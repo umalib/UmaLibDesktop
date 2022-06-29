@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import Utils from '@/renderer/utils/renderer-utils';
+import { formatTimeStamp } from '@/renderer/utils/renderer-utils';
 
 export default {
   name: 'ShowArticle',
@@ -130,7 +130,7 @@ export default {
   },
   props: ['content', 'visible', 'selectedArt'],
   methods: {
-    formatTimeStamp: Utils.formatTimeStamp,
+    formatTimeStamp,
   },
 };
 </script>

@@ -152,7 +152,7 @@
 
 <script>
 import connector from '@/renderer/utils/connector';
-import Utils from '@/renderer/utils/renderer-utils';
+import { formatTimeStamp } from '@/renderer/utils/renderer-utils';
 import ShowArticle from '@/renderer/views/sub-components/show-article';
 
 async function fillArticles(_vue, param) {
@@ -227,7 +227,7 @@ export default {
         );
       }
     },
-    formatTimeStamp: Utils.formatTimeStamp,
+    formatTimeStamp,
     handleCurrentChange(val) {
       this.param.pageNum = val;
       this.searchArticle();

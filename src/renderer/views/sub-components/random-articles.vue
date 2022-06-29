@@ -64,12 +64,12 @@
 </template>
 
 <script>
-import Utils from '@/renderer/utils/renderer-utils';
+import { formatTimeStamp } from '@/renderer/utils/renderer-utils';
 
 export default {
   name: 'random-articles',
   methods: {
-    formatTimeStamp: Utils.formatTimeStamp,
+    formatTimeStamp,
   },
   props: ['randomList', 'visible'],
 };

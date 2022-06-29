@@ -206,7 +206,7 @@
 
 <script>
 import connector from '@/renderer/utils/connector';
-import Utils from '@/renderer/utils/renderer-utils';
+import { formatTimeStamp, splitList } from '@/renderer/utils/renderer-utils';
 import ShowArticle from '@/renderer/views/sub-components/show-article';
 
 async function fillArticles(_vue, param) {
@@ -276,7 +276,7 @@ export default {
     this.$watch(() => this.$route.params.id, jump2Novel);
     const data = await connector.get('getLongNovelTags', {});
     this.search.id2Tag = data.tags;
-    this.search.novels = Utils.splitList(data.novels, 4);
+    this.search.novels = splitList(data.novels, 4);
     this.loading.menu = false;
     jump2Novel(this.$route.params.id);
   },
@@ -291,7 +291,7 @@ export default {
         );
       }
     },
-    formatTimeStamp: Utils.formatTimeStamp,
+    formatTimeStamp,
     handleCurrentChange(val) {
       this.param.pageNum = val;
       this.searchArticle();

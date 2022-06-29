@@ -1,4 +1,4 @@
-export default [
+module.exports = [
   {
     label: '那我呢',
     color: 'nga',

@@ -116,7 +116,7 @@ async function updateTags(artId, tags) {
   }
 }
 
-export default {
+module.exports = {
   changeDb,
   checkDb() {
     return dbPath === embeddedDbPath;

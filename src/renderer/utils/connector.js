@@ -8,7 +8,7 @@ ipcRenderer.on('dbReturn', (_, res) => {
   }
 });
 
-export default {
+module.exports = {
   async get(action, args) {
     const id = await argon2.hash(
       action + JSON.stringify(args) + new Date().getTime(),

@@ -83,7 +83,7 @@ const recommendations = {
   },
 };
 
-const staffs = [
+const staffList = [
   'byslm',
   'ChibaNils',
   'ken啊我',
@@ -111,6 +111,6 @@ const staffs = [
 
 export default {
   recommendations,
-  staffs: Utils.splitList(staffs, 8),
+  staffs: Utils.splitList(staffList, 8),
   tagTypes: ['其他', '角色', '系列', '长篇/合集', '争议/不适'],
 };

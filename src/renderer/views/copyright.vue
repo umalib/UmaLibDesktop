@@ -109,7 +109,7 @@
 <script>
 import connector from '@/renderer/utils/connector';
 import EmbeddedData from '@/renderer/utils/data';
-import Utils from '@/renderer/utils/renderer-utils';
+import { splitList } from '@/renderer/utils/renderer-utils';
 
 export default {
   name: 'copyright',
@@ -120,7 +120,7 @@ export default {
     };
   },
   async created() {
-    this.creators = Utils.splitList(await connector.get('copyright'), 8);
+    this.creators = splitList(await connector.get('copyright'), 8);
   },
 };
 </script>

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   formatTimeStamp(timestamp) {
     if (!timestamp) {
       return '';

@@ -379,7 +379,10 @@
 <script>
 import connector from '@/renderer/utils/connector';
 import EmbeddedData from '@/renderer/utils/data';
-import Utils from '@/renderer/utils/renderer-utils';
+import {
+  formatTimeStamp,
+  getNewTextObj,
+} from '@/renderer/utils/renderer-utils';
 import 'quill/dist/quill.core.css'; // import styles
 import 'quill/dist/quill.snow.css'; // for snow theme
 import 'quill/dist/quill.bubble.css'; // for bubble theme
@@ -495,7 +498,7 @@ export default {
       count: 0,
       favorites: {},
       id2Art: {},
-      newText: Utils.getNewTextObj(),
+      newText: getNewTextObj(),
       param: {
         keyword: '',
         noTagIds: [],
@@ -623,7 +626,7 @@ export default {
         node.text.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
       );
     },
-    formatTimeStamp: Utils.formatTimeStamp,
+    formatTimeStamp,
     handleAuthorLink(someone) {
       this.param.someone = someone;
       this.param.pageNum = 1;
@@ -713,12 +716,12 @@ export default {
         tags: this.newText.tags,
       });
       this.visible.publish = false;
-      this.newText = Utils.getNewTextObj();
+      this.newText = getNewTextObj();
       this.updateTags();
       this.searchArticle();
     },
     resetNewArt() {
-      this.newText = Utils.getNewTextObj();
+      this.newText = getNewTextObj();
     },
     searchArticle() {
       window.scrollTo(0, 0);
