@@ -254,10 +254,11 @@ async function createWindow() {
 }
 
 // Quit when all windows are closed.
-app.on('window-all-closed', () => {
+app.on('window-all-closed', async () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
+    await dbManage.disconnect();
     app.quit();
   }
 });
@@ -301,13 +302,15 @@ app.on('web-contents-created', (_, webContents) => {
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {
-    process.on('message', data => {
+    process.on('message', async data => {
       if (data === 'graceful-exit') {
+        await dbManage.disconnect();
         app.quit();
       }
     });
   } else {
-    process.on('SIGTERM', () => {
+    process.on('SIGTERM', async () => {
+      await dbManage.disconnect();
       app.quit();
     });
   }

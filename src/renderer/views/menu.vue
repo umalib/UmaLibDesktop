@@ -40,9 +40,6 @@
                     <strong>{{ search.id2Tag[novelId].name }}</strong>
                   </p>
                   <p>{{ search.id2Tag[novelId].author }} 著</p>
-                  <p>
-                    <small>{{ search.id2Tag[novelId].description }}</small>
-                  </p>
                 </div>
               </el-card>
             </el-link>
@@ -67,7 +64,10 @@
             </el-image>
           </div>
           <p>{{ search.id2Tag[param.tagId].author }} 著</p>
-          <p v-if="search.id2Tag[param.tagId].description">
+          <p
+            v-if="search.id2Tag[param.tagId].description"
+            style="text-align: left;"
+          >
             {{ search.id2Tag[param.tagId].description }}
           </p>
         </el-col>

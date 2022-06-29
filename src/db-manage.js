@@ -15,7 +15,7 @@ let dbPath = embeddedDbPath;
 async function changeDb(path) {
   logger.info('change db to ' + path);
   if (prisma) {
-    prisma.$disconnect();
+    await prisma.$disconnect();
   }
   dbPath = path;
   prisma = new PrismaClient({
@@ -196,6 +196,9 @@ module.exports = {
     ret.translators.sort();
     ret.double.sort();
     return ret;
+  },
+  async disconnect() {
+    await prisma.$disconnect();
   },
   async getArt(artId) {
     const art = await prisma.article.findUnique({
