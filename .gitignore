@@ -27,3 +27,4 @@ pnpm-debug.log*
 prisma/migrations
 /package-lock.json
 /tools/config.js
+/data
