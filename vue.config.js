@@ -1,8 +1,18 @@
 module.exports = {
   pluginOptions: {
     electronBuilder: {
+      builderOptions: {
+        extraResources: [
+          'prisma/**/*',
+          'node_modules/.prisma/**/*',
+          'node_modules/@prisma/client/**/*',
+        ],
+      },
       externals: ['@prisma/client'],
-      extraResources: ['src/data.db'],
+      nodeIntegration: true,
     },
+  },
+  devServer: {
+    port: 58090,
   },
 };

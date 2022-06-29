@@ -1,57 +1,42 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-datasource db {
-  provider = "sqlite"
-  url      = "file:../src/data.db"
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
-model Post {
-
-  id        Int      @default(autoincrement()) @id
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
-
-  title     String
-
-  content   String?
-
-  published Boolean  @default(false)
-
-  author    User     @relation(fields: [authorId], references: [id])
-
-  authorId  Int
-
+datasource db {
+  provider = "sqlite"
+  url      = "file:./uma.db"
 }
 
-model Profile {
-
-  id     Int     @default(autoincrement()) @id
-
-  bio    String?
-
-  user   User    @relation(fields: [userId], references: [id])
-
-  userId Int     @unique
-
+model article {
+  id         Int      @id @default(autoincrement())
+  name       String?
+  note       String?
+  content    String?
+  author     String?
+  translator String?
+  uploadTime Int?
+  source     String?
+  taggedList tagged[]
 }
 
-model User {
+model tag {
+  id          Int      @id @default(autoincrement())
+  name        String?
+  type        Int?
+  cover       String?
+  description String?
+  taggedList  tagged[]
+}
 
-  id      Int      @default(autoincrement()) @id
+model tagged {
+  id      Int     @id @default(autoincrement())
+  artId   Int
+  tagId   Int
+  article article @relation(fields: [artId], references: [id])
+  tag     tag     @relation(fields: [tagId], references: [id])
+}
 
-  email   String   @unique
-
-  name    String?
-
-  posts   Post[]
-
-  profile Profile?
-
+model creator {
+  id    Int     @id @default(autoincrement())
+  names String?
 }

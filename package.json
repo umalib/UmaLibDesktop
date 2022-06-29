@@ -1,7 +1,8 @@
 {
-  "name": "vue-electron-prisma",
-  "version": "0.1.0",
+  "name": "uma-library-desktop",
+  "version": "1.6.0",
   "private": true,
+  "author": "WindyWisper <umalib629@outlook.com>",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -14,11 +15,13 @@
   "main": "background.js",
   "dependencies": {
     "@prisma/client": "^2.16.1",
-    "core-js": "^3.6.5",
+    "argon2": "^0.28.5",
+    "element-ui": "^2.15.8",
+    "log4js": "^6.5.2",
     "prisma": "^2.16.1",
     "vue": "^2.6.11",
-    "vue-router": "^3.2.0",
-    "vuex": "^3.4.0"
+    "vue-quill-editor": "^3.0.6",
+    "vue-router": "^3.2.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
@@ -29,14 +32,18 @@
     "@vue/eslint-config-prettier": "^6.0.0",
     "babel-eslint": "^10.1.0",
     "copy-webpack-plugin": "^7.0.0",
-    "electron": "^11.0.0",
+    "electron": "^11.2.3",
     "electron-devtools-installer": "^3.1.0",
+    "electron-store": "^8.0.2",
+    "element-theme": "^2.0.1",
+    "element-theme-chalk": "^2.15.8",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.1.3",
     "eslint-plugin-vue": "^6.2.2",
     "node-sass": "^4.12.0",
     "prettier": "^1.19.1",
     "sass-loader": "^8.0.2",
+    "sm-crypto": "^0.3.8",
     "vue-cli-plugin-electron-builder": "~2.0.0-rc.6",
     "vue-template-compiler": "^2.6.11"
   }
