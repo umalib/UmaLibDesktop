@@ -66,7 +66,7 @@
           <p>{{ search.id2Tag[param.tagId].author }} 著</p>
           <p
             v-if="search.id2Tag[param.tagId].description"
-            style="text-align: left;"
+            class="novel-description"
           >
             <span
               v-bind:key="i"
@@ -361,6 +361,7 @@ export default {
 
 <style lang="scss">
 div.default-cover {
+  color: black;
   background-image: url('../images/cover.png');
   background-size: contain;
   background-repeat: no-repeat;
@@ -377,5 +378,11 @@ div.novel-info-small {
   strong {
     font-size: 16px;
   }
+}
+
+p.novel-description {
+  text-align: left;
+  font-size: 14px;
+  line-height: 2;
 }
 </style>

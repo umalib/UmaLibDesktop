@@ -358,6 +358,7 @@
       <recommended-articles
         @close-recommend="visible.recommend = false"
         @show-art="showArticle"
+        @show-novel="$router.push(`/menu/${$event}`)"
         @show-someone="
           visible.recommend = false;
           param.tagIds = [];
@@ -366,7 +367,14 @@
           param.keyword = '';
           searchArticle();
         "
-        @show-tag="$router.push(`/menu/${$event}`)"
+        @show-tag="
+          visible.recommend = false;
+          param.tagIds = [$event];
+          param.noTagIds;
+          param.someone = '';
+          param.keyword = '';
+          searchArticle();
+        "
         :save-me="saveMe"
         :visible="visible.recommend"
       />

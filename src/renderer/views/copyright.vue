@@ -22,8 +22,8 @@
         <p>
           <span v-bind:key="i1" v-for="(subList, i1) in staffs">
             <span v-bind:key="staff" v-for="(staff, i2) in subList">
+              <el-divider v-if="i2 !== 0" direction="vertical" />
               <span>{{ staff }}</span>
-              <el-divider v-if="i2 !== 8" direction="vertical" />
             </span>
             <br v-if="i1 !== staffs.length" />
           </span>
@@ -49,8 +49,8 @@
           <p>
             <span v-bind:key="i1" v-for="(subList, i1) in creators">
               <span v-bind:key="staff" v-for="(staff, i2) in subList">
+                <el-divider v-if="i2 !== 0" direction="vertical" />
                 <span>{{ staff }}</span>
-                <el-divider v-if="i2 !== 8" direction="vertical" />
               </span>
               <br v-if="i1 !== creators.length" />
             </span>

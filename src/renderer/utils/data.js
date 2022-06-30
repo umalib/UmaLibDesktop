@@ -4,7 +4,7 @@ const recommendations = {
   creators: [
     {
       name: 'kuirui（悔類）',
-      isAuthor: true,
+      type: 0,
       recommendations: [
         {
           name: 'Nils',
@@ -20,7 +20,7 @@ const recommendations = {
     },
     {
       name: 'おはな',
-      isAuthor: true,
+      type: 0,
       recommendations: [
         {
           name: 'Nils',
@@ -37,7 +37,7 @@ const recommendations = {
     },
     {
       name: '仮名@ウマ娘怪文書',
-      isAuthor: true,
+      type: 0,
       recommendations: [
         {
           name: 'Nils',
@@ -54,7 +54,8 @@ const recommendations = {
     },
     {
       name: '万碎碎碎碎碎',
-      isAuthor: true,
+      type: 0,
+      r: true,
       recommendations: [
         { name: 'Nils', reason: ['推 荐！'] },
         { name: '风之低吟', reason: ['著名老师', '不言而喻'] },
@@ -62,10 +63,8 @@ const recommendations = {
     },
     {
       name: 'Nils',
-      isAuthor: false,
-      recommendations: [
-        { name: '风之低吟', reason: ['翻译楼元老', '品质保证'] },
-      ],
+      type: 1,
+      recommendations: [{ name: '风之低吟', reason: ['老牌译者，品质保证'] }],
     },
   ],
   novels: {
@@ -74,11 +73,61 @@ const recommendations = {
       isNovel: true,
       recommendations: [{ name: '黑羽仙洛', reason: ['推 荐！'] }],
     },
+    264: {
+      title: '被拖入其中的训练员',
+      isNovel: true,
+      recommendations: [
+        {
+          name: '风之低吟',
+          reason: [
+            '被拖入其中的训练员第一部让我听见了最想让深陷重马场的训练员们喊出的话。',
+          ],
+        },
+      ],
+    },
   },
   articles: {
     1: {
       title: '铃鹿小姐的故事',
       recommendations: [{ name: 'nameabcd', reason: ['万 恶 之 源'] }],
+    },
+    2212: {
+      title: '曼城茶座-大进综合征',
+      recommendations: [
+        {
+          name: '风之低吟',
+          reason: [
+            '曾经只存在于臆想中的孩子终于降临到父母身边，',
+            '虽然有些伤感，但最后很幸福的一篇大进综合征。',
+          ],
+        },
+      ],
+    },
+    2783: {
+      title: '没有星星的夜空',
+      recommendations: [
+        {
+          name: 'banerjee',
+          reason: [
+            '（录入者的PS：推荐来自三创；是的，推荐者为本作写了三创）',
+            '把这张西服的织姬套入正文里，就一转目白城画风了，一切不言者、尽在括号中',
+            '桀桀桀桀桀，黑习习，和你努力营造的沉重感说再见吧(吔！！！)',
+          ],
+        },
+      ],
+    },
+    3457: {
+      title: '快子(Tachyon)曾梦扑火飞蛾乎',
+      recommendations: [
+        {
+          name: '风之低吟',
+          reason: [
+            '两个角色、一个概念正好构成了两组对照，与标题遥相呼应。',
+            '结局虽不完美，但从对照的关系去思考，又不得不承认角色某种意义上还是实现了自己的目的。',
+            '结构巧妙，情节感人，推荐一读。',
+          ],
+        },
+      ],
     },
   },
 };
