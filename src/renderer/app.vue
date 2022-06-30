@@ -1,21 +1,25 @@
 <template>
   <div id="app">
-    <router-view :built-in-db="builtInDb" />
+    <router-view
+      :built-in-db="builtInDb"
+      :save-me="saveMeId"
+      @is-safe="isSafe"
+    />
     <el-divider />
     <el-row style="text-align: center">
       <small>
-        内容：NGA赛马娘翻译交流群 开发：风之低吟（NGA） 版本：1.6.0
+        {{ signInfo.content }}
         <el-tooltip placement="top" effect="light">
           <div slot="content">
             <el-descriptions :column="1" border size="mini">
               <el-descriptions-item label="签名">
-                304402204e8906c766db6a47135ec68d76f8f0df9306770891a6f525a84605a8cd634e3f02201f00b4570d9b24a61fd216ecbfd1f3c9d962e2f1c85d78452b8693541bb6b23e
+                {{ signInfo.sign[0] }}
               </el-descriptions-item>
               <el-descriptions-item label="参数">
                 sm2 {der,hash,publicKey}
               </el-descriptions-item>
               <el-descriptions-item label="公钥">
-                04f7c5d1bf43e06c4a119deb999c33a488fc38d1a7f6387cdc0001ed190d6b304846b3d2931fb15f819c6e57ac7ce119f8c68e376a5631d5ccfc1f712a51187123
+                {{ signInfo.pubKey }}
               </el-descriptions-item>
             </el-descriptions>
           </div>
@@ -41,9 +45,10 @@
 </template>
 
 <script>
-import connector from '@/renderer/utils/connector';
-
 const { ipcRenderer } = require('electron');
+
+import connector from '@/renderer/utils/connector';
+import EmbeddedData from '@/renderer/utils/data';
 
 document.title = '赛马娘同人集中楼大书库';
 
@@ -52,6 +57,8 @@ export default {
     return {
       colorClz: '',
       builtInDb: true,
+      saveMeId: -1,
+      signInfo: EmbeddedData.signInfo,
     };
   },
 
@@ -91,9 +98,13 @@ export default {
       _vue.refreshPage(path);
     });
 
-    this.builtInDb = await connector.get('checkDb');
+    this.builtInDb = await connector.get('checkDb', {});
+    this.saveMeId = await connector.get('saveMe', {});
   },
   methods: {
+    isSafe() {
+      this.saveMeId = -3;
+    },
     async refreshPage(path) {
       await this.$router.push('/empty');
       await this.$notify({
@@ -102,6 +113,7 @@ export default {
         type: 'success',
       });
       this.builtInDb = !path;
+      this.saveMeId = await connector.get('saveMe', {});
     },
   },
 };

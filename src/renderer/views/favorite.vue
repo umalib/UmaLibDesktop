@@ -211,7 +211,7 @@ export default {
   async created() {
     const data = await connector.get('getTags', {});
     this.search.id2Tag = data.tags;
-    this.favorites = await connector.get('getFavorites');
+    this.favorites = await connector.get('getFavorites', {});
     await fillArticles(this, {
       ids: this.favorites,
     });

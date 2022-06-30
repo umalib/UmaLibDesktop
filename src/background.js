@@ -16,7 +16,7 @@ import {
 } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import dbManage from '@/db-manage';
-import themes from '@/themes';
+import { themes } from '@/main-config';
 
 const log4js = require('log4js');
 
@@ -51,14 +51,15 @@ function createConfig() {
   });
 }
 
-const favEvents = {
+let saveMe = -2;
+
+const storeEvents = {
   getFavorites() {
     let ret = store.get(dbManage.getPath());
     if (!ret) {
       createConfig();
       return [];
     }
-    logger.debug(ret);
     const b = ret.favorites.filter((v, i, l) => l.indexOf(v) === i);
     if (b.length !== ret.favorites.length) {
       ret.favorites = b;
@@ -82,6 +83,16 @@ const favEvents = {
     const list = this.getFavorites().filter(x => x !== id);
     this.setFavorites(list);
     return list;
+  },
+  async saveMe() {
+    if (saveMe === -2) {
+      saveMe = await dbManage.checkR18();
+      logger.info('R18 id:' + saveMe);
+    }
+    return saveMe;
+  },
+  isSafe() {
+    saveMe = -3;
   },
 };
 
@@ -122,15 +133,22 @@ async function createWindow() {
     if (color) {
       setBackgroundColor(color);
     }
-    mainWindow.webContents.send('colorEvent', getBackgroundColor());
+    try {
+      mainWindow.webContents.send('colorEvent', getBackgroundColor());
+    } catch (e) {
+      logger.warn(e);
+    }
   }
 
   const timestamp = {};
-  ipcMain.on('callDb', async (_, msg) => {
+  ipcMain.on('artChannel', async (_, msg) => {
     let result;
     if (dbManage[msg.action]) {
       timestamp[msg.id] = new Date().getTime();
       logger.debug(`dbManage.${msg.action}(${JSON.stringify(msg.args)})`);
+      if (msg.action === 'changeDb' && saveMe > -3) {
+        saveMe = -2;
+      }
       result = await dbManage[msg.action](msg.args);
       logger.info(
         `dbManage.${msg.action}: ${new Date().getTime() -
@@ -138,10 +156,13 @@ async function createWindow() {
       );
       delete timestamp[msg.id];
     } else {
-      logger.info('favorite event ' + msg.action);
-      result = favEvents[msg.action](msg.args);
+      logger.info(`storeEvents.${msg.action}`);
+      result = storeEvents[msg.action](msg.args);
+      if (result instanceof Promise) {
+        result = await result;
+      }
     }
-    mainWindow.webContents.send('dbReturn', {
+    mainWindow.webContents.send('artChannel', {
       id: msg.id,
       data: result,
     });
@@ -164,6 +185,9 @@ async function createWindow() {
           const path = await dialog.showOpenDialog();
           if (path.filePaths.length) {
             logger.info(`dbManage.changeDb("${path.filePaths[0]}")`);
+            if (saveMe > -3) {
+              saveMe = -2;
+            }
             mainWindow.webContents.send(
               'refreshPage',
               await dbManage.changeDb(path.filePaths[0]),
@@ -174,6 +198,9 @@ async function createWindow() {
       {
         label: '切换到内置数据库',
         async click() {
+          if (saveMe > -3) {
+            saveMe = -2;
+          }
           await dbManage.resetDb();
           mainWindow.webContents.send('refreshPage', '');
         },
@@ -181,15 +208,6 @@ async function createWindow() {
       { label: '刷新', role: 'reload' },
       { role: 'quit', label: '退出' },
     ],
-  });
-  const colorSubMenu = [];
-  themes.forEach(c => {
-    colorSubMenu.push({
-      label: c.label,
-      click() {
-        setRendererBackgroundColor(c.color);
-      },
-    });
   });
   template.push({
     label: '功能',
@@ -244,6 +262,15 @@ async function createWindow() {
       { label: '符合格式粘贴', role: 'pasteAndMatchStyle' },
       { label: '全选', role: 'selectAll' },
     ],
+  });
+  const colorSubMenu = [];
+  themes.forEach(c => {
+    colorSubMenu.push({
+      label: c.label,
+      click() {
+        setRendererBackgroundColor(c.color);
+      },
+    });
   });
   template.push({
     label: '主题',

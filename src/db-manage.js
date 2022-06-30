@@ -121,6 +121,14 @@ module.exports = {
   checkDb() {
     return dbPath === embeddedDbPath;
   },
+  async checkR18() {
+    const tag = await prisma.tag.findFirst({
+      where: {
+        name: 'R18',
+      },
+    });
+    return tag ? tag.id : -1;
+  },
   async copyright() {
     return JSON.parse(
       (
@@ -475,6 +483,18 @@ module.exports = {
     return getArts(findManyOptions, param);
   },
   async listFavorites(param) {
+    if (param.noTagIds.length) {
+      const noArtList = (
+        await prisma.tagged.findMany({
+          where: {
+            tagId: {
+              in: param.noTagIds,
+            },
+          },
+        })
+      ).map(x => x.artId);
+      param.ids = param.ids.filter(x => noArtList.indexOf(x) === -1);
+    }
     return getArts(
       {
         where: {

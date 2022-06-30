@@ -15,3 +15,10 @@ logger.info(
     publicKey: keyPair.publicKey,
   }),
 );
+logger.info(
+  sm2.doSignature(msg, keyPair.privateKey, {
+    der: true,
+    hash: true,
+    publicKey: keyPair.publicKey,
+  }),
+);

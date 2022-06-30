@@ -54,35 +54,37 @@
                 v-bind:key="i"
                 v-for="(novel, tagId, i) in recommendations.novels"
               >
-                <el-divider v-if="i !== 0" />
-                <strong>
-                  {{ novel.isNovel ? '长篇小说' : '小说合集' }}
-                  <el-link
-                    @click="$emit('show-tag', Number(tagId))"
-                    type="primary"
-                  >
-                    {{ novel.title }}
-                  </el-link>
-                </strong>
-                <el-card
-                  v-bind:key="rec.name"
-                  v-for="rec in novel.recommendations"
-                  shadow="hover"
-                >
-                  <span v-bind:key="j" v-for="(content, j) in rec.reason">
-                    {{ content }}
-                    <br />
-                  </span>
-                  <strong class="recommender">
-                    ——
+                <div v-if="saveMe === -3 && !novel.r">
+                  <el-divider v-if="i !== 0" />
+                  <strong>
+                    {{ novel.isNovel ? '长篇小说' : '小说合集' }}
                     <el-link
-                      @click="$emit('show-someone', rec.name)"
+                      @click="$emit('show-tag', Number(tagId))"
                       type="primary"
                     >
-                      {{ rec.name }}
+                      {{ novel.title }}
                     </el-link>
                   </strong>
-                </el-card>
+                  <el-card
+                    v-bind:key="rec.name"
+                    v-for="rec in novel.recommendations"
+                    shadow="hover"
+                  >
+                    <span v-bind:key="j" v-for="(content, j) in rec.reason">
+                      {{ content }}
+                      <br />
+                    </span>
+                    <strong class="recommender">
+                      ——
+                      <el-link
+                        @click="$emit('show-someone', rec.name)"
+                        type="primary"
+                      >
+                        {{ rec.name }}
+                      </el-link>
+                    </strong>
+                  </el-card>
+                </div>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -92,35 +94,37 @@
                 v-bind:key="i"
                 v-for="(article, artId, i) in recommendations.articles"
               >
-                <el-divider v-if="i !== 0" />
-                <strong>
-                  作品
-                  <el-link
-                    @click="$emit('show-art', Number(artId))"
-                    type="primary"
-                  >
-                    {{ article.title }}
-                  </el-link>
-                </strong>
-                <el-card
-                  v-bind:key="rec.name"
-                  v-for="rec in article.recommendations"
-                  shadow="hover"
-                >
-                  <span v-bind:key="j" v-for="(content, j) in rec.reason">
-                    {{ content }}
-                    <br />
-                  </span>
-                  <strong class="recommender">
-                    ——
+                <div v-if="saveMe === -3 && !article.r">
+                  <el-divider v-if="i !== 0" />
+                  <strong>
+                    作品
                     <el-link
-                      @click="$emit('show-someone', rec.name)"
+                      @click="$emit('show-art', Number(artId))"
                       type="primary"
                     >
-                      {{ rec.name }}
+                      {{ article.title }}
                     </el-link>
                   </strong>
-                </el-card>
+                  <el-card
+                    v-bind:key="rec.name"
+                    v-for="rec in article.recommendations"
+                    shadow="hover"
+                  >
+                    <span v-bind:key="j" v-for="(content, j) in rec.reason">
+                      {{ content }}
+                      <br />
+                    </span>
+                    <strong class="recommender">
+                      ——
+                      <el-link
+                        @click="$emit('show-someone', rec.name)"
+                        type="primary"
+                      >
+                        {{ rec.name }}
+                      </el-link>
+                    </strong>
+                  </el-card>
+                </div>
               </div>
             </el-scrollbar>
           </el-tab-pane>
@@ -144,7 +148,7 @@ export default {
       recommendations: EmbeddedData.recommendations,
     };
   },
-  props: ['visible'],
+  props: ['saveMe', 'visible'],
   methods: {
     closeDialog() {
       this.$emit('close-recommend');

@@ -16,15 +16,7 @@
           <span>风之低吟</span>
         </p>
         <h4>程序</h4>
-        <p>
-          风之低吟
-          <el-tooltip
-            content="请我一杯咖啡？认准唯一指定邮箱XD：asdfgh309327@163.com"
-            placement="right"
-          >
-            <i class="el-icon-coffee-cup" />
-          </el-tooltip>
-        </p>
+        <p>风之低吟</p>
         <h4>录入协助</h4>
         <small>按字母/笔画顺序，排名不分先后</small>
         <p>
@@ -102,6 +94,18 @@
           </el-descriptions-item>
         </el-descriptions>
       </el-row>
+      <el-row v-if="saveMe > -3">
+        <el-divider />
+        <el-col :offset="8" :span="8">
+          <el-input
+            placeholder="枯树洞看着你"
+            style="width: 100%"
+            v-model="keyword"
+          >
+            <el-button @click="jump" slot="append">爱丽丝</el-button>
+          </el-input>
+        </el-col>
+      </el-row>
     </el-col>
   </el-row>
 </template>
@@ -117,10 +121,37 @@ export default {
     return {
       staffs: EmbeddedData.staffs,
       creators: [],
+      keyword: '',
     };
   },
+  props: ['saveMe'],
   async created() {
-    this.creators = splitList(await connector.get('copyright'), 8);
+    this.creators = splitList(await connector.get('copyright', {}), 8);
+  },
+  methods: {
+    async jump() {
+      if (
+        this.keyword ===
+        EmbeddedData.signInfo.sign[1].substring(
+          EmbeddedData.signInfo.sign[1].length - 8,
+        )
+      ) {
+        connector.get('isSafe', {}).then();
+        await this.$notify({
+          message: '格林……是你吗？',
+          title: '',
+          type: 'warning',
+        });
+        this.$emit('is-safe');
+        await this.$router.push('/empty');
+      } else {
+        await this.$notify({
+          message: '退下，无礼者！',
+          title: '',
+          type: 'error',
+        });
+      }
+    },
   },
 };
 </script>

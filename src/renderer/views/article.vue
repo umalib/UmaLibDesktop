@@ -128,10 +128,7 @@
             content="在搜索结果中不返回NTR、R18G等引起争议/令人不适的作品"
           >
             <el-checkbox
-              @change="
-                param.pageNum = 1;
-                searchArticle();
-              "
+              @change="changePrevents"
               style="line-height: 42px; margin-left: 5px"
               v-model="search.preventSensitive"
             >
@@ -370,6 +367,7 @@
           searchArticle();
         "
         @show-tag="$router.push(`/menu/${$event}`)"
+        :save-me="saveMe"
         :visible="visible.recommend"
       />
     </el-col>
@@ -421,9 +419,12 @@ async function getTagsFromServer(_vue) {
     _vue.search.sensitiveTags = data['typeMap'][4];
   }
   for (let k in data['typeMap']) {
+    if (_vue.search.preventSensitive && Number(k) === 4) {
+      continue;
+    }
     let v = data['typeMap'][k];
     let options = [];
-    v.forEach(x =>
+    v.filter(x => x !== _vue.saveMe).forEach(x =>
       options.push({
         value: x,
         label: _vue.search.id2Tag[x].name,
@@ -454,7 +455,10 @@ async function getTagsFromServer(_vue) {
       }),
     });
   }
-  if (_vue.search.tagOptions.length === EmbeddedData.tagTypes.length) {
+  if (
+    _vue.search.tagOptions.length > 1 &&
+    _vue.search.tagOptions[0].label === EmbeddedData.tagTypes[0]
+  ) {
     let others = _vue.search.tagOptions.splice(0, 1);
     _vue.search.tagOptions.push(others[0]);
     others = _vue.search.tagCascader.options.splice(0, 1);
@@ -553,13 +557,13 @@ export default {
       },
     };
   },
-  props: ['builtInDb'],
+  props: ['builtInDb', 'saveMe'],
   async created() {
     updateFavorites(this, await connector.get('getFavorites'));
     await getTagsFromServer(this);
     getAuthorsFromServer(this).then();
     fillArticles(this, {
-      noTagIds: this.search.sensitiveTags,
+      noTagIds: this.fillNoTagIds(),
       sortBy: this.param.sortBy,
     }).then();
   },
@@ -577,6 +581,11 @@ export default {
           message: `收藏 ${this.articles[this.id2Art[id]].name} 成功！`,
         });
       }
+    },
+    async changePrevents() {
+      this.param.pageNum = 1;
+      await getTagsFromServer(this);
+      this.searchArticle();
     },
     clearSearchParam() {
       this.param.tagIds = [];
@@ -619,6 +628,16 @@ export default {
           art.tagLabels.push(this.search.id2Tag[tagId].name),
         );
       }
+    },
+    fillNoTagIds() {
+      let noTagIds = [].concat(this.param.noTagIds);
+      if (this.search.preventSensitive) {
+        noTagIds.push.apply(noTagIds, this.search.sensitiveTags);
+      }
+      if (this.saveMe > 0) {
+        noTagIds.push(this.saveMe);
+      }
+      return noTagIds;
     },
     filterTagsInCascader(node, keyword) {
       return (
@@ -717,7 +736,7 @@ export default {
       });
       this.visible.publish = false;
       this.newText = getNewTextObj();
-      this.updateTags();
+      await getTagsFromServer(this);
       this.searchArticle();
     },
     resetNewArt() {
@@ -728,9 +747,7 @@ export default {
       this.visible.content = false;
       fillArticles(this, {
         tagIds: this.param.tagIds,
-        noTagIds: this.search.preventSensitive
-          ? this.param.noTagIds.concat(this.search.sensitiveTags)
-          : this.param.noTagIds,
+        noTagIds: this.fillNoTagIds(),
         keyword: this.param.keyword,
         someone: this.param.someone,
         sortBy: this.param.sortBy,
@@ -777,7 +794,7 @@ export default {
     },
     async showRandomArticle(num) {
       const param = {
-        noTagIds: this.search.preventSensitive ? this.search.sensitiveTags : [],
+        noTagIds: this.fillNoTagIds(),
       };
       if (num && num > 1) {
         param.count = num;
@@ -818,9 +835,6 @@ export default {
         return aTagInfo.name > bTagInfo.name ? 1 : -1;
       }
       return bTagInfo.type - aTagInfo.type;
-    },
-    updateTags() {
-      getTagsFromServer(this);
     },
   },
 };

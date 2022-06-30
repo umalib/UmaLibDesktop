@@ -68,7 +68,15 @@
             v-if="search.id2Tag[param.tagId].description"
             style="text-align: left;"
           >
-            {{ search.id2Tag[param.tagId].description }}
+            <span
+              v-bind:key="i"
+              v-for="(content, i) in replaceNewLine(
+                search.id2Tag[param.tagId].description,
+              )"
+            >
+              <br v-if="i !== 0" />
+              {{ content }}
+            </span>
           </p>
         </el-col>
 
@@ -262,6 +270,7 @@ export default {
       },
     };
   },
+  props: ['saveMe'],
   async created() {
     const _vue = this;
     function jump2Novel(id) {
@@ -313,12 +322,15 @@ export default {
       }
       this.searchArticle();
     },
+    replaceNewLine(content) {
+      return content.split('\n');
+    },
     searchArticle() {
       window.scrollTo(0, 0);
       this.contentVisible = false;
       fillArticles(this, {
         tagIds: [this.param.tagId],
-        noTagIds: [],
+        noTagIds: [this.saveMe],
         keyword: '',
         someone: '',
         sortBy: this.param.sortBy,
