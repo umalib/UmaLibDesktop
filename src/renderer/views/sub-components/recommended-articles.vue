@@ -90,6 +90,46 @@
               </div>
             </el-scrollbar>
           </el-tab-pane>
+          <el-tab-pane label="系列推荐" name="series-recommend">
+            <el-scrollbar style="height: 100%">
+              <div
+                v-bind:key="i"
+                v-for="(tag, tagId, i) in recommendations.series"
+              >
+                <div v-if="saveMe === -3 || !tag.r">
+                  <el-divider v-if="i !== 0" />
+                  <strong>
+                    系列
+                    <el-link
+                      @click="$emit('show-novel', Number(tagId))"
+                      type="primary"
+                    >
+                      {{ tag.title }}
+                    </el-link>
+                  </strong>
+                  <el-card
+                    v-bind:key="rec.name"
+                    v-for="rec in tag.recommendations"
+                    shadow="hover"
+                  >
+                    <span v-bind:key="j" v-for="(content, j) in rec.reason">
+                      {{ content }}
+                      <br />
+                    </span>
+                    <strong class="recommender">
+                      ——
+                      <el-link
+                        @click="$emit('show-someone', rec.name)"
+                        type="primary"
+                      >
+                        {{ rec.name }}
+                      </el-link>
+                    </strong>
+                  </el-card>
+                </div>
+              </div>
+            </el-scrollbar>
+          </el-tab-pane>
           <el-tab-pane label="单篇作品推荐" name="art-recommend">
             <el-scrollbar style="height: 100%">
               <div

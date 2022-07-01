@@ -131,9 +131,9 @@
         </el-tab-pane>
       </el-tabs>
       <div v-else style="text-align: center">
-        <p>你没资格啊你没资格</p>
+        <p>你没有资格 没有资格啊 没有资格</p>
         <p>正因为如此</p>
-        <p>踏上古龙之道吧</p>
+        <p>你没有资格 没有资格啊 没有资格</p>
       </div>
     </el-col>
   </el-row>

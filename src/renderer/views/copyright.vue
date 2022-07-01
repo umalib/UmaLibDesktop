@@ -40,6 +40,9 @@
           <el-divider direction="vertical" />
           <span>nameabcd</span>
         </p>
+        <el-tooltip content="双王子？你为什么不问问黑暗剑呢？">
+          <h2>今日，我等攻略了大书库！</h2>
+        </el-tooltip>
       </el-row>
       <el-divider />
       <el-row>
