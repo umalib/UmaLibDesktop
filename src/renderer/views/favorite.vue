@@ -157,6 +157,7 @@ import ShowArticle from '@/renderer/views/sub-components/show-article';
 
 async function fillArticles(_vue, param) {
   _vue.articleLoading = true;
+  param.noTagIds = _vue.saveMe > 0 ? [_vue.saveMe] : [];
   const data = await connector.get('listFavorites', param);
   _vue.contentVisible = false;
   _vue.articles = [];
@@ -208,6 +209,7 @@ export default {
       },
     };
   },
+  props: ['saveMe'],
   async created() {
     const data = await connector.get('getTags', {});
     this.search.id2Tag = data.tags;
