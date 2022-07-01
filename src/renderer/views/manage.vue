@@ -4,7 +4,7 @@
       <el-row style="text-align: center">
         <h1>管理处</h1>
       </el-row>
-      <el-tabs v-model="activeName" @tab-click="changeTab">
+      <el-tabs v-if="cue >= 10" v-model="activeName" @tab-click="changeTab">
         <el-tab-pane label="创作者管理" name="author-management">
           <el-row>
             <el-transfer
@@ -130,6 +130,11 @@
           </el-row>
         </el-tab-pane>
       </el-tabs>
+      <div v-else style="text-align: center">
+        <p>你没资格啊你没资格</p>
+        <p>正因为如此</p>
+        <p>踏上古龙之道吧</p>
+      </div>
     </el-col>
   </el-row>
 </template>
@@ -219,6 +224,7 @@ export default {
       typeResult: 0,
     };
   },
+  props: ['cue'],
   created() {
     updateAuthors(this);
   },

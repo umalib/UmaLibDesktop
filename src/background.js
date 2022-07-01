@@ -1,9 +1,6 @@
 'use strict';
 
-const os = require('os');
-const path = require('path');
 let { app } = require('electron');
-const Store = require('electron-store');
 import {
   BrowserWindow,
   dialog,
@@ -14,11 +11,15 @@ import {
   session,
   shell,
 } from 'electron';
+const Store = require('electron-store');
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import dbManage from '@/db-manage';
 import { themes } from '@/main-config';
 
+const argon2 = require('argon2');
 const log4js = require('log4js');
+const os = require('os');
+const path = require('path');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const logger = log4js.getLogger();
@@ -51,8 +52,6 @@ function createConfig() {
   });
 }
 
-let saveMe = -2;
-
 const storeEvents = {
   getFavorites() {
     let ret = store.get(dbManage.getPath());
@@ -84,15 +83,29 @@ const storeEvents = {
     this.setFavorites(list);
     return list;
   },
+  saveMeFlag: -2,
+  password: '',
   async saveMe() {
-    if (saveMe === -2) {
-      saveMe = await dbManage.checkR18();
-      logger.info('R18 id:' + saveMe);
+    if (this.saveMeFlag === -2) {
+      this.password = await dbManage.getPassword();
+      if (this.password) {
+        this.password = await argon2.hash(this.password);
+        this.password = this.password.substring(this.password.length - 8);
+      }
+      this.saveMeFlag = this.password ? await dbManage.checkR18() : -1;
+      logger.info('R18 id:' + this.saveMeFlag);
+      logger.debug(`R18 id=${this.saveMeFlag}, pwd=${this.password}`);
     }
-    return saveMe;
+    return this.saveMeFlag;
+  },
+  clearSaveMe() {
+    this.saveMeFlag = -2;
   },
   isSafe() {
-    saveMe = -3;
+    this.saveMeFlag = -3;
+  },
+  getPwd() {
+    return this.password;
   },
 };
 
@@ -146,8 +159,8 @@ async function createWindow() {
     if (dbManage[msg.action]) {
       timestamp[msg.id] = new Date().getTime();
       logger.debug(`dbManage.${msg.action}(${JSON.stringify(msg.args)})`);
-      if (msg.action === 'changeDb' && saveMe > -3) {
-        saveMe = -2;
+      if (msg.action === 'changeDb') {
+        storeEvents.clearSaveMe();
       }
       result = await dbManage[msg.action](msg.args);
       logger.info(
@@ -185,9 +198,7 @@ async function createWindow() {
           const path = await dialog.showOpenDialog();
           if (path.filePaths.length) {
             logger.info(`dbManage.changeDb("${path.filePaths[0]}")`);
-            if (saveMe > -3) {
-              saveMe = -2;
-            }
+            storeEvents.clearSaveMe();
             mainWindow.webContents.send(
               'refreshPage',
               await dbManage.changeDb(path.filePaths[0]),
@@ -198,9 +209,7 @@ async function createWindow() {
       {
         label: '切换到内置数据库',
         async click() {
-          if (saveMe > -3) {
-            saveMe = -2;
-          }
+          storeEvents.clearSaveMe();
           await dbManage.resetDb();
           mainWindow.webContents.send('refreshPage', '');
         },

@@ -130,12 +130,7 @@ export default {
   },
   methods: {
     async jump() {
-      if (
-        this.keyword ===
-        EmbeddedData.signInfo.sign[1].substring(
-          EmbeddedData.signInfo.sign[1].length - 8,
-        )
-      ) {
+      if (this.keyword === (await connector.get('getPwd', {}))) {
         connector.get('isSafe', {}).then();
         await this.$notify({
           message: '格林……是你吗？',

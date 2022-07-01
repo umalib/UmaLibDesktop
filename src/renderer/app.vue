@@ -2,18 +2,19 @@
   <div id="app">
     <router-view
       :built-in-db="builtInDb"
+      :cue="cue"
       :save-me="saveMeId"
       @is-safe="isSafe"
     />
     <el-divider />
     <el-row style="text-align: center">
-      <small>
+      <small @click="cue++" :style="cue >= 10 ? 'font-weight: bold' : ''">
         {{ signInfo.content }}
         <el-tooltip placement="top" effect="light">
           <div slot="content">
             <el-descriptions :column="1" border size="mini">
               <el-descriptions-item label="签名">
-                {{ signInfo.sign[0] }}
+                {{ signInfo.sign }}
               </el-descriptions-item>
               <el-descriptions-item label="参数">
                 sm2 {der,hash,publicKey}
@@ -56,6 +57,7 @@ export default {
   data() {
     return {
       colorClz: '',
+      cue: 0,
       builtInDb: true,
       saveMeId: -1,
       signInfo: EmbeddedData.signInfo,

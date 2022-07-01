@@ -164,10 +164,8 @@ export default {
     content: '内容：NGA赛马娘翻译交流群 开发：风之低吟（NGA） 版本：1.6.0',
     pubKey:
       '04f7c5d1bf43e06c4a119deb999c33a488fc38d1a7f6387cdc0001ed190d6b304846b3d2931fb15f819c6e57ac7ce119f8c68e376a5631d5ccfc1f712a51187123',
-    sign: [
+    sign:
       '30450220222f11deee897dfe569aaac9ce679a4b64fc57adb3464eca9d14bb1011d66c80022100bd7685ed19b4bc3faf6f7d65c36d89d4119df324171c4a1720651ee518e163f3',
-      '304502201652f4dc284d986172f818ec160e5189a03c1e32182e772d80d747ab209d69e5022100fc512e7c0f90a49890b4d20301904a5af14650234ae3ddf28f541f4354d35e95',
-    ],
   },
   staffs: Utils.splitList(staffList, 8),
   tagTypes: ['其他', '角色', '系列', '长篇/合集', '争议/不适'],

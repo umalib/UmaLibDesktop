@@ -554,6 +554,14 @@ module.exports = {
       });
     }
   },
+  async getPassword() {
+    const pwd = await prisma.creator.findUnique({
+      where: {
+        id: 2,
+      },
+    });
+    return pwd ? pwd.names : '';
+  },
   getPath() {
     return dbPath;
   },

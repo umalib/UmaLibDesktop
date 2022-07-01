@@ -6,14 +6,23 @@
       </el-row>
       <el-row>
         <el-col :offset="10" :span="4">
-          <el-button @click="showPubDialog" style="width: 100%" type="primary">
+          <el-button
+            v-if="cue >= 10"
+            @click="showPubDialog"
+            style="width: 100%"
+            type="primary"
+          >
             发布新作品
           </el-button>
         </el-col>
         <el-col :offset="1" :span="8" style="float: right">
           <el-tooltip content="不知道看什么？试试这些！">
             <el-button-group>
-              <el-button @click="visible.recommend = true" type="success">
+              <el-button
+                v-if="cue >= 10 || builtInDb"
+                @click="visible.recommend = true"
+                type="success"
+              >
                 推荐
               </el-button>
               <el-button @click="showRandomArticle" type="success">
@@ -284,6 +293,7 @@
           <template v-slot="cell">
             <el-button-group>
               <el-button
+                v-if="cue >= 10"
                 @click="showEditDialog(cell.row['id'])"
                 icon="el-icon-edit"
                 round
@@ -565,7 +575,7 @@ export default {
       },
     };
   },
-  props: ['builtInDb', 'saveMe'],
+  props: ['builtInDb', 'cue', 'saveMe'],
   async created() {
     updateFavorites(this, await connector.get('getFavorites'));
     await getTagsFromServer(this);
