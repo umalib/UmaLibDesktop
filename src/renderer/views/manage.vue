@@ -56,7 +56,8 @@
                 round
                 size="small"
                 slot="left-footer"
-                >按名字排序
+              >
+                按名字排序
               </el-button>
               <el-button
                 @click="sortTagByType"

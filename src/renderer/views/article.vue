@@ -893,7 +893,7 @@ div.el-dialog {
   margin: 2% auto !important;
 
   div.el-dialog__body {
-    height: 85%;
+    height: calc(100% - 124px);
     padding-top: 0;
     padding-bottom: 0;
   }

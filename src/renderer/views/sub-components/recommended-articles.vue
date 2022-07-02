@@ -52,16 +52,13 @@
           </el-tab-pane>
           <el-tab-pane label="长篇/合集推荐" name="novel-recommend">
             <el-scrollbar style="height: 100%">
-              <div
-                v-bind:key="i"
-                v-for="(novel, tagId, i) in recommendations.novels"
-              >
+              <div v-bind:key="i" v-for="(novel, i) in recommendations.novels">
                 <div v-if="saveMe === -3 || !novel.r">
                   <el-divider v-if="i !== 0" />
                   <strong>
                     {{ novel.isNovel ? '长篇小说' : '短篇合集' }}
                     <el-link
-                      @click="$emit('show-novel', Number(tagId))"
+                      @click="$emit('show-novel', novel.id)"
                       type="primary"
                     >
                       {{ novel.title }}
@@ -92,18 +89,12 @@
           </el-tab-pane>
           <el-tab-pane label="系列推荐" name="series-recommend">
             <el-scrollbar style="height: 100%">
-              <div
-                v-bind:key="i"
-                v-for="(tag, tagId, i) in recommendations.series"
-              >
+              <div v-bind:key="i" v-for="(tag, i) in recommendations.series">
                 <div v-if="saveMe === -3 || !tag.r">
-                  <el-divider v-if="i !== 0" />
+                  <el-divider v-if="i !== 0 && !tag.noDivider" />
                   <strong>
                     系列
-                    <el-link
-                      @click="$emit('show-novel', Number(tagId))"
-                      type="primary"
-                    >
+                    <el-link @click="$emit('show-tag', tag.id)" type="primary">
                       {{ tag.title }}
                     </el-link>
                   </strong>
@@ -134,14 +125,14 @@
             <el-scrollbar style="height: 100%">
               <div
                 v-bind:key="i"
-                v-for="(article, artId, i) in recommendations.articles"
+                v-for="(article, i) in recommendations.articles"
               >
                 <div v-if="saveMe === -3 || !article.r">
                   <el-divider v-if="i !== 0" />
                   <strong>
                     作品
                     <el-link
-                      @click="$emit('show-art', Number(artId))"
+                      @click="$emit('show-art', article.id)"
                       type="primary"
                     >
                       {{ article.title }}
@@ -400,11 +391,16 @@ export default {
   }
 
   .el-tabs__content {
-    height: calc(100% - 50px);
+    height: calc(100% - 45px);
   }
 
   div.el-scrollbar__view {
-    padding-top: 16px;
+    > div:nth-child(1) {
+      margin-top: 16px;
+    }
+    > div:last-child {
+      margin-bottom: 8px;
+    }
   }
 
   strong {
