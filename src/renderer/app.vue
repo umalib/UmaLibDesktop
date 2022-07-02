@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <router-view
+      v-if="saveMeId > -4"
       :built-in-db="builtInDb"
       :cue="cue"
       :save-me="saveMeId"
@@ -59,7 +60,7 @@ export default {
       colorClz: '',
       cue: 0,
       builtInDb: true,
-      saveMeId: -1,
+      saveMeId: -4,
       signInfo: EmbeddedData.signInfo,
     };
   },
