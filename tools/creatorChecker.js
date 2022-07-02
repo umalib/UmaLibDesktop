@@ -26,10 +26,14 @@ async function task() {
   });
   articles.forEach(x => {
     const creator = x.translator ? x.translator : x.author;
-    creators[creator] = true;
+    if (!creators[creator]) {
+      creators[creator] = 1;
+    } else {
+      creators[creator] += 1;
+    }
   });
   for (const c in creators) {
-    logger.info(c);
+    logger.info(`${c}\t${creators[c]}`);
   }
   await prisma.$disconnect();
 }
