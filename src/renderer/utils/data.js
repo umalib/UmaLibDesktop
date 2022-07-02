@@ -53,6 +53,19 @@ const recommendations = {
       ],
     },
     {
+      name: '南极洲老土著',
+      type: 1,
+      recommendations: [
+        {
+          name: 'Nils',
+          reason: [
+            '对于“企划内未实装马”（包括老黄金这种拿不到版权的、一路通这种著名梗马、现在竞马时代的乐透心、苏妲己之类原创拟人化）进行了大量创作翻译的译者（甚至达到了单人开辟一个领域的程度）',
+            '对于实马方向有兴趣的读者们推荐搜索阅读',
+          ],
+        },
+      ],
+    },
+    {
       name: 'Nils',
       type: 1,
       recommendations: [{ name: '风之低吟', reason: ['老牌译者，品质保证'] }],
@@ -707,11 +720,11 @@ const staffList = [
 export default {
   recommendations,
   signInfo: {
-    content: '内容：NGA赛马娘翻译交流群 开发：风之低吟（NGA） 版本：1.7.0',
+    content: '内容：NGA赛马娘翻译交流群 开发：风之低吟（NGA） 版本：1.7.1',
     pubKey:
       '04f7c5d1bf43e06c4a119deb999c33a488fc38d1a7f6387cdc0001ed190d6b304846b3d2931fb15f819c6e57ac7ce119f8c68e376a5631d5ccfc1f712a51187123',
     sign:
-      '30450221009dc3162a45f77a1b9714e0270cdd1e68b194872d2dd26e24bbf7549c9d73cb9a02203470de82aba05db0061476e1706a9b4082c79ebf4929665fb3e8c4c830248940',
+      '3045022007b793cdbc3b258a4a05478b85d022298f5e2a2140931aca1fd0a34dce865725022100af7f59720a3c24af8e738b6495119a14d4973b128dc38ba91a904c3a6d8c5f9b',
   },
   staffs: Utils.splitList(staffList, 8),
   tagTypes: ['其他', '角色', '系列', '长篇/合集', '争议/不适'],
