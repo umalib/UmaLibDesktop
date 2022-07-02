@@ -128,20 +128,6 @@ async function createWindow() {
     },
   });
 
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
-    // Load the url of the dev server if in development mode
-    await mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
-    if (!process.env.IS_TEST) {
-      mainWindow.webContents.openDevTools();
-    }
-  } else {
-    createProtocol('app');
-    // Load the index.html when not in development
-    await mainWindow.loadURL('app://./index.html');
-  }
-  mainWindow.maximize();
-  mainWindow.show();
-
   function setRendererBackgroundColor(color) {
     if (color) {
       setBackgroundColor(color);
@@ -182,6 +168,20 @@ async function createWindow() {
   });
 
   ipcMain.on('colorEvent', () => setRendererBackgroundColor());
+
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    // Load the url of the dev server if in development mode
+    await mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
+    if (!process.env.IS_TEST) {
+      mainWindow.webContents.openDevTools();
+    }
+  } else {
+    createProtocol('app');
+    // Load the index.html when not in development
+    await mainWindow.loadURL('app://./index.html');
+  }
+  mainWindow.maximize();
+  mainWindow.show();
 
   const template = [];
   if (process.platform === 'darwin') {
