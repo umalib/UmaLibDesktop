@@ -889,8 +889,8 @@ export default {
 }
 
 div.el-dialog {
-  height: 92%;
-  margin: 2% auto !important;
+  height: calc(100% - 60px);
+  margin: 30px auto !important;
 
   div.el-dialog__body {
     height: calc(100% - 124px);
