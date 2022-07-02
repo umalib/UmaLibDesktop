@@ -16,7 +16,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import dbManage from '@/db-manage';
 import { themes } from '@/main-config';
 
-const argon2 = require('argon2');
+const MD5 = new (require('jshashes').MD5)();
 const log4js = require('log4js');
 const os = require('os');
 const path = require('path');
@@ -89,7 +89,7 @@ const storeEvents = {
     if (this.saveMeFlag === -2) {
       this.password = await dbManage.getPassword();
       if (this.password) {
-        this.password = await argon2.hash(this.password);
+        this.password = await MD5.hex(this.password);
         this.password = this.password.substring(this.password.length - 8);
       }
       this.saveMeFlag = this.password ? await dbManage.checkR18() : -1;

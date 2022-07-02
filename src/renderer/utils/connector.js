@@ -1,5 +1,5 @@
 const { ipcRenderer } = require('electron');
-const argon2 = require('argon2');
+const MD5 = new (require('jshashes').MD5)();
 
 const id2Resolve = {};
 ipcRenderer.on('artChannel', (_, res) => {
@@ -10,7 +10,7 @@ ipcRenderer.on('artChannel', (_, res) => {
 
 module.exports = {
   async get(action, args) {
-    const id = await argon2.hash(
+    const id = await MD5.hex(
       action + JSON.stringify(args) + new Date().getTime(),
     );
     ipcRenderer.send('artChannel', {
