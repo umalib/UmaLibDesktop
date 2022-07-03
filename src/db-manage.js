@@ -31,8 +31,12 @@ async function changeDb(path) {
 async function getArts(findManyOptions, param) {
   if (param.sortBy && Object.keys(param.sortBy).length !== 0) {
     findManyOptions.orderBy.push(param.sortBy);
+    findManyOptions.orderBy.push({
+      id: param.sortBy[Object.keys(param.sortBy)[0]],
+    });
+  } else {
+    findManyOptions.orderBy.push({ id: 'asc' });
   }
-  findManyOptions.orderBy.push({ id: 'asc' });
   if (param.offset) {
     findManyOptions.skip = (param.page - 1) * param.offset;
     findManyOptions.take = param.offset;

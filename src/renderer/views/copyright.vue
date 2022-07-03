@@ -97,7 +97,7 @@
           </el-descriptions-item>
         </el-descriptions>
       </el-row>
-      <el-row v-if="saveMe > -3">
+      <el-row v-if="saveMe > 0">
         <el-divider />
         <el-col :offset="8" :span="8">
           <el-input
