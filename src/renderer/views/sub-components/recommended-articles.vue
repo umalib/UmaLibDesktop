@@ -128,7 +128,7 @@
                 v-for="(article, i) in recommendations.articles"
               >
                 <div v-if="saveMe === -3 || !article.r">
-                  <el-divider v-if="i !== 0" />
+                  <el-divider v-if="i !== 0 && !article.noDivider" />
                   <strong>
                     作品
                     <el-link
