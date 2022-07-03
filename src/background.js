@@ -25,6 +25,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 const logger = log4js.getLogger();
 logger.level = isDevelopment ? 'debug' : 'info';
 const store = new Store();
+logger.info(`use config path: ${store.path}`);
 
 if (!app) {
   app = remote.app;
@@ -139,27 +140,25 @@ async function createWindow() {
     }
   }
 
-  const timestamp = {};
   ipcMain.on('artChannel', async (_, msg) => {
     let result;
+    const start = new Date().getTime();
     if (dbManage[msg.action]) {
-      timestamp[msg.id] = new Date().getTime();
       logger.debug(`dbManage.${msg.action}(${JSON.stringify(msg.args)})`);
       if (msg.action === 'changeDb') {
         storeEvents.clearSaveMe();
       }
       result = await dbManage[msg.action](msg.args);
-      logger.info(
-        `dbManage.${msg.action}: ${new Date().getTime() -
-          timestamp[msg.id]} ms`,
-      );
-      delete timestamp[msg.id];
+      logger.info(`dbManage.${msg.action}: ${new Date().getTime() - start} ms`);
     } else {
-      logger.info(`storeEvents.${msg.action}`);
       result = storeEvents[msg.action](msg.args);
       if (result instanceof Promise) {
         result = await result;
       }
+      logger.debug(`storeEvents.${msg.action}: ${JSON.stringify(result)}`);
+      logger.info(
+        `storeEvents.${msg.action}: ${new Date().getTime() - start} ms`,
+      );
     }
     mainWindow.webContents.send('artChannel', {
       id: msg.id,

@@ -29,10 +29,6 @@ async function changeDb(path) {
 }
 
 async function getArts(findManyOptions, param) {
-  const ret = {
-    count: await prisma.article.count(findManyOptions),
-    list: [],
-  };
   if (param.sortBy && Object.keys(param.sortBy).length !== 0) {
     findManyOptions.orderBy.push(param.sortBy);
   }
@@ -46,7 +42,7 @@ async function getArts(findManyOptions, param) {
   }
   findManyOptions.include = { taggedList: true };
   logger.debug(JSON.stringify(findManyOptions));
-  ret.list = (await prisma.article.findMany(findManyOptions)).map(art => {
+  return (await prisma.article.findMany(findManyOptions)).map(art => {
     return {
       id: art.id,
       name: art.name,
@@ -61,7 +57,6 @@ async function getArts(findManyOptions, param) {
       }),
     };
   });
-  return ret;
 }
 
 async function updateTags(artId, tags) {
@@ -480,7 +475,10 @@ module.exports = {
         OR: [{ author: param.someone }, { translator: param.someone }],
       });
     }
-    return getArts(findManyOptions, param);
+    return {
+      count: await prisma.article.count(findManyOptions),
+      list: await getArts(findManyOptions, param),
+    };
   },
   async listFavorites(param) {
     if (param.noTagIds.length) {
@@ -495,17 +493,32 @@ module.exports = {
       ).map(x => x.artId);
       param.ids = param.ids.filter(x => noArtList.indexOf(x) === -1);
     }
-    return getArts(
-      {
-        where: {
-          id: {
-            in: param.ids,
+    const count = param.ids.length;
+    if (!param.sortBy || Object.keys(param.sortBy).length === 0) {
+      if (param.page) {
+        param.ids.splice(param.page * param.offset);
+        if (param.page > 1) {
+          param.ids.splice(0, (param.page - 1) * param.offset);
+        }
+      } else {
+        param.ids.splice(10);
+      }
+      param.page = 1;
+    }
+    return {
+      count,
+      list: await getArts(
+        {
+          where: {
+            id: {
+              in: param.ids,
+            },
           },
+          orderBy: [],
         },
-        orderBy: [],
-      },
-      param,
-    );
+        param,
+      ),
+    };
   },
   async mergeAuthors(param) {
     if (!param.finalAuthor) {
