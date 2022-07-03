@@ -84,7 +84,7 @@ async function updateTags(artId, tags) {
     }
     tagDict[tag.id] = 1;
   }
-  const taggedList = await prisma.tagged.findMany({
+  const taggedList = await prisma['tagged'].findMany({
     where: {
       artId,
     },
@@ -98,7 +98,7 @@ async function updateTags(artId, tags) {
       deleteData.push(tagged.id);
     }
   }
-  await prisma.tagged.deleteMany({
+  await prisma['tagged'].deleteMany({
     where: {
       id: {
         in: deleteData,
@@ -106,7 +106,7 @@ async function updateTags(artId, tags) {
     },
   });
   for (const tagId in tagDict) {
-    await prisma.tagged.create({
+    await prisma['tagged'].create({
       data: {
         artId,
         tagId: Number(tagId),
@@ -143,7 +143,7 @@ module.exports = {
     );
   },
   async deleteArt(artId) {
-    await prisma.tagged.deleteMany({
+    await prisma['tagged'].deleteMany({
       where: {
         artId,
       },
@@ -155,7 +155,7 @@ module.exports = {
     });
   },
   async deleteTags(param) {
-    await prisma.tagged.deleteMany({
+    await prisma['tagged'].deleteMany({
       where: {
         tagId: {
           in: param.tagIds,
@@ -244,23 +244,14 @@ module.exports = {
         }),
       };
     }
-
-    let condition = [];
-    if (param.noTagIds.length) {
-      condition = (
-        await prisma.tagged.findMany({
-          where: {
+    const artList = await prisma.article.findMany({
+      where: {
+        taggedList: {
+          none: {
             tagId: {
               in: param.noTagIds,
             },
           },
-        })
-      ).map(tagged => tagged.artId);
-    }
-    const artList = await prisma.article.findMany({
-      where: {
-        NOT: {
-          id: { in: condition },
         },
       },
       select: {
@@ -275,9 +266,7 @@ module.exports = {
             await prisma.article.findMany({ include: { taggedList: true } })
           )
             .map(fillArt)
-            .sort(() => {
-              return Math.random() - 0.5;
-            });
+            .sort(() => Math.random() - 0.5);
         } else {
           const tmpMap = {};
           while (Object.keys(tmpMap).length < param.count) {
@@ -289,7 +278,6 @@ module.exports = {
           retList = retList.filter((v, i, s) => {
             return s.indexOf(v) === i;
           });
-          logger.debug(retList);
           for (let i = 0; i < retList.length; ++i) {
             tmpMap[retList[i]] = i;
           }
@@ -373,7 +361,7 @@ module.exports = {
     const artIds = [];
     tags.forEach(tag => {
       if (tag.type === 3 && tag.taggedList.length) {
-        tag.author = tag.taggedList[0].artId;
+        tag.author = tag.taggedList[0]['artId'];
         artIds.push(tag.author);
         ret.novels.push(tag.id);
       }
@@ -408,50 +396,23 @@ module.exports = {
       where: { AND: [] },
       orderBy: [],
     };
-    if (param.tagIds && param.tagIds.length !== 0) {
-      const artDict = {};
-      const artIds = [];
-      const requiredTagLength = param.tagIds.length;
-      param.noTagIds.forEach(tagId => {
-        param.tagIds.push(tagId);
-      });
-      const taggedList = await prisma.tagged.findMany({
-        where: { tagId: { in: param.tagIds } },
-      });
-      taggedList.forEach(tagged => {
-        if (param.noTagIds.indexOf(tagged.tagId) !== -1) {
-          artDict[tagged.artId] = false;
-          return;
-        }
-        if (artDict[tagged.artId]) {
-          artDict[tagged.artId]++;
-        } else if (artDict[tagged.artId] === undefined) {
-          artDict[tagged.artId] = 1;
-        }
-      });
-      for (const id in artDict) {
-        if (artDict[id] && artDict[id] === requiredTagLength) {
-          artIds.push(Number(id));
-        }
-      }
-      findManyOptions.where.AND.push({ id: { in: artIds } });
-    } else if (param.noTagIds && param.noTagIds.length !== 0) {
-      const taggedList = await prisma.tagged.findMany({
-        where: {
-          tagId: {
-            in: param.noTagIds,
+    if (param.tagIds) {
+      param.tagIds.forEach(tagId =>
+        findManyOptions.where.AND.push({
+          taggedList: { some: { tagId } },
+        }),
+      );
+    }
+    if (param.noTagIds) {
+      findManyOptions.where.AND.push({
+        taggedList: {
+          none: {
+            tagId: {
+              in: param.noTagIds,
+            },
           },
         },
       });
-      if (taggedList.length) {
-        findManyOptions.where.AND.push({
-          NOT: {
-            id: {
-              in: taggedList.map(tagged => tagged.artId),
-            },
-          },
-        });
-      }
     }
     if (param.keyword) {
       findManyOptions.where.AND.push({
@@ -487,14 +448,14 @@ module.exports = {
   async listFavorites(param) {
     if (param.noTagIds.length) {
       const noArtList = (
-        await prisma.tagged.findMany({
+        await prisma['tagged'].findMany({
           where: {
             tagId: {
               in: param.noTagIds,
             },
           },
         })
-      ).map(x => x.artId);
+      ).map(tagged => tagged['artId']);
       param.ids = param.ids.filter(x => noArtList.indexOf(x) === -1);
     }
     const count = param.ids.length;
@@ -545,19 +506,19 @@ module.exports = {
     const finalTagId = param.toMergedTags[0];
     for (let i = 1; i < param.toMergedTags.length; ++i) {
       const tagId = param.toMergedTags[i];
-      const taggedList = await prisma.tagged.findMany({ where: { tagId } });
+      const taggedList = await prisma['tagged'].findMany({ where: { tagId } });
       for (const i in taggedList) {
         const tagged = taggedList[i];
         const data = {
-          artId: tagged.artId,
+          artId: tagged['artId'],
           tagId: finalTagId,
         };
-        const count = await prisma.tagged.count({ where: data });
+        const count = await prisma['tagged'].count({ where: data });
         if (!count || count === 0) {
-          await prisma.tagged.create({ data });
+          await prisma['tagged'].create({ data });
         }
       }
-      await prisma.tagged.deleteMany({ where: { tagId } });
+      await prisma['tagged'].deleteMany({ where: { tagId } });
       await prisma.tag.deleteMany({ where: { id: tagId } });
     }
     if (param['tagLabel']) {
@@ -575,6 +536,9 @@ module.exports = {
     const pwd = await prisma.creator.findUnique({
       where: {
         id: 2,
+      },
+      select: {
+        names: true,
       },
     });
     return pwd ? pwd.names : '';
