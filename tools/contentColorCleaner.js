@@ -30,7 +30,10 @@ async function task() {
   const articles = await prisma.article.findMany();
   for (const art of articles) {
     let content = art.content;
-    if (art.note.indexOf('字符画') === -1) {
+    if (
+      art.note.indexOf('字符画') === -1 &&
+      art.note.indexOf('AA漫画') === -1
+    ) {
       content = art.content.replace(
         /\s+style="((background-color:\s*rgb\(245,\s*232,\s*203\);\s*)|(color:\s*rgb\(16,\s*39,\s*63\);\s*))+"/g,
         '',
@@ -99,7 +102,9 @@ async function task() {
       });
     }
   }
-  await prisma.$disconnect();
 }
 
-task().then();
+task().then(async () => {
+  logger.info('task done!');
+  await prisma.$disconnect();
+});
