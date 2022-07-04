@@ -341,6 +341,11 @@ export default {
     color: nth($fontColor, 1);
     background-color: $backColor;
   }
+
+  span.el-breadcrumb__inner,
+  span.el-breadcrumb__item:last-child span.el-breadcrumb__inner {
+    color: nth($fontColor, 1);
+  }
 }
 
 body.nga-background {

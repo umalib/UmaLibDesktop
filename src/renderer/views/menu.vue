@@ -28,7 +28,10 @@
           >
             <el-link @click="showNovel(novelId)" :underline="false">
               <el-card shadow="hover">
-                <el-image :src="search.id2Tag[novelId]['cover']">
+                <el-image
+                  :src="search.id2Tag[novelId]['cover']"
+                  style="width: 100%"
+                >
                   <div slot="error" class="default-cover">
                     <div>
                       {{ search.id2Tag[novelId].name }}
@@ -52,7 +55,7 @@
           <h2>{{ search.id2Tag[param.tagId].name }}</h2>
           <div class="block">
             <el-image
-              style="max-width: 100%"
+              style="max-width: 100%; min-width: calc(500vw / 36 - 40px);"
               :src="search.id2Tag[param.tagId]['cover']"
               fit="contain"
             >
@@ -360,17 +363,23 @@ export default {
 </script>
 
 <style lang="scss">
+div.el-col > a.el-link,
+div.el-col > a.el-link > span.el-link--inner {
+  width: 100%;
+}
 div.default-cover {
   color: black;
   background-image: url('../images/cover.png');
   background-size: contain;
   background-repeat: no-repeat;
-  width: 156px;
-  min-height: 216px;
+  width: 100%;
+  height: 0;
+  padding-bottom: calc(100% * 937 / 666);
 
   div {
     font-size: 14px;
-    padding: 50px 30px 0 30px;
+    font-weight: normal;
+    padding: 35% 20% 0 20%;
   }
 }
 
