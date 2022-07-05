@@ -47,31 +47,37 @@ if (!getBackgroundColor()) {
   logger.info('read background-color: ' + getBackgroundColor());
 }
 
-function createConfig() {
-  store.set(dbManage.getPath(), {
-    favorites: [],
-  });
-}
-
 const storeEvents = {
-  getFavorites() {
-    let ret = store.get(dbManage.getPath());
+  pathConf: MD5.hex(dbManage.getPath()),
+  getOrCreateConfig() {
+    const defaultConf = {
+      favorites: [],
+    };
+    let ret = store.get(this.pathConf);
     if (!ret) {
-      createConfig();
-      return [];
+      ret = store.get(dbManage.getPath());
+      if (!ret) {
+        store.set(this.pathConf, defaultConf);
+        return defaultConf;
+      }
+      store.set(this.pathConf, ret);
     }
+    return ret;
+  },
+
+  getFavorites() {
+    const ret = this.getOrCreateConfig();
     const b = ret.favorites.filter((v, i, l) => l.indexOf(v) === i);
     if (b.length !== ret.favorites.length) {
-      ret.favorites = b;
-      store.set('favorites', ret);
+      this.setFavorites(b);
       return b;
     }
     return ret.favorites;
   },
   setFavorites(favorites) {
-    const ret = store.get(dbManage.getPath());
+    const ret = store.get(this.pathConf);
     ret.favorites = favorites;
-    store.set(dbManage.getPath(), ret);
+    store.set(this.pathConf, ret);
   },
   addFavorite(id) {
     const list = this.getFavorites();
@@ -84,13 +90,14 @@ const storeEvents = {
     this.setFavorites(list);
     return list;
   },
+
   saveMeFlag: -2,
   password: '',
   async saveMe() {
     if (this.saveMeFlag === -2) {
       this.password = await dbManage.getPassword();
       if (this.password) {
-        this.password = await MD5.hex(this.password);
+        this.password = MD5.hex(this.password);
         this.password = this.password.substring(this.password.length - 8);
       }
       this.saveMeFlag = this.password ? await dbManage.checkR18() : -1;
@@ -99,14 +106,16 @@ const storeEvents = {
     }
     return this.saveMeFlag;
   },
-  clearSaveMe() {
-    this.saveMeFlag = -2;
-  },
   isSafe() {
     this.saveMeFlag = -3;
   },
   getPwd() {
     return this.password;
+  },
+
+  resetConfig() {
+    this.pathConf = MD5.hex(dbManage.getPath());
+    this.saveMeFlag = -2;
   },
 };
 
@@ -126,6 +135,7 @@ async function createWindow() {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+      contextIsolation: false,
     },
   });
 
@@ -145,10 +155,10 @@ async function createWindow() {
     const start = new Date().getTime();
     if (dbManage[msg.action]) {
       logger.debug(`dbManage.${msg.action}(${JSON.stringify(msg.args)})`);
-      if (msg.action === 'changeDb') {
-        storeEvents.clearSaveMe();
-      }
       result = await dbManage[msg.action](msg.args);
+      if (msg.action === 'changeDb') {
+        storeEvents.resetConfig();
+      }
       logger.info(`dbManage.${msg.action}: ${new Date().getTime() - start} ms`);
     } else {
       result = storeEvents[msg.action](msg.args);
@@ -194,22 +204,20 @@ async function createWindow() {
       {
         label: '选择数据库',
         async click() {
-          const path = await dialog.showOpenDialog();
+          const path = await dialog['showOpenDialog']();
           if (path.filePaths.length) {
             logger.info(`dbManage.changeDb("${path.filePaths[0]}")`);
-            storeEvents.clearSaveMe();
-            mainWindow.webContents.send(
-              'refreshPage',
-              await dbManage.changeDb(path.filePaths[0]),
-            );
+            const result = await dbManage.changeDb(path.filePaths[0]);
+            storeEvents.resetConfig();
+            mainWindow.webContents.send('refreshPage', result);
           }
         },
       },
       {
         label: '切换到内置数据库',
         async click() {
-          storeEvents.clearSaveMe();
           await dbManage.resetDb();
+          storeEvents.resetConfig();
           mainWindow.webContents.send('refreshPage', '');
         },
       },
