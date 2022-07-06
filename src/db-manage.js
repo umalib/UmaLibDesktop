@@ -32,7 +32,7 @@ async function getArts(findManyOptions, param) {
   if (param.sortBy && Object.keys(param.sortBy).length !== 0) {
     findManyOptions.orderBy.push(param.sortBy);
     findManyOptions.orderBy.push({
-      id: param.sortBy[Object.keys(param.sortBy)[0]],
+      id: Object.values(param.sortBy)[0],
     });
   } else {
     findManyOptions.orderBy.push({ id: 'asc' });
