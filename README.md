@@ -1,5 +1,7 @@
 # Uma Library Desktop
 
+A library of doujin articles of _Umamusume: Pretty Derby_
+
 ## Project setup
 ```
 npm install

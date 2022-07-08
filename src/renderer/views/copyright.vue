@@ -62,6 +62,18 @@
         <strong>
           感谢在上方名单中所有参与翻译创作的大家，以及，浏览该页面的您
         </strong>
+        <p>
+          <small>
+            <el-link
+              href="https://bbs.nga.cn/read.php?tid=32535194#l2"
+              style="font-size: inherit"
+              target="_blank"
+              type="primary"
+            >
+              我有作品想被收录/我不想被收录/我有其他问题？点击这里
+            </el-link>
+          </small>
+        </p>
       </el-row>
       <el-divider />
       <el-row>

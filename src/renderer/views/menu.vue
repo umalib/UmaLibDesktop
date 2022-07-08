@@ -367,6 +367,7 @@ div.el-col > a.el-link,
 div.el-col > a.el-link > span.el-link--inner {
   width: 100%;
 }
+
 div.default-cover {
   color: black;
   background-image: url('../images/cover.png');
