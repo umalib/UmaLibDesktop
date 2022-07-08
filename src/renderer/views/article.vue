@@ -35,7 +35,7 @@
           </el-tooltip>
         </el-col>
       </el-row>
-      <el-row style="margin-top: 10px; margin-bottom: 10px">
+      <el-row style="margin: 10px auto;">
         <el-col :offset="1" :span="10">
           <el-cascader
             @change="

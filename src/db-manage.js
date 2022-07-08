@@ -342,6 +342,21 @@ module.exports = {
     });
     return ret;
   },
+  async getIdsByFav(favList) {
+    return (
+      await prisma.article.findMany({
+        where: {
+          OR: favList.map(fav => {
+            return {
+              name: fav.name,
+              author: fav.author,
+              translator: fav.translator,
+            };
+          }),
+        },
+      })
+    ).map(art => art.id);
+  },
   async getLongNovelTags() {
     const tags = await prisma.tag.findMany({
       orderBy: [
@@ -444,6 +459,40 @@ module.exports = {
       count: await prisma.article.count(findManyOptions),
       list: await getArts(findManyOptions, param),
     };
+  },
+  async listAllFav(favList) {
+    const articles = await prisma.article.findMany({
+      where: {
+        id: {
+          in: favList,
+        },
+      },
+      include: {
+        taggedList: true,
+      },
+    });
+    const tagMap = {};
+    articles.forEach(art =>
+      art.taggedList.forEach(tagged => (tagMap[tagged.tagId] = true)),
+    );
+    (
+      await prisma.tag.findMany({
+        where: {
+          id: {
+            in: Object.keys(tagMap).map(id => Number(id)),
+          },
+        },
+      })
+    ).forEach(tag => (tagMap[tag.id] = tag.name));
+    articles.sorted((a, b) => favList.indexOf(a.id) - favList.indexOf(b.id));
+    return articles.map(art => {
+      return {
+        name: art.name,
+        author: art.author,
+        translator: art.translator,
+        tags: art.taggedList.map(tagged => tagMap[tagged.tagId]),
+      };
+    });
   },
   async listFavorites(param) {
     if (param.noTagIds.length) {

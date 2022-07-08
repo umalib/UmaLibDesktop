@@ -4,6 +4,16 @@
       <el-row>
         <h1>收藏夹</h1>
       </el-row>
+      <el-row style="margin: 10px auto;">
+        <el-button-group>
+          <el-button @click="importFavorites" type="primary">
+            导入
+          </el-button>
+          <el-button @click="exportFavorites" type="primary">
+            导出
+          </el-button>
+        </el-button-group>
+      </el-row>
 
       <div class="block">
         <el-pagination
@@ -219,6 +229,22 @@ export default {
     });
   },
   methods: {
+    async exportFavorites() {
+      const path = await connector.get('exportFavorites', {});
+      if (path) {
+        await this.$notify({
+          message: `收藏夹导出成功！${path}`,
+          title: '',
+          type: 'success',
+        });
+      } else {
+        await this.$notify({
+          message: `导出收藏夹已取消`,
+          title: '',
+          type: 'warning',
+        });
+      }
+    },
     fillArticleTags(art) {
       if (!art.tagLabels) {
         art.tagLabels = [];
@@ -250,6 +276,30 @@ export default {
         this.param.sortBy[column.prop] = val;
       }
       this.searchArticle();
+    },
+    async importFavorites() {
+      const favList = await connector.get('importFavorites', {});
+      if (!favList) {
+        await this.$notify({
+          message: `导入收藏夹已取消`,
+          title: '',
+          type: 'warning',
+        });
+      } else if (favList.length) {
+        this.favorites = favList;
+        await this.$notify({
+          message: `收藏夹导入成功！`,
+          title: '',
+          type: 'success',
+        });
+        this.searchArticle();
+      } else {
+        await this.$notify({
+          message: `请选取正确的导出文件！`,
+          title: '',
+          type: 'error',
+        });
+      }
     },
     searchArticle() {
       window.scrollTo(0, 0);

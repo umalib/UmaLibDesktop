@@ -16,13 +16,14 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import dbManage from '@/db-manage';
 import { themes } from '@/main-config';
 
+const { readFileSync, writeFileSync } = require('fs');
 const MD5 = new (require('jshashes').MD5)();
-const log4js = require('log4js');
-const os = require('os');
-const path = require('path');
+const { getLogger } = require('log4js');
+const { homedir } = require('os');
+const { join } = require('path');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
-const logger = log4js.getLogger();
+const logger = getLogger();
 logger.level = isDevelopment ? 'debug' : 'info';
 const store = new Store();
 logger.info(`use config path: ${store.path}`);
@@ -66,17 +67,11 @@ const storeEvents = {
   },
 
   getFavorites() {
-    const ret = this.getOrCreateConfig();
-    const b = ret.favorites.filter((v, i, l) => l.indexOf(v) === i);
-    if (b.length !== ret.favorites.length) {
-      this.setFavorites(b);
-      return b;
-    }
-    return ret.favorites;
+    return this.getOrCreateConfig().favorites;
   },
   setFavorites(favorites) {
     const ret = store.get(this.pathConf);
-    ret.favorites = favorites;
+    ret.favorites = favorites.filter((v, i, l) => l.indexOf(v) === i);
     store.set(this.pathConf, ret);
   },
   addFavorite(id) {
@@ -89,6 +84,38 @@ const storeEvents = {
     const list = this.getFavorites().filter(x => x !== id);
     this.setFavorites(list);
     return list;
+  },
+  async importFavorites() {
+    const path = await dialog['showOpenDialog']({
+      multiSelections: false,
+      openDirectory: false,
+    });
+    if (path.filePaths.length) {
+      try {
+        const favList = this.getFavorites().concat(
+          await dbManage.getIdsByFav(
+            JSON.parse(readFileSync(path.filePaths[0], 'utf-8')),
+          ),
+        );
+        this.setFavorites(favList);
+        return this.getFavorites();
+      } catch (ignored) {
+        return true;
+      }
+    }
+  },
+  async exportFavorites() {
+    const path = (
+      await dialog['showSaveDialog']({
+        title: '导出收藏夹配置到……',
+        defaultPath: `./${this.pathConf}.json`,
+      })
+    ).filePath;
+    writeFileSync(
+      path,
+      JSON.stringify(await dbManage.listAllFav(this.getFavorites())),
+    );
+    return path;
   },
 
   saveMeFlag: -2,
@@ -204,7 +231,10 @@ async function createWindow() {
       {
         label: '选择数据库',
         async click() {
-          const path = await dialog['showOpenDialog']();
+          const path = await dialog['showOpenDialog']({
+            multiSelections: false,
+            openDirectory: false,
+          });
           if (path.filePaths.length) {
             logger.info(`dbManage.changeDb("${path.filePaths[0]}")`);
             const result = await dbManage.changeDb(path.filePaths[0]);
@@ -322,9 +352,9 @@ app.on('ready', async () => {
     // Install Vue Devtools
     try {
       // installExtension(VUEJS_DEVTOOLS);
-      const reactDevToolsPath = path.join(
-        os.homedir(),
-        '/Library/Application Support/Microsoft Edge/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.1.4_0',
+      const reactDevToolsPath = join(
+        homedir(),
+        '/Library/Application Support/Microsoft Edge/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.2.0_0',
       );
       await session.defaultSession.loadExtension(reactDevToolsPath);
     } catch (e) {

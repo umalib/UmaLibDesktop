@@ -76,6 +76,12 @@ const recommendations = {
       r: true,
       recommendations: [{ name: '风之低吟', reason: ['著名老师', '不言而喻'] }],
     },
+    {
+      name: '南村群童',
+      type: 1,
+      r: true,
+      recommendations: [{ name: '风之低吟', reason: ['著名老师', '不言而喻'] }],
+    },
   ],
   novels: [
     {
