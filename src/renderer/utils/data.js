@@ -786,11 +786,11 @@ const staffList = [
 export default {
   recommendations,
   signInfo: {
-    content: '内容：NGA赛马娘翻译交流群 开发：风之低吟（NGA） 版本：1.7.2',
+    content: '内容：NGA赛马娘翻译交流群 开发：风之低吟（NGA） 版本：1.8.0',
     pubKey:
       '04f7c5d1bf43e06c4a119deb999c33a488fc38d1a7f6387cdc0001ed190d6b304846b3d2931fb15f819c6e57ac7ce119f8c68e376a5631d5ccfc1f712a51187123',
     sign:
-      '3044022071b18b440103e6068a3ecb3d9d2ba9bfba0c2074d7c9e41e917aad8a35a6da7102206ce084794d909d7a13cab0d701ff60a184841a98081bdea1dccab4d5de41182e',
+      '3045022100e9d23da06e0b68b5f0633f392469f1e4fba354b9a5107480e97f6bad840adbf602202cdbef560a55fb97654c2e6326b31d8d25adb1cb15e900f171d7f9f0b5654176',
   },
   staffs: Utils.splitList(staffList, 8),
   tagTypes: ['其他', '角色', '系列', '长篇/合集', '争议/不适'],
