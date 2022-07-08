@@ -484,7 +484,7 @@ module.exports = {
         },
       })
     ).forEach(tag => (tagMap[tag.id] = tag.name));
-    articles.sorted((a, b) => favList.indexOf(a.id) - favList.indexOf(b.id));
+    articles.sort((a, b) => favList.indexOf(a.id) - favList.indexOf(b.id));
     return articles.map(art => {
       return {
         name: art.name,
