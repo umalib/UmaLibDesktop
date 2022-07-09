@@ -285,7 +285,7 @@ export default {
           title: '',
           type: 'warning',
         });
-      } else if (favList.length) {
+      } else if (favList.length !== undefined) {
         this.favorites = favList;
         await this.$notify({
           message: `收藏夹导入成功！`,
