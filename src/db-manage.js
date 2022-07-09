@@ -1,12 +1,13 @@
 const { PrismaClient } = require('@prisma/client');
 const { join, resolve } = require('path');
 const log4js = require('log4js');
-const logger = log4js.getLogger();
+const logger = log4js.getLogger('db-manage');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-let prisma = null;
 logger.level = isDevelopment ? 'debug' : 'info';
+
+let prisma = null;
 const embeddedDbPath = isDevelopment
   ? join(resolve('./prisma/main.db'))
   : join(process.resourcesPath, './prisma/main.db');

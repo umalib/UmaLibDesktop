@@ -11,7 +11,6 @@ import {
   session,
   shell,
 } from 'electron';
-const Store = require('electron-store');
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import dbManage from '@/db-manage';
 import { themes } from '@/main-config';
@@ -23,21 +22,23 @@ const { homedir } = require('os');
 const { join } = require('path');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
-const logger = getLogger();
+
+const logger = getLogger('background');
 logger.level = isDevelopment ? 'debug' : 'info';
-const store = new Store();
-logger.info(`use config path: ${store.path}`);
+
+const configStore = new (require('electron-store'))();
+logger.info(`use config path: ${configStore.path}`);
 
 if (!app) {
   app = remote.app;
 }
 
 function getBackgroundColor() {
-  return store.get('background-color');
+  return configStore.get('background-color');
 }
 
 function setBackgroundColor(color) {
-  store.set('background-color', color);
+  configStore.set('background-color', color);
   return color;
 }
 
@@ -54,14 +55,14 @@ const storeEvents = {
     const defaultConf = {
       favorites: [],
     };
-    let ret = store.get(this.pathConf);
+    let ret = configStore.get(this.pathConf);
     if (!ret) {
-      ret = store.get(dbManage.getPath());
+      ret = configStore.get(dbManage.getPath());
       if (!ret) {
-        store.set(this.pathConf, defaultConf);
+        configStore.set(this.pathConf, defaultConf);
         return defaultConf;
       }
-      store.set(this.pathConf, ret);
+      configStore.set(this.pathConf, ret);
     }
     return ret;
   },
@@ -70,9 +71,9 @@ const storeEvents = {
     return this.getOrCreateConfig().favorites;
   },
   setFavorites(favorites) {
-    const ret = store.get(this.pathConf);
+    const ret = configStore.get(this.pathConf);
     ret.favorites = favorites.filter((v, i, l) => l.indexOf(v) === i);
-    store.set(this.pathConf, ret);
+    configStore.set(this.pathConf, ret);
   },
   addFavorite(id) {
     const list = this.getFavorites();
