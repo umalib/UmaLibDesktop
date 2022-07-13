@@ -163,20 +163,17 @@ async function createWindow() {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-      contextIsolation: false,
+      contextIsolation: true,
     },
   });
 
   function setRendererBackgroundColor(color) {
-    if (color) {
-      setBackgroundColor(color);
-    }
-    try {
-      mainWindow.webContents.send('colorEvent', getBackgroundColor());
-    } catch (e) {
-      logger.warn(e);
-    }
+    color && setBackgroundColor(color);
+    mainWindow.webContents.send('colorEvent', getBackgroundColor());
   }
+
+  logger.info('clean old listeners');
+  ipcMain.removeAllListeners();
 
   ipcMain.on('artChannel', async (_, msg) => {
     let result;
@@ -205,6 +202,8 @@ async function createWindow() {
   });
 
   ipcMain.on('colorEvent', () => setRendererBackgroundColor());
+
+  logger.info('register new listeners');
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
