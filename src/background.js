@@ -163,7 +163,7 @@ async function createWindow() {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-      contextIsolation: true,
+      contextIsolation: false,
     },
   });
 
@@ -186,10 +186,7 @@ async function createWindow() {
       }
       logger.info(`dbManage.${msg.action}: ${new Date().getTime() - start} ms`);
     } else {
-      result = storeEvents[msg.action](msg.args);
-      if (result instanceof Promise) {
-        result = await result;
-      }
+      result = await storeEvents[msg.action](msg.args);
       logger.debug(`storeEvents.${msg.action}: ${JSON.stringify(result)}`);
       logger.info(
         `storeEvents.${msg.action}: ${new Date().getTime() - start} ms`,
