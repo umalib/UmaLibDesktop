@@ -38,10 +38,7 @@
       <el-row style="margin: 10px auto;">
         <el-col :offset="1" :span="10">
           <el-cascader
-            @change="
-              param.pageNum = 1;
-              searchArticle();
-            "
+            @change="resetPageNumAndSearchArticle"
             :filter-method="filterTagsInCascader"
             :key="'t' + param.tagIds.length"
             :options="search.tagCascader.options"
@@ -59,10 +56,7 @@
             </template>
           </el-cascader>
           <el-cascader
-            @change="
-              param.pageNum = 1;
-              searchArticle();
-            "
+            @change="resetPageNumAndSearchArticle"
             :filter-method="filterTagsInCascader"
             :key="'no' + param.noTagIds.length"
             :options="search.noTagCascader.options"
@@ -82,10 +76,7 @@
         </el-col>
         <el-col :span="10">
           <el-select
-            @change="
-              param.pageNum = 1;
-              searchArticle();
-            "
+            @change="resetPageNumAndSearchArticle"
             clearable
             filterable
             placeholder="请选择作者/译者"
@@ -107,18 +98,14 @@
             </el-option-group>
           </el-select>
           <el-input
-            @change="
-              param.pageNum = 1;
-              searchArticle();
-            "
+            @change="resetPageNumAndSearchArticle"
             placeholder="请输入关键词"
             v-model="param.keyword"
           >
             <el-button
               @click="
                 param.keyword = '';
-                param.pageNum = 1;
-                searchArticle();
+                resetPageNumAndSearchArticle();
               "
               icon="el-icon-circle-close"
               slot="append"
@@ -610,6 +597,7 @@ export default {
       this.param.noTagIds = [];
       this.param.someone = '';
       this.param.keyword = '';
+      this.param.pageNum = 1;
       this.search.preventSensitive = true;
       this.searchArticle();
     },
@@ -629,6 +617,13 @@ export default {
           type: 'success',
           message: '删除成功！',
         });
+        if (
+          this.param.pageNum > 1 &&
+          this.count % this.param.offset === 1 &&
+          this.param.pageNum === Math.ceil(this.count / this.param.offset)
+        ) {
+          this.param.pageNum -= 1;
+        }
         this.searchArticle();
       } catch (_) {
         this.$message({
@@ -759,6 +754,10 @@ export default {
     },
     resetNewArt() {
       this.newText = getNewTextObj();
+    },
+    resetPageNumAndSearchArticle() {
+      this.param.pageNum = 1;
+      this.searchArticle();
     },
     searchArticle() {
       window.scrollTo(0, 0);

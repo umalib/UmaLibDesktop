@@ -47,7 +47,7 @@
 </template>
 
 <script>
-const { ipcRenderer } = require('electron');
+import { ipcRenderer } from 'electron';
 
 import connector from '@/renderer/utils/connector';
 import EmbeddedData from '@/renderer/utils/data';
