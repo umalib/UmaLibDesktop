@@ -275,7 +275,7 @@
           fixed="right"
           label=""
           style="text-align: center"
-          width="150"
+          :width="cue >= 10 ? 150 : 107"
         >
           <template v-slot="cell">
             <el-button-group>
@@ -875,7 +875,6 @@ export default {
   p {
     font-size: 16px;
     line-height: 2;
-    margin-bottom: 5px;
   }
 
   span.ql-size-large {

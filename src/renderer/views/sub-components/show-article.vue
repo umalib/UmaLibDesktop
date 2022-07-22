@@ -58,7 +58,7 @@
           </el-descriptions>
         </el-col>
       </el-row>
-      <el-row :class="`ql-snow ${fontSize}`">
+      <el-row :class="`ql-snow ${fontSize}-font ${segmentSpace}-space`">
         <el-col
           :offset="2"
           :span="20"
@@ -81,36 +81,49 @@
           关闭
         </el-button>
       </el-col>
-      <el-col :offset="6" :span="4" style="float: right">
-        <el-button-group>
-          <el-button
-            @click="
-              fontSize = '';
-              descriptionSize = 'mini';
-            "
-            size="mini"
-          >
-            小
+      <el-col :offset="7" :span="3" style="float: right">
+        <el-dropdown
+          @command="handleCommand"
+          :hide-on-click="false"
+          placement="top-start"
+        >
+          <el-button>
+            界面配置<i class="el-icon-arrow-up el-icon--right" />
           </el-button>
-          <el-button
-            @click="
-              fontSize = 'normal-font';
-              descriptionSize = 'small';
-            "
-            size="mini"
-          >
-            中
-          </el-button>
-          <el-button
-            @click="
-              fontSize = 'large-font';
-              descriptionSize = 'medium';
-            "
-            size="mini"
-          >
-            大
-          </el-button>
-        </el-button-group>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item
+              command="font:small"
+              :disabled="fontSize === 'small'"
+            >
+              字号：小
+            </el-dropdown-item>
+            <el-dropdown-item
+              command="font:normal"
+              :disabled="fontSize === 'normal'"
+            >
+              字号：中
+            </el-dropdown-item>
+            <el-dropdown-item
+              command="font:large"
+              :disabled="fontSize === 'large'"
+            >
+              字号：大
+            </el-dropdown-item>
+            <el-dropdown-item
+              command="space:normal"
+              :disabled="segmentSpace === 'normal'"
+              divided
+            >
+              段间距：标准
+            </el-dropdown-item>
+            <el-dropdown-item
+              command="space:wider"
+              :disabled="segmentSpace === 'wider'"
+            >
+              段间距：大
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </el-col>
     </span>
   </el-dialog>
@@ -124,12 +137,34 @@ export default {
   data() {
     return {
       aaFont: '',
-      fontSize: 'normal-font',
+      fontSize: 'normal',
+      segmentSpace: 'normal',
       descriptionSize: 'small',
     };
   },
   props: ['content', 'visible', 'selectedArt'],
   methods: {
+    handleCommand(command) {
+      const commandArr = command.split(':');
+      switch (commandArr[0]) {
+        case 'font':
+          this.fontSize = commandArr[1];
+          switch (this.fontSize) {
+            case 'small':
+              this.descriptionSize = 'mini';
+              break;
+            case 'normal':
+              this.descriptionSize = 'small';
+              break;
+            case 'large':
+              this.descriptionSize = 'medium';
+              break;
+          }
+          break;
+        case 'space':
+          this.segmentSpace = commandArr[1];
+      }
+    },
     formatTimeStamp,
   },
 };
@@ -159,7 +194,6 @@ div.uma-article div.el-dialog__body {
     p {
       font-size: 20px;
       line-height: 2;
-      margin-bottom: 5px;
     }
 
     span.ql-size-large {
@@ -169,6 +203,10 @@ div.uma-article div.el-dialog__body {
     span.ql-size-small {
       font-size: 16px;
     }
+  }
+
+  .wider-space .ql-editor p {
+    margin-bottom: 5px;
   }
 
   .ql-editor.Saitamaar p {
