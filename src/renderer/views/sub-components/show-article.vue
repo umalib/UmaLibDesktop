@@ -185,13 +185,16 @@ div.uma-article div.el-dialog__body {
   .large-font .ql-editor {
     h1 {
       font-size: 32px;
+      line-height: 2;
     }
 
     h2 {
       font-size: 27px;
+      line-height: 2;
     }
 
-    p {
+    p,
+    li {
       font-size: 20px;
       line-height: 2;
     }
@@ -200,13 +203,18 @@ div.uma-article div.el-dialog__body {
       font-size: 24px;
     }
 
-    span.ql-size-small {
+    span.ql-size-small,
+    blockquote {
       font-size: 16px;
     }
   }
 
-  .wider-space .ql-editor p {
-    margin-bottom: 5px;
+  .wider-space .ql-editor {
+    p,
+    h1,
+    h2 {
+      margin-bottom: 5px;
+    }
   }
 
   .ql-editor.Saitamaar p {

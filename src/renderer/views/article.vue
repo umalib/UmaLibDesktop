@@ -866,13 +866,16 @@ export default {
 .uma-article .normal-font .ql-editor {
   h1 {
     font-size: 28px;
+    line-height: 2;
   }
 
   h2 {
     font-size: 23px;
+    line-height: 2;
   }
 
-  p {
+  p,
+  li {
     font-size: 16px;
     line-height: 2;
   }
@@ -881,7 +884,8 @@ export default {
     font-size: 20px;
   }
 
-  span.ql-size-small {
+  span.ql-size-small,
+  blockquote {
     font-size: 12px;
   }
 }
