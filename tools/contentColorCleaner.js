@@ -35,7 +35,7 @@ async function task() {
       art.note.indexOf('AA漫画') === -1
     ) {
       content = art.content.replace(
-        /\s+style="((background-color:\s*rgb\(245,\s*232,\s*203\);\s*)|(color:\s*rgb\(16,\s*39,\s*63\);\s*))+"/g,
+        /\s+style="((background-color:\s*rgb\(255,\s*248,\s*231\);\s*)|(background-color:\s*rgb\(245,\s*232,\s*203\);\s*)|(background-color:\s*rgb\(255,\s*240,\s*205\);\s*)|(color:\s*rgb\(16,\s*39,\s*63\);\s*))+"/g,
         '',
       );
       content = art.content.replace(
