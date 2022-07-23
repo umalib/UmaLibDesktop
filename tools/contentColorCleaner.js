@@ -3,7 +3,7 @@ const { join, resolve } = require('path');
 const log4js = require('log4js');
 const logger = log4js.getLogger();
 logger.level = 'debug';
-const { path } = require('./config.js');
+const { alignCenterImg, path } = require('./config.js');
 
 const prisma = new PrismaClient({
   datasources: {
@@ -43,7 +43,7 @@ async function task() {
         '',
       );
       content = art.content.replace(/\sstyle="color:\s*black;"/g, '');
-      if (art.name.indexOf('两人三足') === -1) {
+      if (art.name.indexOf('两人三足') === -1 && alignCenterImg) {
         content = content.replace(
           /<p>\s*<img\s+/g,
           '<p class="ql-align-center"><img ',
