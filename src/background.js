@@ -23,19 +23,22 @@ const { join } = require('path');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
+if (!app) {
+  app = remote.app;
+}
+
 log4js.configure({
   appenders: {
     console: { type: 'console' },
     file: {
+      filename: join(app.getPath('userData'), './logs/main.log'),
+      keepFileExt: true,
+      pattern: 'yyMMdd',
       type: 'dateFile',
-      filename: 'logs/main',
-      pattern: 'yyMMdd.log',
-      alwaysIncludePattern: true,
     },
   },
   categories: {
-    default: { appenders: ['console'], level: 'info' },
-    background: { appenders: ['console', 'file'], level: 'info' },
+    default: { appenders: ['console', 'file'], level: 'info' },
   },
 });
 const logger = log4js.getLogger('background');
@@ -44,11 +47,7 @@ if (isDevelopment) {
 }
 
 const configStore = new (require('electron-store'))();
-logger.info(`use config path: ${configStore.path}`);
-
-if (!app) {
-  app = remote.app;
-}
+logger.debug(`use config path: ${configStore.path}`);
 
 function getBackgroundColor() {
   return configStore.get('background-color');
