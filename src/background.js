@@ -1,7 +1,7 @@
 'use strict';
 
 let { app } = require('electron');
-import {
+const {
   BrowserWindow,
   dialog,
   ipcMain,
@@ -10,21 +10,38 @@ import {
   remote,
   session,
   shell,
-} from 'electron';
-import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
-import dbManage from '@/db-manage';
-import { themes } from '@/main-config';
+} = require('electron');
+const { createProtocol } = require('vue-cli-plugin-electron-builder/lib');
+const dbManage = require('@/db-manage');
+const { themes } = require('@/main-config');
 
 const { readFileSync, writeFileSync } = require('fs');
 const MD5 = new (require('jshashes').MD5)();
-const { getLogger } = require('log4js');
+const log4js = require('log4js');
 const { homedir } = require('os');
 const { join } = require('path');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-const logger = getLogger('background');
-logger.level = isDevelopment ? 'debug' : 'info';
+log4js.configure({
+  appenders: {
+    console: { type: 'console' },
+    file: {
+      type: 'dateFile',
+      filename: 'logs/main',
+      pattern: 'yyMMdd.log',
+      alwaysIncludePattern: true,
+    },
+  },
+  categories: {
+    default: { appenders: ['console'], level: 'info' },
+    background: { appenders: ['console', 'file'], level: 'info' },
+  },
+});
+const logger = log4js.getLogger('background');
+if (isDevelopment) {
+  logger.level = 'debug';
+}
 
 const configStore = new (require('electron-store'))();
 logger.info(`use config path: ${configStore.path}`);
@@ -182,6 +199,7 @@ async function createWindow() {
       logger.debug(`dbManage.${msg.action}(${JSON.stringify(msg.args)})`);
       result = await dbManage[msg.action](msg.args);
       if (msg.action === 'changeDb') {
+        logger.info(`change db to ${msg.args}`);
         storeEvents.resetConfig();
       }
       logger.info(`dbManage.${msg.action}: ${new Date().getTime() - start} ms`);
@@ -351,7 +369,7 @@ app.on('ready', async () => {
       // installExtension(VUEJS_DEVTOOLS);
       const reactDevToolsPath = join(
         homedir(),
-        '/Library/Application Support/Microsoft Edge/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.2.0_0',
+        '/Library/Application Support/Microsoft Edge/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.2.1_0',
       );
       await session.defaultSession.loadExtension(reactDevToolsPath);
     } catch (e) {

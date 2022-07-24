@@ -1,11 +1,11 @@
 const { PrismaClient } = require('@prisma/client');
 const { join, resolve } = require('path');
-const log4js = require('log4js');
-const logger = log4js.getLogger('db-manage');
+const logger = require('log4js').getLogger('db-manage');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
-
-logger.level = isDevelopment ? 'debug' : 'info';
+if (isDevelopment) {
+  logger.level = 'debug';
+}
 
 let prisma = null;
 const embeddedDbPath = isDevelopment
@@ -14,7 +14,6 @@ const embeddedDbPath = isDevelopment
 let dbPath = embeddedDbPath;
 
 async function changeDb(path) {
-  logger.info('change db to ' + path);
   if (prisma) {
     await prisma.$disconnect();
   }
