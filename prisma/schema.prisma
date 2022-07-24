@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./uma.db"
+  url      = "file:./main.db"
 }
 
 model article {
@@ -32,8 +32,8 @@ model tagged {
   id      Int     @id @default(autoincrement())
   artId   Int
   tagId   Int
-  article article @relation(fields: [artId], references: [id])
-  tag     tag     @relation(fields: [tagId], references: [id])
+  article article @relation(fields: [artId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tag     tag     @relation(fields: [tagId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model creator {

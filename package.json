@@ -14,11 +14,11 @@
   },
   "main": "background.js",
   "dependencies": {
-    "@prisma/client": "^2.16.1",
+    "@prisma/client": "^3.15.2",
     "element-ui": "^2.15.8",
     "jshashes": "^1.0.8",
     "log4js": "^6.5.2",
-    "prisma": "^2.16.1",
+    "prisma": "^3.15.2",
     "vue": "^2.6.11",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.2.0"
