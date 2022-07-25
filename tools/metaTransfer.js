@@ -13,7 +13,12 @@ async function task() {
       },
     },
   });
-  const tagList = await prisma.tag.findMany();
+  const tagList = await prisma.tag.findMany({
+    orderBy: [{ type: 'asc' }, { name: 'asc' }],
+  });
+  const creators = await prisma.creator.findUnique({
+    where: { id: 1 },
+  });
   await prisma.$disconnect();
   prisma = new PrismaClient({
     datasources: {
@@ -27,6 +32,13 @@ async function task() {
       data: {
         name: tag.name,
         type: tag.type,
+      },
+    });
+  }
+  if (creators) {
+    await prisma.creator.create({
+      data: {
+        names: creators.names,
       },
     });
   }
