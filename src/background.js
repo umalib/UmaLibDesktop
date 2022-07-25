@@ -145,7 +145,6 @@ const storeEvents = {
         this.password = this.password.substring(this.password.length - 8);
       }
       this.saveMeFlag = this.password ? await dbManage.checkR18() : -1;
-      logger.info('R18 id:' + this.saveMeFlag);
       logger.debug(`R18 id=${this.saveMeFlag}, pwd=${this.password}`);
     }
     return this.saveMeFlag;

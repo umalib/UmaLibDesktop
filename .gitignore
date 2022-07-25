@@ -28,4 +28,3 @@ prisma/migrations
 /package-lock.json
 /tools/config.js
 /data
-/logs

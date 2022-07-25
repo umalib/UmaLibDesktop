@@ -93,17 +93,19 @@
               16 Feb 2021
             </el-link>
           </el-descriptions-item>
-          <el-descriptions-item label="electron">11.2.3</el-descriptions-item>
-          <el-descriptions-item label="vue">2.6.12</el-descriptions-item>
-          <el-descriptions-item label="vue-router">3.5.1</el-descriptions-item>
+          <el-descriptions-item label="electron">19.0.9</el-descriptions-item>
+          <el-descriptions-item label="vue">2.7.8</el-descriptions-item>
+          <el-descriptions-item label="vue-router">3.5.4</el-descriptions-item>
           <el-descriptions-item label="vue-quill-editor">
             3.0.6
           </el-descriptions-item>
-          <el-descriptions-item label="element-ui">2.15.8</el-descriptions-item>
-          <el-descriptions-item label="prisma">2.16.1</el-descriptions-item>
+          <el-descriptions-item label="element-ui">2.15.9</el-descriptions-item>
+          <el-descriptions-item label="prisma">
+            3.15.2
+          </el-descriptions-item>
           <el-descriptions-item label="sqlite3">3.37.0</el-descriptions-item>
           <el-descriptions-item label="webpack">4.46.0</el-descriptions-item>
-          <el-descriptions-item label="argon2">0.28.5</el-descriptions-item>
+          <el-descriptions-item label="jshashes">1.0.8</el-descriptions-item>
           <el-descriptions-item label="sm-crypto">
             0.3.8
           </el-descriptions-item>
