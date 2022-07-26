@@ -45,6 +45,7 @@ const logger = log4js.getLogger('background');
 if (isDevelopment) {
   logger.level = 'debug';
 }
+dbManage.config(isDevelopment, log4js.getLogger('db-manage'));
 
 const configStore = new (require('electron-store'))();
 logger.debug(`use config path: ${configStore.path}`);
@@ -341,7 +342,7 @@ async function createWindow() {
 
 // Quit when all windows are closed.
 app.on('window-all-closed', async () => {
-  // On macOS it is common for applications and their menu bar
+  // On macOS, it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     await dbManage.disconnect();
@@ -350,7 +351,7 @@ app.on('window-all-closed', async () => {
 });
 
 app.on('activate', async () => {
-  // On macOS it's common to re-create a window in the app when the
+  // On macOS, it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
     await createWindow();
@@ -364,7 +365,6 @@ app.on('ready', async () => {
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
     try {
-      // installExtension(VUEJS_DEVTOOLS);
       const reactDevToolsPath = join(
         homedir(),
         '/Library/Application Support/Microsoft Edge/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.2.1_0',
@@ -379,9 +379,9 @@ app.on('ready', async () => {
 });
 
 app.on('web-contents-created', (_, webContents) => {
-  webContents.on('new-window', async (event, url) => {
-    event.preventDefault();
-    await shell.openExternal(url);
+  webContents.setWindowOpenHandler(detail => {
+    shell.openExternal(detail.url).then();
+    return { action: 'deny' };
   });
 });
 

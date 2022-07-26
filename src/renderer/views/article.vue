@@ -40,7 +40,6 @@
           <el-cascader
             @change="resetPageNumAndSearchArticle"
             :filter-method="filterTagsInCascader"
-            :key="'t' + param.tagIds.length"
             :options="search.tagCascader.options"
             :props="search.tagCascader.props"
             :show-all-levels="false"
@@ -58,7 +57,6 @@
           <el-cascader
             @change="resetPageNumAndSearchArticle"
             :filter-method="filterTagsInCascader"
-            :key="'no' + param.noTagIds.length"
             :options="search.noTagCascader.options"
             :props="search.noTagCascader.props"
             :show-all-levels="false"

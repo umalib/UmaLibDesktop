@@ -1,17 +1,10 @@
 const { PrismaClient } = require('@prisma/client');
 const { join, resolve } = require('path');
-const logger = require('log4js').getLogger('db-manage');
 
-const isDevelopment = process.env.NODE_ENV !== 'production';
-if (isDevelopment) {
-  logger.level = 'debug';
-}
-
+let logger = null;
+let embeddedDbPath = null;
+let dbPath = null;
 let prisma = null;
-const embeddedDbPath = isDevelopment
-  ? join(resolve('./prisma/main.db'))
-  : join(process.resourcesPath, './prisma/main.db');
-let dbPath = embeddedDbPath;
 
 async function changeDb(path) {
   if (prisma) {
@@ -141,6 +134,16 @@ module.exports = {
         })
       ).names,
     );
+  },
+  config(_isDevelopment, _logger) {
+    embeddedDbPath = _isDevelopment
+      ? join(resolve('./prisma/main.db'))
+      : join(process.resourcesPath, './prisma/main.db');
+    dbPath = embeddedDbPath;
+    logger = _logger;
+    if (_isDevelopment) {
+      logger.level = 'debug';
+    }
   },
   async deleteArt(artId) {
     await prisma['tagged'].deleteMany({
@@ -418,7 +421,7 @@ module.exports = {
         }),
       );
     }
-    if (param.noTagIds) {
+    if (param.noTagIds && param.noTagIds.length) {
       findManyOptions.where.AND.push({
         taggedList: {
           none: {
