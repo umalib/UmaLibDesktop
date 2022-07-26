@@ -1,8 +1,6 @@
 const { sm2 } = require('sm-crypto');
-const log4js = require('log4js');
-const logger = log4js.getLogger();
 const { keyPair } = require('./config');
-
+const logger = require('log4js').getLogger('generator');
 logger.level = 'info';
 
 const msg = '内容：NGA赛马娘翻译交流群 开发：风之低吟（NGA） 版本：1.8.2';

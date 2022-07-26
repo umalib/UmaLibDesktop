@@ -1,10 +1,8 @@
 const { PrismaClient } = require('@prisma/client');
 const { join, resolve } = require('path');
-const log4js = require('log4js');
-
 const { path } = require('./config.js');
-const logger = log4js.getLogger();
-logger.level = 'debug';
+const logger = require('log4js').getLogger('exporter');
+logger.level = 'info';
 
 const prisma = new PrismaClient({
   datasources: {

@@ -1,9 +1,8 @@
 const { PrismaClient } = require('@prisma/client');
 const { join, resolve } = require('path');
-const log4js = require('log4js');
-const logger = log4js.getLogger();
-logger.level = 'debug';
 const { alignCenterImg, path } = require('./config.js');
+const logger = require('log4js').getLogger('cleaner');
+logger.level = 'info';
 
 const prisma = new PrismaClient({
   datasources: {
@@ -34,25 +33,26 @@ async function task() {
       art.note.indexOf('字符画') === -1 &&
       art.note.indexOf('AA漫画') === -1
     ) {
-      content = art.content.replace(
-        /\s+style="((background-color:\s*rgb\(255,\s*248,\s*231\);\s*)|(background-color:\s*rgb\(245,\s*232,\s*203\);\s*)|(background-color:\s*rgb\(255,\s*240,\s*205\);\s*)|(color:\s*rgb\(16,\s*39,\s*63\);\s*))+"/g,
+      content = content.replace(
+        /\s*background-color:\s*(transparent|rgb\(255,\s*248,\s*231\)|rgb\(245,\s*232,\s*203\)|rgb\(255,\s*240,\s*205\));\s*/g,
         '',
       );
-      content = art.content.replace(
-        /\s+style="((background-color:\s*transparent;\s*)|(color:\s*rgb\(51,\s*51,\s*51\);\s*))+"/g,
+      content = content.replace(
+        /\s*color:\s*(black|rgb\(51,\s*51,\s*51\)|rgb\(16,\s*39,\s*63\));\s*/g,
         '',
       );
-      content = art.content.replace(/\sstyle="color:\s*black;"/g, '');
+      content = content.replace(/\s+style="\s*"\s*/g, '');
+      content = content
+        .replace(/^\s*(<p>\s*<br>\s*<\/p>\s*)*\s*/, '')
+        .replace(/\s*(\s*<p>\s*<br>\s*<\/p>)*\s*$/, '');
+      content = content.replace(/<\/p>\s*<p>/g, '</p><p>');
+      content = cleaner(content);
       if (art.name.indexOf('两人三足') === -1 && alignCenterImg) {
         content = content.replace(
           /<p>\s*<img\s+/g,
           '<p class="ql-align-center"><img ',
         );
       }
-      content = cleaner(content.replace(/<\/p>\s*<p>/g, '</p><p>'));
-      content = content
-        .replace(/^\s*(<p>\s*<br>\s*<\/p>\s*)*\s*/, '')
-        .replace(/\s*(\s*<p>\s*<br>\s*<\/p>)*\s*$/, '');
     }
     const author = art.author.replace(/^\s*/, '').replace(/\s*$/, '');
     const translator = art.translator.replace(/^\s*/, '').replace(/\s*$/, '');

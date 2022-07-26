@@ -1,10 +1,9 @@
 const { PrismaClient } = require('@prisma/client');
-const dbManage = require('../src/db-manage');
 const { join, resolve } = require('path');
-const log4js = require('log4js');
-const logger = log4js.getLogger();
-logger.level = 'info';
+const dbManage = require('../src/db-manage');
 const { path, srcPath } = require('./config.js');
+const logger = require('log4js').getLogger('merger');
+logger.level = 'info';
 
 async function task() {
   const prisma = new PrismaClient({
