@@ -57,6 +57,34 @@ async function task() {
     const author = art.author.replace(/^\s*/, '').replace(/\s*$/, '');
     const translator = art.translator.replace(/^\s*/, '').replace(/\s*$/, '');
     const name = art.name.replace(/^\s*/, '').replace(/\s*$/, '');
+    let source = art.source;
+    if (source.startsWith(' ')) {
+      source = source.replace(/^\s+/, '');
+    }
+    if (source.startsWith('[')) {
+      source = source.substring(1);
+    }
+    if (source.endsWith(']')) {
+      source = source.substring(0, source.length - 1);
+    }
+    if (
+      source.startsWith('tsumanne.net') ||
+      source.startsWith('www.pixiv.net')
+    ) {
+      source = 'https://' + source;
+    }
+    if (source.startsWith('pixiv.net')) {
+      source = 'https://www.' + source;
+    }
+    if (source.startsWith('PIXIV ID：')) {
+      source = 'https://www.pixiv.net/novel/show.php?id=' + source.substring(9);
+    }
+    if (source.startsWith('Pid=')) {
+      source = 'https://www.pixiv.net/novel/show.php?id=' + source.substring(4);
+    }
+    if (source.startsWith('PIXIV ID=')) {
+      source = 'https://www.pixiv.net/novel/show.php?id=' + source.substring(9);
+    }
     const flags = [];
     if (art.name.length !== name.length) {
       flags.push('name');
@@ -70,6 +98,9 @@ async function task() {
     if (art.content.length !== content.length) {
       flags.push('content');
     }
+    if (art.source.length !== source.length) {
+      flags.push('source');
+    }
     if (flags.length) {
       logger.info(
         `update ${flags.join(', ')} of article ${art.id} [${art.name}]`,
@@ -80,6 +111,7 @@ async function task() {
           author,
           translator,
           content,
+          source,
         },
         where: {
           id: art.id,
