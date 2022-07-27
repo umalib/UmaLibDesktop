@@ -260,6 +260,7 @@ async function createWindow() {
       {
         label: '切换到内置数据库',
         async click() {
+          logger.info('dbManage.resetDb()');
           await dbManage.resetDb();
           storeEvents.resetConfig();
           mainWindow.webContents.send('refreshPage', '');

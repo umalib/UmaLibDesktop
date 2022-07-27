@@ -86,9 +86,10 @@
           @command="handleCommand"
           :hide-on-click="false"
           placement="top-start"
+          size="small"
         >
-          <el-button>
-            界面配置<i class="el-icon-arrow-up el-icon--right" />
+          <el-button size="small">
+            界面设置<i class="el-icon-arrow-up el-icon--right" />
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item
