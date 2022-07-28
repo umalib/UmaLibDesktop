@@ -178,7 +178,7 @@
               label="上传时间"
               sortable="custom"
               prop="uploadTime"
-              width="160"
+              width="120"
             >
               <template v-slot="cell">
                 {{ formatTimeStamp(cell.row['uploadTime']) }}

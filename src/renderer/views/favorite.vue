@@ -88,7 +88,7 @@
           label="上传时间"
           sortable="custom"
           prop="uploadTime"
-          width="160"
+          width="120"
         >
           <template v-slot="cell">
             {{ formatTimeStamp(cell.row['uploadTime']) }}
@@ -120,7 +120,7 @@
           fixed="right"
           label=""
           style="text-align: center"
-          width="100"
+          width="64"
         >
           <template v-slot="cell">
             <el-button

@@ -1,11 +1,15 @@
+const formatter = new Intl.DateTimeFormat('cn', {
+  dateStyle: 'short',
+  timeStyle: 'short',
+  hour12: false,
+});
+
 module.exports = {
   formatTimeStamp(timestamp) {
     if (!timestamp) {
       return '';
     }
-    return new Date(timestamp)
-      .toLocaleString('cn', { hour12: false })
-      .replace(' 24:', ' 00:');
+    return formatter.format(new Date(timestamp)).replace(/\//g, '-');
   },
   getNewTextObj() {
     return {

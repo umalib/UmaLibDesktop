@@ -86,7 +86,7 @@
           </el-form-item>
           <el-form-item>
             <el-date-picker
-              format="yyyy/MM/dd HH:mm:ss"
+              format="yyyy-MM-dd HH:mm"
               placeholder="选择发表/翻译时间"
               style="width: 100%"
               type="datetime"
