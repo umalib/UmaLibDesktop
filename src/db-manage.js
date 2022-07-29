@@ -91,13 +91,15 @@ async function updateTags(artId, tags) {
       deleteData.push(tagged.id);
     }
   }
-  await prisma['tagged'].deleteMany({
-    where: {
-      id: {
-        in: deleteData,
+  if (deleteData.length) {
+    await prisma['tagged'].deleteMany({
+      where: {
+        id: {
+          in: deleteData,
+        },
       },
-    },
-  });
+    });
+  }
   for (const tagId in tagDict) {
     await prisma['tagged'].create({
       data: {
