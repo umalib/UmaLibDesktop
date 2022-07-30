@@ -40,8 +40,8 @@
           <el-cascader
             @change="resetPageNumAndSearchArticle"
             :filter-method="filterTagsInCascader"
-            :options="search.tagCascader.options"
-            :props="search.tagCascader.props"
+            :options="search.tagCascaderOptions"
+            :props="search.cascaderProps"
             :show-all-levels="false"
             clearable
             filterable
@@ -57,8 +57,8 @@
           <el-cascader
             @change="resetPageNumAndSearchArticle"
             :filter-method="filterTagsInCascader"
-            :options="search.noTagCascader.options"
-            :props="search.noTagCascader.props"
+            :options="search.noTagCascaderOptions"
+            :props="search.cascaderProps"
             :show-all-levels="false"
             clearable
             filterable
@@ -410,8 +410,8 @@ async function getTagsFromServer(_vue) {
   const data = await connector.get('getTags', {});
   _vue.search.id2Tag = data.tags;
   _vue.search.tagOptions = [];
-  _vue.search.tagCascader.options = [];
-  _vue.search.noTagCascader.options = [];
+  _vue.search.tagCascaderOptions = [];
+  _vue.search.noTagCascaderOptions = [];
   _vue.search.sensitiveTags = [];
   if (data['typeMap'][4]) {
     _vue.search.sensitiveTags = data['typeMap'][4];
@@ -432,7 +432,7 @@ async function getTagsFromServer(_vue) {
       label: EmbeddedData.tagTypes[k],
       options,
     });
-    _vue.search.tagCascader.options.push({
+    _vue.search.tagCascaderOptions.push({
       value: k,
       label: EmbeddedData.tagTypes[k],
       children: options.map(x => {
@@ -442,7 +442,7 @@ async function getTagsFromServer(_vue) {
         };
       }),
     });
-    _vue.search.noTagCascader.options.push({
+    _vue.search.noTagCascaderOptions.push({
       value: k,
       label: EmbeddedData.tagTypes[k],
       children: options.map(x => {
@@ -459,10 +459,10 @@ async function getTagsFromServer(_vue) {
   ) {
     let others = _vue.search.tagOptions.splice(0, 1);
     _vue.search.tagOptions.push(others[0]);
-    others = _vue.search.tagCascader.options.splice(0, 1);
-    _vue.search.tagCascader.options.push(others[0]);
-    others = _vue.search.noTagCascader.options.splice(0, 1);
-    _vue.search.noTagCascader.options.push(others[0]);
+    others = _vue.search.tagCascaderOptions.splice(0, 1);
+    _vue.search.tagCascaderOptions.push(others[0]);
+    others = _vue.search.noTagCascaderOptions.splice(0, 1);
+    _vue.search.noTagCascaderOptions.push(others[0]);
   }
 }
 
@@ -516,25 +516,17 @@ export default {
       randomList: [],
       search: {
         authorOptions: [],
-        id2Tag: {},
-        noTagCascader: {
-          props: {
-            emitPath: false,
-            expandTrigger: 'hover',
-            multiple: true,
-          },
-          options: [],
+        cascaderProps: {
+          checkStrictly: false,
+          emitPath: false,
+          expandTrigger: 'hover',
+          multiple: true,
         },
+        id2Tag: {},
+        noTagCascaderOptions: [],
         preventSensitive: true,
         sensitiveTags: [],
-        tagCascader: {
-          props: {
-            emitPath: false,
-            expandTrigger: 'hover',
-            multiple: true,
-          },
-          options: [],
-        },
+        tagCascaderOptions: [],
         tagOptions: [],
         tagType2Name: EmbeddedData.tagTypes,
       },
@@ -689,13 +681,15 @@ export default {
       const lengthArr = [this.param.tagIds.length, this.param.noTagIds.length];
       if (isAppend) {
         if (tagIndex === -1) {
-          this.param.tagIds.push(tagId);
+          this.param.tagIds = this.param.tagIds.concat([tagId]);
         }
       } else {
         if (tagIndex !== -1) {
-          this.param.tagIds.splice(tagIndex, 1);
+          this.param.tagIds = this.param.tagIds.filter(
+            (_, i) => i !== tagIndex,
+          );
         }
-        this.param.noTagIds.push(tagId);
+        this.param.noTagIds = this.param.noTagIds.concat([tagId]);
       }
       if (
         this.param.tagIds.length !== lengthArr[0] ||
