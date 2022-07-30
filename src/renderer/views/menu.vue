@@ -117,7 +117,7 @@
               label="标题"
               prop="name"
               sortable="custom"
-              width="160"
+              width="200"
             >
               <template v-slot="cell">
                 <el-link
@@ -175,10 +175,11 @@
               </template>
             </el-table-column>
             <el-table-column
+              fixed="right"
               label="上传时间"
-              sortable="custom"
               prop="uploadTime"
-              width="120"
+              sortable="custom"
+              width="125"
             >
               <template v-slot="cell">
                 {{ formatTimeStamp(cell.row['uploadTime']) }}

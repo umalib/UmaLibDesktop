@@ -165,7 +165,7 @@
           label="标题"
           prop="name"
           sortable="custom"
-          width="160"
+          width="200"
         >
           <template v-slot="cell">
             <el-link
@@ -239,20 +239,15 @@
         <el-table-column
           fixed="right"
           label="上传时间"
-          sortable="custom"
           prop="uploadTime"
-          width="120"
+          sortable="custom"
+          width="125"
         >
           <template v-slot="cell">
             {{ formatTimeStamp(cell.row['uploadTime']) }}
           </template>
         </el-table-column>
-        <el-table-column
-          label="来源"
-          sortable="custom"
-          prop="source"
-          width="100"
-        >
+        <el-table-column label="来源" sortable="custom" prop="source">
           <template v-slot="cell">
             <el-tooltip
               v-if="cell.row['source'].startsWith('http')"
