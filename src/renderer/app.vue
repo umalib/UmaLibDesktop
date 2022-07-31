@@ -264,7 +264,8 @@ export default {
   }
 
   span.el-link--inner > span.el-tag:hover {
-    background-color: rgba(236, 245, 255, 0.4);
+    background-color: white;
+    color: navy;
   }
 
   .el-dialog {
