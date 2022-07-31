@@ -4,14 +4,15 @@ const { path, srcPath } = require('./config.js');
 const logger = require('log4js').getLogger('transfer');
 logger.level = 'info';
 
-async function task() {
-  let prisma = new PrismaClient({
-    datasources: {
-      db: {
-        url: `file:${join(resolve(srcPath))}`,
-      },
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: `file:${join(resolve(srcPath))}`,
     },
-  });
+  },
+});
+
+async function task() {
   const tagList = await prisma.tag.findMany({
     orderBy: [{ type: 'asc' }, { name: 'asc' }],
   });
@@ -41,7 +42,9 @@ async function task() {
       },
     });
   }
-  await prisma.$disconnect();
 }
 
-task().then(() => logger.info('task done'));
+task().then(async () => {
+  await prisma.$disconnect();
+  logger.info('task done');
+});

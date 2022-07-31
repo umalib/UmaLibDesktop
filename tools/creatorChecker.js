@@ -45,9 +45,9 @@ async function task() {
     return b.count - a.count;
   });
   creatorArr.forEach(x => logger.info(`${x.name}\t${x.count}`));
-  await prisma.$disconnect();
 }
 
 task().then(async () => {
+  await prisma.$disconnect();
   logger.info('task done!');
 });

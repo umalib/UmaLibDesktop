@@ -5,14 +5,15 @@ const { path, coverPath } = require('./config.js');
 const logger = require('log4js').getLogger('setter');
 logger.level = 'info';
 
-async function task() {
-  let prisma = new PrismaClient({
-    datasources: {
-      db: {
-        url: `file:${join(resolve(path))}`,
-      },
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: `file:${join(resolve(path))}`,
     },
-  });
+  },
+});
+
+async function task() {
   const id2Tag = {};
   (await prisma.tag.findMany()).forEach(tag => (id2Tag[tag.name] = tag.id));
   const fileList = fs.readdirSync(coverPath);
@@ -41,7 +42,9 @@ async function task() {
       logger.error(fileName);
     }
   }
-  await prisma.$disconnect();
 }
 
-task().then(() => logger.info('task done'));
+task().then(async () => {
+  await prisma.$disconnect();
+  logger.info('task done');
+});

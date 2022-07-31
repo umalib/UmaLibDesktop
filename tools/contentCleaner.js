@@ -137,6 +137,6 @@ async function task() {
 }
 
 task().then(async () => {
-  logger.info('task done!');
   await prisma.$disconnect();
+  logger.info('task done!');
 });
