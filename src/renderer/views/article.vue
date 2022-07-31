@@ -177,11 +177,14 @@
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column label="标签" width="180">
+        <el-table-column label="标签" width="140">
           <template v-slot="cell">
-            <div v-bind:key="tagId" v-for="tagId in cell.row['tags']">
+            <span :key="tagId" v-for="tagId in cell.row['tags']">
               <el-tooltip effect="light" placement="right">
                 <div slot="content">
+                  <span v-if="search.id2Tag[tagId].name.length > 9">
+                    {{ search.id2Tag[tagId].name }}
+                  </span>
                   <el-tag size="mini" style="margin-right: 10px">
                     {{ search.tagType2Name[search.id2Tag[tagId].type] }}
                   </el-tag>
@@ -205,10 +208,22 @@
                   :underline="false"
                   type="primary"
                 >
-                  {{ search.id2Tag[tagId].name }}
+                  <el-tag
+                    v-if="search.id2Tag[tagId].name.length > 9"
+                    size="mini"
+                  >
+                    {{ search.id2Tag[tagId].name.substring(0, 4) }}…{{
+                      search.id2Tag[tagId].name.substring(
+                        search.id2Tag[tagId].name.length - 4,
+                      )
+                    }}
+                  </el-tag>
+                  <el-tag v-else size="mini">
+                    {{ search.id2Tag[tagId].name }}
+                  </el-tag>
                 </el-link>
               </el-tooltip>
-            </div>
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="作者" prop="author" width="150">

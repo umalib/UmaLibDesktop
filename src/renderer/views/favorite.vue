@@ -59,7 +59,7 @@
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column label="标签" width="150">
+        <el-table-column label="标签" width="140">
           <template v-slot="cell">
             <span :key="tagId" v-for="tagId in cell.row['tags']">
               <el-tooltip
@@ -94,12 +94,7 @@
             {{ formatTimeStamp(cell.row['uploadTime']) }}
           </template>
         </el-table-column>
-        <el-table-column
-          label="来源"
-          sortable="custom"
-          prop="source"
-          width="100"
-        >
+        <el-table-column label="来源" sortable="custom" prop="source">
           <template v-slot="cell">
             <el-tooltip
               v-if="cell.row['source'].startsWith('http')"

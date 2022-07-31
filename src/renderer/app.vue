@@ -263,6 +263,10 @@ export default {
     }
   }
 
+  span.el-link--inner > span.el-tag:hover {
+    background-color: rgba(236, 245, 255, 0.4);
+  }
+
   .el-dialog {
     background-color: nth($cellColor, 2);
     .el-dialog__title {
