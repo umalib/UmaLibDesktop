@@ -22,17 +22,29 @@ async function task() {
       translator: true,
     },
   });
-  articles.forEach(x => {
-    const creator = x.translator ? x.translator : x.author;
+  function updateMap(creator) {
     if (!creators[creator]) {
       creators[creator] = 1;
     } else {
       creators[creator] += 1;
     }
-  });
-  for (const c in creators) {
-    logger.info(`${c}\t${creators[c]}`);
   }
+  articles.forEach(x => {
+    const creator = x.translator ? x.translator : x.author;
+    const creatorArr = creator.split('/');
+    creatorArr.forEach(updateMap);
+  });
+  const creatorArr = [];
+  for (const c in creators) {
+    creatorArr.push({ name: c, count: creators[c] });
+  }
+  creatorArr.sort((a, b) => {
+    if (a.count === b.count) {
+      return a.name > b.name ? 1 : -1;
+    }
+    return b.count - a.count;
+  });
+  creatorArr.forEach(x => logger.info(`${x.name}\t${x.count}`));
   await prisma.$disconnect();
 }
 
