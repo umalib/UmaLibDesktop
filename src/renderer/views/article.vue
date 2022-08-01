@@ -178,51 +178,51 @@
         </el-table-column>
         <el-table-column label="标签" width="140">
           <template v-slot="cell">
-            <span v-for="tagId in cell.row['tags']" :key="tagId">
-              <el-tooltip effect="light" placement="right">
-                <div slot="content">
-                  <span v-if="search.id2Tag[tagId].name.length > 9">
-                    {{ search.id2Tag[tagId].name }}
-                  </span>
-                  <el-tag size="mini" style="margin-right: 10px">
-                    {{ search.tagType2Name[search.id2Tag[tagId].type] }}
-                  </el-tag>
-                  <el-button
-                    circle
-                    icon="el-icon-plus"
-                    size="mini"
-                    type="success"
-                    @click="handleTagLink(tagId, true)"
-                  />
-                  <el-button
-                    circle
-                    icon="el-icon-minus"
-                    size="mini"
-                    type="danger"
-                    @click="handleTagLink(tagId)"
-                  />
-                </div>
-                <el-link
-                  :underline="false"
-                  type="primary"
-                  @click="handleTagLinkWithReplace(tagId)"
-                >
-                  <el-tag
-                    v-if="search.id2Tag[tagId].name.length > 9"
-                    size="mini"
-                  >
-                    {{ search.id2Tag[tagId].name.substring(0, 4) }}…{{
-                      search.id2Tag[tagId].name.substring(
-                        search.id2Tag[tagId].name.length - 4,
-                      )
-                    }}
-                  </el-tag>
-                  <el-tag v-else size="mini">
-                    {{ search.id2Tag[tagId].name }}
-                  </el-tag>
-                </el-link>
-              </el-tooltip>
-            </span>
+            <el-tooltip
+              v-for="tagId in cell.row['tags']"
+              :key="tagId"
+              effect="light"
+              placement="right"
+            >
+              <div slot="content">
+                <span v-if="search.id2Tag[tagId].name.length > 9">
+                  {{ search.id2Tag[tagId].name }}
+                </span>
+                <el-tag size="mini" style="margin-right: 10px">
+                  {{ search.tagType2Name[search.id2Tag[tagId].type] }}
+                </el-tag>
+                <el-button
+                  circle
+                  icon="el-icon-plus"
+                  size="mini"
+                  type="success"
+                  @click="handleTagLink(tagId, true)"
+                />
+                <el-button
+                  circle
+                  icon="el-icon-minus"
+                  size="mini"
+                  type="danger"
+                  @click="handleTagLink(tagId)"
+                />
+              </div>
+              <el-link
+                :underline="false"
+                type="primary"
+                @click="handleTagLinkWithReplace(tagId)"
+              >
+                <el-tag v-if="search.id2Tag[tagId].name.length > 9" size="mini">
+                  {{ search.id2Tag[tagId].name.substring(0, 4) }}…{{
+                    search.id2Tag[tagId].name.substring(
+                      search.id2Tag[tagId].name.length - 4,
+                    )
+                  }}
+                </el-tag>
+                <el-tag v-else size="mini">
+                  {{ search.id2Tag[tagId].name }}
+                </el-tag>
+              </el-link>
+            </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column label="作者" prop="author" width="150">
