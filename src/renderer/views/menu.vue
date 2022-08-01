@@ -15,18 +15,18 @@
 
       <div v-if="param.tagId === ''">
         <el-row
-          :key="index"
           v-for="(novelList, index) in search.novels"
+          :key="index"
           v-loading="loading.menu"
           style="margin:10px 0"
         >
           <el-col
-            :key="novelId"
             v-for="(novelId, i2) in novelList"
+            :key="novelId"
             :offset="1 + !!(i2 % 4)"
             :span="4"
           >
-            <el-link @click="showNovel(novelId)" :underline="false">
+            <el-link :underline="false" @click="showNovel(novelId)">
               <el-card shadow="hover">
                 <el-image
                   :src="search.id2Tag[novelId]['cover']"
@@ -55,9 +55,9 @@
           <h2>{{ search.id2Tag[param.tagId].name }}</h2>
           <div class="block">
             <el-image
-              style="max-width: 100%; min-width: calc(500vw / 36 - 40px);"
               :src="search.id2Tag[param.tagId]['cover']"
               fit="contain"
+              style="max-width: 100%; min-width: calc(500vw / 36 - 40px);"
             >
               <div slot="error" class="default-cover">
                 <div>
@@ -72,10 +72,10 @@
             class="novel-description"
           >
             <span
-              v-bind:key="i"
               v-for="(content, i) in replaceNewLine(
                 search.id2Tag[param.tagId].description,
               )"
+              :key="i"
             >
               <br v-if="i !== 0" />
               {{ content }}
@@ -86,26 +86,26 @@
         <el-col>
           <div class="block">
             <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
               :current-page="param.pageNum"
               :hide-on-single-page="count <= 10"
-              :page-sizes="[10, 20, 25, 50]"
               :page-size="param.offset"
+              :page-sizes="[10, 20, 25, 50]"
               :total="count"
               layout="total, sizes, prev, pager, next, jumper"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
             />
           </div>
 
           <el-table
-            @sort-change="handleSortChange"
+            v-loading="loading.article"
             :data="articles"
             :default-sort="{ prop: 'uploadTime', order: 'ascending' }"
             class="article-table"
             row-key="id"
             stripe
             style="width: 100%"
-            v-loading="loading.article"
+            @sort-change="handleSortChange"
           >
             <el-table-column
               :index="param.offset * (param.pageNum - 1) + 1"
@@ -121,9 +121,9 @@
             >
               <template v-slot="cell">
                 <el-link
-                  @click="showArticle(cell.row['id'])"
                   :underline="false"
                   type="primary"
+                  @click="showArticle(cell.row['id'])"
                 >
                   {{ cell.row['name'] ? cell.row['name'] : '「无题」' }}
                 </el-link>
@@ -131,7 +131,7 @@
             </el-table-column>
             <el-table-column label="标签" width="140">
               <template v-slot="cell">
-                <span :key="tagId" v-for="tagId in cell.row['tags']">
+                <span v-for="tagId in cell.row['tags']" :key="tagId">
                   <el-tooltip
                     v-if="search.id2Tag[tagId].name.length > 9"
                     :content="search.id2Tag[tagId].name"
@@ -152,7 +152,7 @@
             </el-table-column>
             <el-table-column label="译者" prop="translator" width="150" />
             <el-table-column label="备注" prop="note" width="400" />
-            <el-table-column label="来源" sortable="custom" prop="source">
+            <el-table-column label="来源" prop="source" sortable="custom">
               <template v-slot="cell">
                 <el-tooltip
                   v-if="cell.row['source'].startsWith('http')"
@@ -184,25 +184,25 @@
 
           <div class="block">
             <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
               :current-page="param.pageNum"
               :hide-on-single-page="count <= 10"
-              :page-sizes="[10, 20, 25, 50]"
               :page-size="param.offset"
+              :page-sizes="[10, 20, 25, 50]"
               :total="count"
               layout="total, sizes, prev, pager, next, jumper"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
             />
           </div>
 
           <show-article
+            :content="content"
+            :selected-art="selectedArt"
+            :visible="contentVisible"
             @close-art="
               content = '';
               contentVisible = false;
             "
-            :content="content"
-            :selected-art="selectedArt"
-            :visible="contentVisible"
           />
         </el-col>
       </el-row>
@@ -272,6 +272,7 @@ export default {
   props: ['saveMe'],
   async created() {
     const _vue = this;
+
     function jump2Novel(id) {
       if (id !== 'm') {
         _vue.param.tagId = Number(id);
@@ -281,6 +282,7 @@ export default {
         _vue.param.tagId = '';
       }
     }
+
     this.$watch(() => this.$route.params.id, jump2Novel);
     const data = await connector.get('getLongNovelTags', {});
     this.search.id2Tag = data.tags;

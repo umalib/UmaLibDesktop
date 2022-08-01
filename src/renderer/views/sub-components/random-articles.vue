@@ -1,14 +1,14 @@
 <template>
   <el-dialog
-    @close="
-      $refs.randomContent && ($refs.randomContent.wrap.scrollTop = 0);
-      $emit('close-random');
-    "
     :close-on-click-modal="false"
     :visible="visible"
     center
     title="手气不错！"
     width="80%"
+    @close="
+      $refs.randomContent && ($refs.randomContent.wrap.scrollTop = 0);
+      $emit('close-random');
+    "
   >
     <el-scrollbar ref="randomContent" style="height: 100%">
       <el-table :data="randomList" row-key="id" stripe style="width: 100%">
@@ -16,9 +16,9 @@
         <el-table-column fixed label="标题" prop="name" sortable="custom">
           <template v-slot="cell">
             <el-link
-              @click="$emit('show-art', cell.row['id'])"
               :underline="false"
               type="primary"
+              @click="$emit('show-art', cell.row['id'])"
             >
               {{ cell.row['name'] ? cell.row['name'] : '「无题」' }}
             </el-link>
@@ -26,7 +26,7 @@
         </el-table-column>
         <el-table-column label="标签">
           <template v-slot="cell">
-            <span :key="tagLabel" v-for="tagLabel in cell.row['tagLabels']">
+            <span v-for="tagLabel in cell.row['tagLabels']" :key="tagLabel">
               <el-tooltip v-if="tagLabel.length > 9" :content="tagLabel">
                 <el-tag size="mini">
                   {{ tagLabel.substring(0, 4) }}…{{
@@ -45,8 +45,8 @@
         <el-table-column
           fixed="right"
           label="上传时间"
-          sortable="custom"
           prop="uploadTime"
+          sortable="custom"
           width="160"
         >
           <template v-slot="cell">

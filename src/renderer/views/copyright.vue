@@ -20,8 +20,8 @@
         <h4>录入协助</h4>
         <small>按字母/笔画顺序，排名不分先后</small>
         <p>
-          <span v-bind:key="i1" v-for="(subList, i1) in staffs">
-            <span v-bind:key="staff" v-for="(staff, i2) in subList">
+          <span v-for="(subList, i1) in staffs" :key="i1">
+            <span v-for="(staff, i2) in subList" :key="staff">
               <el-divider v-if="i2 !== 0" direction="vertical" />
               <span>{{ staff }}</span>
             </span>
@@ -50,8 +50,8 @@
         <small>NGA论坛ID，按字母/笔画顺序，排名不分先后</small>
         <el-tooltip content="找不到您的名字？请联系@风之低吟">
           <p>
-            <span v-bind:key="i1" v-for="(subList, i1) in creators">
-              <span v-bind:key="staff" v-for="(staff, i2) in subList">
+            <span v-for="(subList, i1) in creators" :key="i1">
+              <span v-for="(staff, i2) in subList" :key="staff">
                 <el-divider v-if="i2 !== 0" direction="vertical" />
                 <span>{{ staff }}</span>
               </span>
@@ -115,11 +115,11 @@
         <el-divider />
         <el-col :offset="8" :span="8">
           <el-input
+            v-model="keyword"
             placeholder="枯树洞看着你"
             style="width: 100%"
-            v-model="keyword"
           >
-            <el-button @click="jump" slot="append">爱丽丝</el-button>
+            <el-button slot="append" @click="jump">爱丽丝</el-button>
           </el-input>
         </el-col>
       </el-row>
@@ -149,7 +149,7 @@ export default {
     async jump() {
       if (this.keyword === (await connector.get('getPwd', {}))) {
         connector.get('isSafe', {}).then();
-        await this.$notify({
+        this.$notify({
           message: '格林……是你吗？',
           title: '',
           type: 'warning',
@@ -157,7 +157,7 @@ export default {
         this.$emit('is-safe');
         await this.$router.push('/empty');
       } else {
-        await this.$notify({
+        this.$notify({
           message: '退下，无礼者！',
           title: '',
           type: 'error',

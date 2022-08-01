@@ -6,10 +6,10 @@
       </el-row>
       <el-row style="margin: 10px auto;">
         <el-button-group>
-          <el-button @click="importFavorites" type="primary">
+          <el-button type="primary" @click="importFavorites">
             导入
           </el-button>
-          <el-button @click="exportFavorites" type="primary">
+          <el-button type="primary" @click="exportFavorites">
             导出
           </el-button>
         </el-button-group>
@@ -17,24 +17,24 @@
 
       <div class="block">
         <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
           :current-page="param.pageNum"
           :hide-on-single-page="count <= 10"
-          :page-sizes="[10, 20, 25, 50]"
           :page-size="param.offset"
+          :page-sizes="[10, 20, 25, 50]"
           :total="count"
           layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
         />
       </div>
       <el-table
-        @sort-change="handleSortChange"
+        v-loading="articleLoading"
         :data="articles"
         class="article-table"
         row-key="id"
         stripe
         style="width: 100%"
-        v-loading="articleLoading"
+        @sort-change="handleSortChange"
       >
         <el-table-column
           :index="param.offset * (param.pageNum - 1) + 1"
@@ -51,9 +51,9 @@
         >
           <template v-slot="cell">
             <el-link
-              @click="showArticle(cell.row['id'])"
               :underline="false"
               type="primary"
+              @click="showArticle(cell.row['id'])"
             >
               {{ cell.row['name'] ? cell.row['name'] : '「无题」' }}
             </el-link>
@@ -61,7 +61,7 @@
         </el-table-column>
         <el-table-column label="标签" width="140">
           <template v-slot="cell">
-            <span :key="tagId" v-for="tagId in cell.row['tags']">
+            <span v-for="tagId in cell.row['tags']" :key="tagId">
               <el-tooltip
                 v-if="search.id2Tag[tagId].name.length > 9"
                 :content="search.id2Tag[tagId].name"
@@ -94,7 +94,7 @@
             {{ formatTimeStamp(cell.row['uploadTime']) }}
           </template>
         </el-table-column>
-        <el-table-column label="来源" sortable="custom" prop="source">
+        <el-table-column label="来源" prop="source" sortable="custom">
           <template v-slot="cell">
             <el-tooltip
               v-if="cell.row['source'].startsWith('http')"
@@ -119,37 +119,37 @@
         >
           <template v-slot="cell">
             <el-button
-              @click="removeFavorite(cell.row['id'])"
               icon="el-icon-delete"
               round
               size="mini"
               type="danger"
+              @click="removeFavorite(cell.row['id'])"
             />
           </template>
         </el-table-column>
       </el-table>
       <div class="block">
         <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
           :current-page="param.pageNum"
           :hide-on-single-page="count <= 10"
-          :page-sizes="[10, 20, 25, 50]"
           :page-size="param.offset"
+          :page-sizes="[10, 20, 25, 50]"
           :total="count"
           layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
         />
       </div>
       <el-backtop />
 
       <show-article
+        :content="content"
+        :selected-art="selectedArt"
+        :visible="contentVisible"
         @close-art="
           content = '';
           contentVisible = false;
         "
-        :content="content"
-        :selected-art="selectedArt"
-        :visible="contentVisible"
       />
     </el-col>
   </el-row>
@@ -227,13 +227,13 @@ export default {
     async exportFavorites() {
       const path = await connector.get('exportFavorites', {});
       if (path) {
-        await this.$notify({
+        this.$notify({
           message: `收藏夹导出成功！${path}`,
           title: '',
           type: 'success',
         });
       } else {
-        await this.$notify({
+        this.$notify({
           message: `导出收藏夹已取消`,
           title: '',
           type: 'warning',
@@ -275,21 +275,21 @@ export default {
     async importFavorites() {
       const favList = await connector.get('importFavorites', {});
       if (!favList) {
-        await this.$notify({
+        this.$notify({
           message: `导入收藏夹已取消`,
           title: '',
           type: 'warning',
         });
       } else if (favList.length !== undefined) {
         this.favorites = favList;
-        await this.$notify({
+        this.$notify({
           message: `收藏夹导入成功！`,
           title: '',
           type: 'success',
         });
         this.searchArticle();
       } else {
-        await this.$notify({
+        this.$notify({
           message: `请选取正确的导出文件！`,
           title: '',
           type: 'error',

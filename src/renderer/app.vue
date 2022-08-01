@@ -9,9 +9,9 @@
     />
     <el-divider />
     <el-row style="text-align: center">
-      <small @click="cue++" :style="cue >= 10 ? 'font-weight: bold' : ''">
+      <small :style="cue >= 10 ? 'font-weight: bold' : ''" @click="cue++">
         {{ signInfo.content }}
-        <el-tooltip placement="top" effect="light">
+        <el-tooltip effect="light" placement="top">
           <div slot="content">
             <el-descriptions :column="1" border size="mini">
               <el-descriptions-item label="签名">
@@ -110,7 +110,7 @@ export default {
     },
     async refreshPage(path) {
       await this.$router.push('/empty');
-      await this.$notify({
+      this.$notify({
         message: `使用数据库：${path || '内置'}`,
         title: '',
         type: 'success',
@@ -242,6 +242,7 @@ export default {
     td:nth-child(2n + 1) {
       background-color: nth($cellColor, 1);
     }
+
     td:nth-child(2n + 2) {
       background-color: nth($cellColor, 2);
     }
@@ -251,6 +252,7 @@ export default {
     td:nth-child(2n + 1) {
       background-color: nth($cellColor, 3);
     }
+
     td:nth-child(2n + 2) {
       background-color: nth($cellColor, 4);
     }
@@ -270,9 +272,11 @@ export default {
 
   .el-dialog {
     background-color: nth($cellColor, 2);
+
     .el-dialog__title {
       color: nth($fontColor, 1);
     }
+
     .el-dialog__body {
       color: nth($fontColor, 1);
     }
@@ -365,8 +369,10 @@ body.nga-background {
     white]
   );
 }
+
 body.elui-background {
 }
+
 body.cyan-background {
   @include themedColor(
     #d3dedb,
@@ -379,6 +385,7 @@ body.cyan-background {
     white]
   );
 }
+
 body.teio-background {
   @include themedColor(
     #d0daff,
@@ -391,6 +398,7 @@ body.teio-background {
     aliceblue]
   );
 }
+
 body.purple-background {
   @include themedColor(
     #ded1d4,
@@ -403,6 +411,7 @@ body.purple-background {
     white]
   );
 }
+
 body.black-background {
   @include themedColor(
     #34312e,
@@ -415,6 +424,7 @@ body.black-background {
     black]
   );
 }
+
 body.green-background {
   @include themedColor(
     #dde9dd,
@@ -427,6 +437,7 @@ body.green-background {
     white]
   );
 }
+
 body.exhentai-background {
   @include themedColor(
     #3e424a,
@@ -439,6 +450,7 @@ body.exhentai-background {
     #dddddd]
   );
 }
+
 body.pink-background {
   @include themedColor(
     #700070,
@@ -451,6 +463,7 @@ body.pink-background {
     deeppink]
   );
 }
+
 body.porn-background {
   @include themedColor(
     black,

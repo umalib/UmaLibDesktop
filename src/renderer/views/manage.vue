@@ -8,23 +8,23 @@
         <el-tab-pane label="创作者管理" name="author-management">
           <el-row>
             <el-transfer
+              v-model="toMergedAuthors"
+              v-loading="authorLoading"
               :data="authors"
               :titles="['创作者列表', '待合并创作者']"
-              filterable
               filter-placeholder="请输入创作者"
-              v-loading="authorLoading"
-              v-model="toMergedAuthors"
+              filterable
             />
           </el-row>
           <el-row style="margin-top: 10px">
             <el-col :offset="6" :span="10">
               <el-input
-                :placeholder="getAuthorPlaceHolder()"
                 v-model="authorResult"
+                :placeholder="getAuthorPlaceHolder()"
               />
             </el-col>
             <el-col :span="2">
-              <el-button @click="mergeAuthors" type="warning">
+              <el-button type="warning" @click="mergeAuthors">
                 合并创作者
               </el-button>
             </el-col>
@@ -33,13 +33,13 @@
         <el-tab-pane label="标签管理" name="tag-management">
           <el-row>
             <el-transfer
+              v-model="toMergedTags"
+              v-loading="tagLoading"
               :data="tags"
               :filter-method="filterTags"
               :titles="['标签列表', '待处理标签']"
-              filterable
               filter-placeholder="请输入标签"
-              v-loading="tagLoading"
-              v-model="toMergedTags"
+              filterable
             >
               <template v-slot="{ option }">
                 <span>
@@ -51,37 +51,37 @@
               </template>
 
               <el-button
-                @click="sortTagByName"
+                slot="left-footer"
                 class="transfer-footer"
                 round
                 size="small"
-                slot="left-footer"
+                @click="sortTagByName"
               >
                 按名字排序
               </el-button>
               <el-button
-                @click="sortTagByType"
+                slot="left-footer"
                 class="transfer-footer"
                 round
                 size="small"
-                slot="left-footer"
+                @click="sortTagByType"
                 >按类别排序
               </el-button>
 
               <el-button
-                @click="sortTagByName"
+                slot="right-footer"
                 class="transfer-footer"
                 round
                 size="small"
-                slot="right-footer"
+                @click="sortTagByName"
                 >按名字排序
               </el-button>
               <el-button
-                @click="sortTagByType"
+                slot="right-footer"
                 class="transfer-footer"
                 round
                 size="small"
-                slot="right-footer"
+                @click="sortTagByType"
                 >按类别排序
               </el-button>
             </el-transfer>
@@ -89,12 +89,12 @@
           <el-row style="margin-top: 10px">
             <el-col :offset="6" :span="10">
               <el-input
-                :placeholder="getTagPlaceHolder()"
                 v-model="tagResult"
+                :placeholder="getTagPlaceHolder()"
               />
             </el-col>
             <el-col :span="2">
-              <el-button @click="mergeTags" style="width: 100%" type="warning">
+              <el-button style="width: 100%" type="warning" @click="mergeTags">
                 合并标签
               </el-button>
             </el-col>
@@ -102,28 +102,28 @@
           <el-row style="margin-top: 10px">
             <el-col :offset="6" :span="8">
               <el-select
+                v-model="typeResult"
                 placeholder="请选择标签类别"
                 style="width:100%"
-                v-model="typeResult"
               >
                 <el-option
+                  v-for="item in typeOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
-                  v-for="item in typeOptions"
                 />
               </el-select>
             </el-col>
             <el-col :span="4">
               <el-button-group style="width: 100%">
                 <el-button
-                  @click="changeTagTypes"
                   style="width: 50%"
                   type="primary"
+                  @click="changeTagTypes"
                 >
                   改变类别
                 </el-button>
-                <el-button @click="deleteTags" style="width: 50%" type="danger">
+                <el-button style="width: 50%" type="danger" @click="deleteTags">
                   删除标签
                 </el-button>
               </el-button-group>

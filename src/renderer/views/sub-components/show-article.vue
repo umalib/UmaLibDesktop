@@ -1,20 +1,20 @@
 <template>
   <el-dialog
+    :close-on-click-modal="false"
+    :title="selectedArt.name"
+    :visible="visible"
+    center
+    class="uma-article"
+    width="80%"
     @close="
       $refs.artContent && ($refs.artContent.wrap.scrollTop = 0);
       $emit('close-art');
     "
-    :close-on-click-modal="false"
-    :visible="visible"
-    :title="selectedArt.name"
-    center
-    class="uma-article"
-    width="80%"
   >
     <el-scrollbar ref="artContent" style="height: 100%">
       <el-row>
         <el-col :offset="2" :span="20">
-          <el-descriptions :column="2" :size="descriptionSize" title="" border>
+          <el-descriptions :column="2" :size="descriptionSize" border title="">
             <el-descriptions-item :span="2" label="标题">
               {{ selectedArt.name }}
             </el-descriptions-item>
@@ -45,9 +45,9 @@
             </el-descriptions-item>
             <el-descriptions-item :span="2" label="标签">
               <el-tag
+                v-for="tagLabel in selectedArt.tagLabels"
                 :key="tagLabel"
                 size="mini"
-                v-for="tagLabel in selectedArt.tagLabels"
               >
                 {{ tagLabel }}
               </el-tag>
@@ -60,19 +60,19 @@
       </el-row>
       <el-row :class="`ql-snow ${fontSize}-font ${segmentSpace}-space`">
         <el-col
-          :offset="2"
-          :span="20"
           :class="
             `ql-editor ${
               selectedArt.tagLabels.indexOf('AA') !== -1 ? 'Saitamaar' : ''
             }`
           "
+          :offset="2"
+          :span="20"
           v-html="content"
         />
       </el-row>
       <el-backtop
-        target=".uma-article .el-scrollbar__wrap"
         style="right: 11%; bottom: 12%;"
+        target=".uma-article .el-scrollbar__wrap"
       />
     </el-scrollbar>
     <span slot="footer" class="dialog-footer">
@@ -83,43 +83,43 @@
       </el-col>
       <el-col :offset="7" :span="3" style="float: right">
         <el-dropdown
-          @command="handleCommand"
           :hide-on-click="false"
           placement="top-start"
           size="small"
+          @command="handleCommand"
         >
           <el-button size="small">
             界面设置<i class="el-icon-arrow-up el-icon--right" />
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item
-              command="font:small"
               :disabled="fontSize === 'small'"
+              command="font:small"
             >
               字号：小
             </el-dropdown-item>
             <el-dropdown-item
-              command="font:normal"
               :disabled="fontSize === 'normal'"
+              command="font:normal"
             >
               字号：中
             </el-dropdown-item>
             <el-dropdown-item
-              command="font:large"
               :disabled="fontSize === 'large'"
+              command="font:large"
             >
               字号：大
             </el-dropdown-item>
             <el-dropdown-item
-              command="space:normal"
               :disabled="segmentSpace === 'normal'"
+              command="space:normal"
               divided
             >
               段间距：标准
             </el-dropdown-item>
             <el-dropdown-item
-              command="space:wider"
               :disabled="segmentSpace === 'wider'"
+              command="space:wider"
             >
               段间距：大
             </el-dropdown-item>
