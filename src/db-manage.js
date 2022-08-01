@@ -249,6 +249,7 @@ module.exports = {
         }),
       };
     }
+
     const artList = await prisma.article.findMany({
       where: {
         taggedList: {
@@ -626,6 +627,7 @@ module.exports = {
       id = (await prisma.article.create({ data })).id;
     }
     await updateTags(id, tags);
+    return true;
   },
   async resetDb() {
     await changeDb(embeddedDbPath);

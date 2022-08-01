@@ -8,9 +8,9 @@
         <el-col :offset="10" :span="4">
           <el-button
             v-if="cue >= 10"
-            @click="showPubDialog"
             style="width: 100%"
             type="primary"
+            @click="showPubDialog"
           >
             发布新作品
           </el-button>
@@ -20,15 +20,15 @@
             <el-button-group>
               <el-button
                 v-if="cue >= 10 || builtInDb"
-                @click="visible.recommend = true"
                 type="success"
+                @click="visible.recommend = true"
               >
                 推荐
               </el-button>
-              <el-button @click="showRandomArticle" type="success">
+              <el-button type="success" @click="showRandomArticle">
                 手气不错
               </el-button>
-              <el-button @click="showRandomArticle(11)" type="success">
+              <el-button type="success" @click="showRandomArticle(11)">
                 十连！
               </el-button>
             </el-button-group>
@@ -38,7 +38,7 @@
       <el-row style="margin: 10px auto;">
         <el-col :offset="1" :span="10">
           <el-cascader
-            @change="resetPageNumAndSearchArticle"
+            v-model="param.tagIds"
             :filter-method="filterTagsInCascader"
             :options="search.tagCascaderOptions"
             :props="search.cascaderProps"
@@ -47,7 +47,7 @@
             filterable
             placeholder="请选择想检索的标签"
             style="width: 100%"
-            v-model="param.tagIds"
+            @change="resetPageNumAndSearchArticle"
           >
             <template v-slot="{ node, data }">
               <span>{{ data.label }}</span>
@@ -55,7 +55,7 @@
             </template>
           </el-cascader>
           <el-cascader
-            @change="resetPageNumAndSearchArticle"
+            v-model="param.noTagIds"
             :filter-method="filterTagsInCascader"
             :options="search.noTagCascaderOptions"
             :props="search.cascaderProps"
@@ -64,7 +64,7 @@
             filterable
             placeholder="请选择想筛去的标签"
             style="width: 100%"
-            v-model="param.noTagIds"
+            @change="resetPageNumAndSearchArticle"
           >
             <template v-slot="{ node, data }">
               <span>{{ data.label }}</span>
@@ -74,13 +74,12 @@
         </el-col>
         <el-col :span="10">
           <el-select
-            @change="resetPageNumAndSearchArticle"
+            v-model="param.someone"
             clearable
             filterable
             placeholder="请选择作者/译者"
             style="width: 100%"
-            v-model="param.someone"
-            value=""
+            @change="resetPageNumAndSearchArticle"
           >
             <el-option-group
               v-for="group in search.authorOptions"
@@ -96,25 +95,25 @@
             </el-option-group>
           </el-select>
           <el-input
-            @change="resetPageNumAndSearchArticle"
-            placeholder="请输入关键词"
             v-model="param.keyword"
+            placeholder="请输入关键词"
+            @change="resetPageNumAndSearchArticle"
           >
             <el-button
+              slot="append"
+              icon="el-icon-circle-close"
               @click="
                 param.keyword = '';
                 resetPageNumAndSearchArticle();
               "
-              icon="el-icon-circle-close"
-              slot="append"
             />
           </el-input>
         </el-col>
         <el-col :span="2">
           <el-button
-            @click="clearSearchParam"
             style="width: 100%"
             type="danger"
+            @click="clearSearchParam"
           >
             重置
           </el-button>
@@ -122,9 +121,9 @@
             content="在搜索结果中不返回NTR、R18G等引起争议/令人不适的作品"
           >
             <el-checkbox
-              @change="changePrevents"
-              style="line-height: 42px; margin-left: 5px"
               v-model="search.preventSensitive"
+              style="line-height: 42px; margin-left: 5px"
+              @change="changePrevents"
             >
               屏蔽争议/不适的作品
             </el-checkbox>
@@ -134,25 +133,25 @@
 
       <div class="block">
         <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
           :current-page="param.pageNum"
           :hide-on-single-page="count <= 10"
-          :page-sizes="[10, 20, 25, 50]"
           :page-size="param.offset"
+          :page-sizes="[10, 20, 25, 50]"
           :total="count"
           layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
         />
       </div>
       <el-table
-        @sort-change="handleSortChange"
+        v-loading="articleLoading"
         :data="articles"
         :default-sort="{ prop: 'uploadTime', order: 'descending' }"
         class="article-table"
         row-key="id"
         stripe
         style="width: 100%"
-        v-loading="articleLoading"
+        @sort-change="handleSortChange"
       >
         <el-table-column
           :index="param.offset * (param.pageNum - 1) + 1"
@@ -169,9 +168,9 @@
         >
           <template v-slot="cell">
             <el-link
-              @click="showArticle(cell.row['id'])"
               :underline="false"
               type="primary"
+              @click="showArticle(cell.row['id'])"
             >
               {{ cell.row['name'] ? cell.row['name'] : '「无题」' }}
             </el-link>
@@ -179,7 +178,7 @@
         </el-table-column>
         <el-table-column label="标签" width="140">
           <template v-slot="cell">
-            <span :key="tagId" v-for="tagId in cell.row['tags']">
+            <span v-for="tagId in cell.row['tags']" :key="tagId">
               <el-tooltip effect="light" placement="right">
                 <div slot="content">
                   <span v-if="search.id2Tag[tagId].name.length > 9">
@@ -189,24 +188,24 @@
                     {{ search.tagType2Name[search.id2Tag[tagId].type] }}
                   </el-tag>
                   <el-button
-                    @click="handleTagLink(tagId, true)"
                     circle
                     icon="el-icon-plus"
                     size="mini"
                     type="success"
+                    @click="handleTagLink(tagId, true)"
                   />
                   <el-button
-                    @click="handleTagLink(tagId)"
                     circle
                     icon="el-icon-minus"
                     size="mini"
                     type="danger"
+                    @click="handleTagLink(tagId)"
                   />
                 </div>
                 <el-link
-                  @click="handleTagLinkWithReplace(tagId)"
                   :underline="false"
                   type="primary"
+                  @click="handleTagLinkWithReplace(tagId)"
                 >
                   <el-tag
                     v-if="search.id2Tag[tagId].name.length > 9"
@@ -229,10 +228,10 @@
         <el-table-column label="作者" prop="author" width="150">
           <template v-slot="cell">
             <el-link
-              @click="handleAuthorLink(cell.row['author'])"
+              v-if="cell.row['author']"
               :underline="false"
               type="primary"
-              v-if="cell.row['author']"
+              @click="handleAuthorLink(cell.row['author'])"
             >
               {{ cell.row['author'] }}
             </el-link>
@@ -241,10 +240,10 @@
         <el-table-column label="译者" prop="translator" width="150">
           <template v-slot="cell">
             <el-link
-              @click="handleAuthorLink(cell.row['translator'])"
+              v-if="cell.row['translator']"
               :underline="false"
               type="primary"
-              v-if="cell.row['translator']"
+              @click="handleAuthorLink(cell.row['translator'])"
             >
               {{ cell.row['translator'] }}
             </el-link>
@@ -262,7 +261,7 @@
             {{ formatTimeStamp(cell.row['uploadTime']) }}
           </template>
         </el-table-column>
-        <el-table-column label="来源" sortable="custom" prop="source">
+        <el-table-column label="来源" prop="source" sortable="custom">
           <template v-slot="cell">
             <el-tooltip
               v-if="cell.row['source'].startsWith('http')"
@@ -280,24 +279,23 @@
           </template>
         </el-table-column>
         <el-table-column
+          :width="cue >= 10 ? 150 : 107"
           fixed="right"
           label=""
           style="text-align: center"
-          :width="cue >= 10 ? 150 : 107"
         >
           <template v-slot="cell">
             <el-button-group>
               <el-button
                 v-if="cue >= 10"
-                @click="showEditDialog(cell.row['id'])"
                 icon="el-icon-edit"
                 round
                 size="mini"
                 type="primary"
+                @click="showEditDialog(cell.row['id'])"
               />
               <el-button
-                @click="changeFavorites(cell.row['id'])"
-                v-bind:icon="
+                :icon="
                   favorites[cell.row['id']]
                     ? 'el-icon-star-on'
                     : 'el-icon-star-off'
@@ -305,13 +303,14 @@
                 :type="favorites[cell.row['id']] ? 'success' : 'info'"
                 round
                 size="mini"
+                @click="changeFavorites(cell.row['id'])"
               />
               <el-button
-                @click="deleteArticle(cell.row['id'])"
                 icon="el-icon-delete"
                 round
                 size="mini"
                 type="danger"
+                @click="deleteArticle(cell.row['id'])"
               />
             </el-button-group>
           </template>
@@ -319,69 +318,56 @@
       </el-table>
       <div class="block">
         <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
           :current-page="param.pageNum"
           :hide-on-single-page="count <= 10"
-          :page-sizes="[10, 20, 25, 50]"
           :page-size="param.offset"
+          :page-sizes="[10, 20, 25, 50]"
           :total="count"
           layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
         />
       </div>
       <el-backtop />
 
       <show-article
+        :content="content"
+        :selected-art="selectedArt"
+        :visible="visible.content"
         @close-art="
           content = '';
           visible.content = false;
         "
-        :content="content"
-        :selected-art="selectedArt"
-        :visible="visible.content"
       />
 
       <pub-article
-        @close-pub="visible.publish = false"
-        @publish-article="publish"
-        @reset-art="resetNewArt"
         :author-options="search.authorOptions"
         :new-text="newText"
+        :publishDisable="publishDisable"
         :tag-options="search.tagOptions"
         :title="publishTitle"
         :visible="visible.publish"
+        @close-pub="visible.publish = false"
+        @publish-article="publish"
+        @reset-art="resetNewArt"
       />
 
       <random-articles
-        @close-random="visible.random = false"
-        @show-art="showArticle"
         :id2-tag="search.id2Tag"
         :random-list="randomList"
         :visible="visible.random"
+        @close-random="visible.random = false"
+        @show-art="showArticle"
       />
 
       <recommended-articles
+        :save-me="saveMe"
+        :visible="visible.recommend"
         @close-recommend="visible.recommend = false"
         @show-art="showArticle"
         @show-novel="$router.push(`/menu/${$event}`)"
-        @show-someone="
-          visible.recommend = false;
-          param.tagIds = [];
-          param.noTagIds = [];
-          param.someone = $event;
-          param.keyword = '';
-          searchArticle();
-        "
-        @show-tag="
-          visible.recommend = false;
-          param.tagIds = [$event];
-          param.noTagIds;
-          param.someone = '';
-          param.keyword = '';
-          searchArticle();
-        "
-        :save-me="saveMe"
-        :visible="visible.recommend"
+        @show-someone="showSomeoneFromRec"
+        @show-tag="showTagFromRec"
       />
     </el-col>
   </el-row>
@@ -527,6 +513,7 @@ export default {
         },
         tagIds: [],
       },
+      publishDisable: false,
       publishTitle: '',
       randomList: [],
       search: {
@@ -715,6 +702,7 @@ export default {
       }
     },
     async publish() {
+      this.publishDisable = true;
       if (!this.newText.author) {
         this.newText.author = '匿名';
       }
@@ -736,7 +724,7 @@ export default {
       if (this.newText.source.startsWith('pixiv.net')) {
         this.newText.source = 'https://www.' + this.newText.source;
       }
-      await connector.get('pubArticle', {
+      const pubResult = await connector.get('pubArticle', {
         id: this.newText.id,
         name: this.newText.name,
         author: this.newText.author,
@@ -749,10 +737,24 @@ export default {
         content: this.newText.content,
         tags: this.newText.tags,
       });
-      this.visible.publish = false;
-      this.newText = getNewTextObj();
-      await getTagsFromServer(this);
-      this.searchArticle();
+      if (pubResult) {
+        this.$notify({
+          message: `作品 ${this.newText.name} 发布成功！`,
+          title: '',
+          type: 'success',
+        });
+        this.visible.publish = false;
+        this.newText = getNewTextObj();
+        await getTagsFromServer(this);
+        this.searchArticle();
+      } else {
+        this.$notify({
+          message: `内部错误！请联系开发者！`,
+          title: '',
+          type: 'error',
+        });
+      }
+      this.publishDisable = false;
     },
     resetNewArt() {
       this.newText = getNewTextObj();
@@ -825,7 +827,7 @@ export default {
           });
           this.visible.random = true;
         } else {
-          await this.$notify({
+          this.$notify({
             message: `无可返回的怪文书！`,
             title: '',
             type: 'error',
@@ -839,13 +841,29 @@ export default {
           this.fillArticleTags(this.selectedArt);
           this.visible.content = true;
         } else {
-          await this.$notify({
+          this.$notify({
             message: `无可返回的怪文书！`,
             title: '',
             type: 'error',
           });
         }
       }
+    },
+    showSomeoneFromRec(someone) {
+      this.visible.recommend = false;
+      this.param.tagIds = [];
+      this.param.noTagIds = [];
+      this.param.someone = someone;
+      this.param.keyword = '';
+      this.searchArticle();
+    },
+    showTagFromRec(tagId) {
+      this.visible.recommend = false;
+      this.param.tagIds = [tagId];
+      this.param.noTagIds = [];
+      this.param.someone = '';
+      this.param.keyword = '';
+      this.searchArticle();
     },
     tagComparator(a, b) {
       const aTagInfo = this.search.id2Tag[a],

@@ -1,39 +1,39 @@
 <template>
   <el-dialog
+    v-loading="publishDisable"
+    :close-on-click-modal="false"
+    :title="title"
+    :visible="visible"
+    center
+    class="new-article"
+    width="80%"
     @close="
       $refs.pubContent && ($refs.pubContent.wrap.scrollTop = 0);
       $emit('close-pub');
     "
-    :close-on-click-modal="false"
-    :visible="visible"
-    center
-    class="new-article"
-    :title="title"
-    width="80%"
   >
     <el-scrollbar ref="pubContent" style="height: 100%">
       <el-col :offset="1" :span="22">
         <el-form :model="newText">
           <el-form-item>
             <el-input
-              maxlength="50"
-              type="input"
-              placeholder="作品的标题"
               v-model="newText.name"
               clearable
+              maxlength="50"
+              placeholder="作品的标题"
+              type="input"
             >
               <template slot="prepend">标题</template>
             </el-input>
           </el-form-item>
           <el-form-item>
             <el-select
+              v-model="newText.author"
               allow-create
               clearable
               filterable
               placeholder="请选择作者"
               style="width: 100%"
-              v-model="newText.author"
-              value=""
             >
               <el-option-group
                 v-for="group in authorOptions"
@@ -51,13 +51,12 @@
           </el-form-item>
           <el-form-item>
             <el-select
+              v-model="newText.translator"
               allow-create
               clearable
               filterable
               placeholder="请选择译者"
               style="width: 100%"
-              v-model="newText.translator"
-              value=""
             >
               <el-option-group
                 v-for="group in authorOptions"
@@ -75,47 +74,45 @@
           </el-form-item>
           <el-form-item>
             <el-input
-              maxlength="100"
-              type="input"
-              placeholder="有什么话想说？没有的话默认截取正文前100个字符哦"
               v-model="newText.note"
               clearable
+              maxlength="100"
+              placeholder="有什么话想说？没有的话默认截取正文前100个字符哦"
+              type="input"
             >
               <template slot="prepend">备注</template>
             </el-input>
           </el-form-item>
           <el-form-item>
             <el-date-picker
+              v-model="newText.uploadTime"
               format="yyyy-MM-dd HH:mm"
               placeholder="选择发表/翻译时间"
               style="width: 100%"
               type="datetime"
-              v-model="newText.uploadTime"
               value-format="timestamp"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
           <el-form-item>
             <el-input
-              maxlength="128"
-              type="input"
-              placeholder="这篇作品是转载吗？请附上链接"
               v-model="newText.source"
               clearable
+              maxlength="128"
+              placeholder="这篇作品是转载吗？请附上链接"
+              type="input"
             >
               <template slot="prepend">来源</template>
             </el-input>
           </el-form-item>
           <el-form-item required>
             <el-select
+              v-model="newText.tags"
               allow-create
               clearable
               filterable
               multiple
-              style="width: 100%"
               placeholder="请选择作品标签"
-              v-model="newText.tags"
-              value=""
+              style="width: 100%"
             >
               <el-option-group
                 v-for="group in tagOptions"
@@ -133,9 +130,9 @@
           </el-form-item>
           <el-form-item required>
             <quill-editor
+              v-model="newText.content"
               :options="editorOptions"
               class="editor"
-              v-model="newText.content"
             />
           </el-form-item>
         </el-form>
@@ -193,7 +190,14 @@ export default {
       },
     };
   },
-  props: ['authorOptions', 'newText', 'tagOptions', 'title', 'visible'],
+  props: [
+    'authorOptions',
+    'newText',
+    'publishDisable',
+    'tagOptions',
+    'title',
+    'visible',
+  ],
 };
 </script>
 

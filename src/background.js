@@ -194,21 +194,26 @@ async function createWindow() {
   ipcMain.on('artChannel', async (_, msg) => {
     let result;
     const start = new Date().getTime();
-    if (dbManage[msg.action]) {
-      logger.debug(`dbManage.${msg.action}(${JSON.stringify(msg.args)})`);
-      result = await dbManage[msg.action](msg.args);
-      if (msg.action === 'changeDb') {
-        logger.info(`change db to ${msg.args}`);
-        storeEvents.resetConfig();
+    try {
+      if (dbManage[msg.action]) {
+        logger.debug(`dbManage.${msg.action}(${JSON.stringify(msg.args)})`);
+        result = await dbManage[msg.action](msg.args);
+        if (msg.action === 'changeDb') {
+          logger.info(`change db to ${msg.args}`);
+          storeEvents.resetConfig();
+        }
+      } else {
+        result = await storeEvents[msg.action](msg.args);
+        logger.debug(`storeEvents.${msg.action}: ${JSON.stringify(result)}`);
       }
-      logger.info(`dbManage.${msg.action}: ${new Date().getTime() - start} ms`);
-    } else {
-      result = await storeEvents[msg.action](msg.args);
-      logger.debug(`storeEvents.${msg.action}: ${JSON.stringify(result)}`);
-      logger.info(
-        `storeEvents.${msg.action}: ${new Date().getTime() - start} ms`,
-      );
+    } catch (e) {
+      logger.error(e.toString());
     }
+    logger.info(
+      `${dbManage[msg.assign] ? 'dbManage' : 'storeEvents'}.${
+        msg.action
+      }: ${new Date().getTime() - start} ms`,
+    );
     mainWindow.webContents.send('artChannel', {
       id: msg.id,
       data: result,
