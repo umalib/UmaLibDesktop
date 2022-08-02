@@ -14,8 +14,13 @@ const prisma = new PrismaClient({
 
 async function task() {
   const tagList = (
-    await prisma.tag.findMany({ where: { name: { in: ['R18', 'R18G'] } } })
+    await prisma.tag.findMany({
+      where: {
+        name: { in: ['R18', 'R18G', 'AA', '两人三足，目标是星光闪耀的舞台！'] },
+      },
+    })
   ).map(tag => tag.id);
+  logger.info(tagList);
   const artList = (
     await prisma['tagged'].findMany({ where: { tagId: { in: tagList } } })
   ).map(tagged => tagged.artId);
@@ -25,8 +30,6 @@ async function task() {
   await prisma.article.deleteMany({ where: { id: { in: artList } } });
   await prisma.tag.deleteMany({ where: { id: { in: tagList } } });
   logger.info('clean done');
-  await prisma.$queryRaw`vacuum;`;
-  logger.info('vacuum done');
 }
 
 task().then(async () => {
