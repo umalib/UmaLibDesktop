@@ -210,7 +210,7 @@ async function createWindow() {
       logger.error(e.toString());
     }
     logger.info(
-      `${dbManage[msg.assign] ? 'dbManage' : 'storeEvents'}.${
+      `${dbManage[msg.action] ? 'dbManage' : 'storeEvents'}.${
         msg.action
       }: ${new Date().getTime() - start} ms`,
     );
