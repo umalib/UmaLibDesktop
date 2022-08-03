@@ -16,7 +16,16 @@ async function task() {
   const tagList = (
     await prisma.tag.findMany({
       where: {
-        name: { in: ['R18', 'R18G', 'AA', '两人三足，目标是星光闪耀的舞台！'] },
+        name: {
+          in: [
+            'R18',
+            'R18G',
+            'AA',
+            '两人三足，目标是星光闪耀的舞台！',
+            'NTR',
+            '争议内容',
+          ],
+        },
       },
     })
   ).map(tag => tag.id);
