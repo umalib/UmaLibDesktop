@@ -38,6 +38,19 @@ async function task() {
   });
   await prisma.article.deleteMany({ where: { id: { in: artList } } });
   await prisma.tag.deleteMany({ where: { id: { in: tagList } } });
+  await prisma.tag.deleteMany({
+    where: {
+      taggedList: {
+        none: {},
+      },
+    },
+  });
+  await prisma.tag.updateMany({
+    data: {
+      cover: '',
+      description: '',
+    },
+  });
   logger.info('clean done');
 }
 
