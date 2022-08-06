@@ -382,7 +382,7 @@ import {
 } from '@/renderer/utils/renderer-utils';
 import 'quill/dist/quill.core.css'; // import styles
 import 'quill/dist/quill.snow.css'; // for snow theme
-import 'quill/dist/quill.bubble.css'; // for bubble theme
+// import 'quill/dist/quill.bubble.css'; // for bubble theme
 import PubArticle from '@/renderer/views/sub-components/pub-article';
 import RandomArticles from '@/renderer/views/sub-components/random-articles';
 import RecommendedArticles from '@/renderer/views/sub-components/recommended-articles';
@@ -739,7 +739,9 @@ export default {
       });
       if (pubResult) {
         this.$notify({
-          message: `作品 ${this.newText.name} 发布成功！`,
+          message: `作品 ${this.newText.name} ${
+            this.newText.id === undefined ? '发布' : '编辑'
+          }成功！`,
           title: '',
           type: 'success',
         });
