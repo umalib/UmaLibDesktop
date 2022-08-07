@@ -16,23 +16,27 @@
           <span>风之低吟</span>
         </p>
         <h4>程序</h4>
-        <p>风之低吟</p>
+        <p>
+          <span>风之低吟</span>
+          <el-divider direction="vertical" />
+          <span>ForeverDdB</span>
+        </p>
         <h4>录入协助</h4>
         <small>按字母/笔画顺序，排名不分先后</small>
         <p>
-          <span v-for="(subList, i1) in staffs" :key="i1">
-            <span v-for="(staff, i2) in subList" :key="staff">
-              <el-divider v-if="i2 !== 0" direction="vertical" />
-              <span>{{ staff }}</span>
-            </span>
-            <br v-if="i1 !== staffs.length" />
+          <span v-for="(staff, i) in staffs" :key="i">
+            <el-divider v-if="i % 8 !== 0" direction="vertical" />
+            <br v-if="i !== 0 && i % 8 === 0" />
+            <span>{{ staff }}</span>
           </span>
         </p>
         <h4>散篇收录</h4>
         <p>
-          <span>黑羽仙洛</span>
-          <el-divider direction="vertical" />
-          <span>风之低吟</span>
+          <span v-for="(editor, i) in editors" :key="i">
+            <el-divider v-if="i % 8 !== 0" direction="vertical" />
+            <br v-if="i !== 0 && i % 8 === 0" />
+            <span>{{ editor }}</span>
+          </span>
         </p>
         <h4>复核协助</h4>
         <p>
@@ -50,12 +54,10 @@
         <small>NGA论坛ID，按字母/笔画顺序，排名不分先后</small>
         <el-tooltip content="找不到您的名字？请联系@风之低吟">
           <p>
-            <span v-for="(subList, i1) in creators" :key="i1">
-              <span v-for="(staff, i2) in subList" :key="staff">
-                <el-divider v-if="i2 !== 0" direction="vertical" />
-                <span>{{ staff }}</span>
-              </span>
-              <br v-if="i1 !== creators.length" />
+            <span v-for="(creator, i) in creators" :key="i">
+              <el-divider v-if="i % 8 !== 0" direction="vertical" />
+              <br v-if="i !== 0 && i % 8 === 0" />
+              <span>{{ creator }}</span>
             </span>
           </p>
         </el-tooltip>
@@ -130,20 +132,20 @@
 <script>
 import connector from '@/renderer/utils/connector';
 import EmbeddedData from '@/renderer/utils/data';
-import { splitList } from '@/renderer/utils/renderer-utils';
 
 export default {
   name: 'copyright',
   data() {
     return {
-      staffs: EmbeddedData.staffs,
       creators: [],
+      editors: EmbeddedData.editors,
       keyword: '',
+      staffs: EmbeddedData.staffs,
     };
   },
   props: ['saveMe'],
   async created() {
-    this.creators = splitList(await connector.get('copyright', {}), 8);
+    this.creators = await connector.get('copyright', {});
   },
   methods: {
     async jump() {

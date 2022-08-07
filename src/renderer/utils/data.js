@@ -1,5 +1,3 @@
-import Utils from './renderer-utils';
-
 const recommendations = {
   creators: [
     {
@@ -757,6 +755,18 @@ const recommendations = {
   ],
 };
 
+const editorList = [
+  '黑羽仙洛',
+  '风之低吟',
+  'ChibaNils',
+  'byslm',
+  'Alanポポ',
+  '提里奥·屠鸡者',
+  '盈盈星尘',
+  '女人的名字',
+  'NagatoSnake',
+];
+
 const staffList = [
   'byslm',
   'ChibaNils',
@@ -784,6 +794,7 @@ const staffList = [
 });
 
 export default {
+  editors: editorList,
   recommendations,
   signInfo: {
     content: '内容：NGA赛马娘翻译交流群 开发：风之低吟（NGA） 版本：1.8.4',
@@ -792,6 +803,6 @@ export default {
     sign:
       '3046022100b80089f7626206ef7fb4a795c2a4a698ff81845f15d60e95d20cbf7771ac39b7022100c2aa9b2c710811be8e4480e72244702f805cb4ed96207268b2760d0c1cd23856',
   },
-  staffs: Utils.splitList(staffList, 8),
+  staffs: staffList,
   tagTypes: ['其他', '角色', '系列', '长篇/合集', '争议/不适'],
 };
