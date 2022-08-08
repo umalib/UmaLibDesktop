@@ -15,12 +15,12 @@ async function task() {
   });
   const id2Tag = {};
   (await prisma.tag.findMany()).forEach(tag => (id2Tag[tag.id] = tag.name));
-  await prisma.$disconnect();
   const artList = await prisma.article.findMany({
     include: {
       taggedList: true,
     },
   });
+  await prisma.$disconnect();
   await dbManage.changeDb(path);
   for (const art of artList) {
     await dbManage.pubArticle({
