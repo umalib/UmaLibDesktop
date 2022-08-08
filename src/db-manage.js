@@ -612,7 +612,7 @@ module.exports = {
         .replace(/<[^>]*>/g, '')
         .replace(/\s+/g, ' ');
       if (data.note.length > 100) {
-        data.note = data.note.substring(0, 100);
+        data.note = data.note.substring(0, 98) + '……';
       }
     }
     data.uploadTime = Math.floor(data.uploadTime / 1000);
