@@ -1,6 +1,6 @@
 {
   "name": "uma-library-desktop",
-  "version": "1.8.4",
+  "version": "1.8.5",
   "private": true,
   "author": "WindyWisper <umalib629@outlook.com>",
   "scripts": {
@@ -15,6 +15,7 @@
   "main": "background.js",
   "dependencies": {
     "@prisma/client": "^3.15.2",
+    "axios": "^0.27.2",
     "element-ui": "^2.15.8",
     "jshashes": "^1.0.8",
     "log4js": "^6.6.0",

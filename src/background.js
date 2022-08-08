@@ -161,6 +161,10 @@ const storeEvents = {
     this.pathConf = MD5.hex(dbManage.getPath());
     this.saveMeFlag = -2;
   },
+
+  checkVersion() {
+    return app.getVersion();
+  },
 };
 
 // Scheme must be registered before the app is ready

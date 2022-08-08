@@ -51,6 +51,7 @@ import { ipcRenderer } from 'electron';
 
 import connector from '@/renderer/utils/connector';
 import EmbeddedData from '@/renderer/utils/data';
+import axios from 'axios';
 
 document.title = '赛马娘同人集中楼大书库';
 
@@ -62,6 +63,7 @@ export default {
       builtInDb: true,
       saveMeId: -4,
       signInfo: EmbeddedData.signInfo,
+      appVersion: undefined,
     };
   },
 
@@ -101,6 +103,26 @@ export default {
       _vue.refreshPage(path);
     });
 
+    this.appVersion = await connector.get('checkVersion', {});
+    axios
+      .get('https://umalib.github.io/UmaLibDesktop/update-info.json')
+      .then(r => {
+        if (this.appVersion < r.data.version) {
+          this.$notify({
+            dangerouslyUseHTMLString: true,
+            message: `发现新版本 v${r.data.version}！请前往下载：<a href='${r.data.url}' target='_blank'>下载地址</a>`,
+            title: '',
+            type: 'info',
+          });
+        }
+      })
+      .catch(() =>
+        this.$notify({
+          message: '新版本请求失败！请检查网络连接……',
+          title: '',
+          type: 'warning',
+        }),
+      );
     this.builtInDb = await connector.get('checkDb', {});
     this.saveMeId = await connector.get('saveMe', {});
   },
