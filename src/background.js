@@ -15,7 +15,7 @@ const { createProtocol } = require('vue-cli-plugin-electron-builder/lib');
 const dbManage = require('@/db-manage');
 const { themes } = require('@/main-config');
 
-const { readFileSync, writeFileSync } = require('fs');
+const { readdirSync, readFileSync, writeFileSync } = require('fs');
 const MD5 = new (require('jshashes').MD5)();
 const log4js = require('log4js');
 const { homedir } = require('os');
@@ -375,11 +375,13 @@ app.on('ready', async () => {
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
     try {
-      const reactDevToolsPath = join(
+      const vueDevToolsPath = join(
         homedir(),
-        '/Library/Application Support/Microsoft Edge/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/6.2.1_0',
+        '/Library/Application Support/Microsoft Edge/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd',
       );
-      await session.defaultSession.loadExtension(reactDevToolsPath);
+      await session.defaultSession.loadExtension(
+        `${vueDevToolsPath}/${readdirSync(vueDevToolsPath)[0]}`,
+      );
     } catch (e) {
       logger.error('Vue Devtools failed to install:', e.toString());
     }
