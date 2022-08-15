@@ -134,13 +134,13 @@
               :disabled="language === 'cn'"
               command="converter:cn"
             >
-              繁简转化：简体
+              繁简转换：简体
             </el-dropdown-item>
             <el-dropdown-item
               :disabled="language === 'hk'"
               command="converter:hk"
             >
-              繁简转化：繁体
+              繁简转换：繁体
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
