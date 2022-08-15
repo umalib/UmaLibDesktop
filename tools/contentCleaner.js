@@ -137,6 +137,9 @@ async function task() {
 }
 
 task().then(async () => {
+  logger.info('clean done!');
+  await prisma.$queryRaw`vacuum;`;
+  logger.info('vacuum done!');
   await prisma.$disconnect();
   logger.info('task done!');
 });
