@@ -327,7 +327,6 @@ export default {
       return content.split('\n');
     },
     searchArticle() {
-      window.scrollTo(0, 0);
       this.contentVisible = false;
       fillArticles(this, {
         tagIds: [this.param.tagId],

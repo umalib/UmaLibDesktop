@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     :close-on-click-modal="false"
-    :title="selectedArt.name"
+    :title="convertLan(selectedArt.name)"
     :visible="visible"
     center
     class="uma-article"
@@ -16,13 +16,13 @@
         <el-col :offset="2" :span="20">
           <el-descriptions :column="2" :size="descriptionSize" border title="">
             <el-descriptions-item :span="2" label="标题">
-              {{ selectedArt.name }}
+              {{ convertLan(selectedArt.name) }}
             </el-descriptions-item>
             <el-descriptions-item label="作者">
-              {{ selectedArt.author }}
+              {{ convertLan(selectedArt.author) }}
             </el-descriptions-item>
             <el-descriptions-item label="译者">
-              {{ selectedArt.translator }}
+              {{ convertLan(selectedArt.translator) }}
             </el-descriptions-item>
             <el-descriptions-item label="上传">
               {{ formatTimeStamp(selectedArt.uploadTime) }}
@@ -49,11 +49,11 @@
                 :key="tagLabel"
                 size="mini"
               >
-                {{ tagLabel }}
+                {{ convertLan(tagLabel) }}
               </el-tag>
             </el-descriptions-item>
             <el-descriptions-item :span="2" label="备注">
-              {{ selectedArt.note }}
+              {{ convertLan(selectedArt.note) }}
             </el-descriptions-item>
           </el-descriptions>
         </el-col>
@@ -67,7 +67,7 @@
           "
           :offset="2"
           :span="20"
-          v-html="content"
+          v-html="convertLan(content)"
         />
       </el-row>
       <el-backtop
@@ -123,6 +123,25 @@
             >
               段间距：大
             </el-dropdown-item>
+            <el-dropdown-item
+              :disabled="language === 'no'"
+              command="converter:no"
+              divided
+            >
+              繁简转换：关闭
+            </el-dropdown-item>
+            <el-dropdown-item
+              :disabled="language === 'cn'"
+              command="converter:cn"
+            >
+              繁简转化：简体
+            </el-dropdown-item>
+            <el-dropdown-item
+              :disabled="language === 'hk'"
+              command="converter:hk"
+            >
+              繁简转化：繁体
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
@@ -132,34 +151,52 @@
 
 <script>
 import { formatTimeStamp } from '@/renderer/utils/renderer-utils';
+import { Converter } from 'opencc-js';
+
+const converters = {
+  cn: Converter({ from: 'hk', to: 'cn' }),
+  hk: Converter({ from: 'cn', to: 'hk' }),
+  no: undefined,
+};
 
 export default {
   name: 'ShowArticle',
   data() {
     return {
       aaFont: '',
-      fontSize: 'normal',
-      segmentSpace: 'normal',
+      converter: undefined,
       descriptionSize: 'small',
+      fontSize: 'normal',
+      language: 'no',
+      segmentSpace: 'normal',
     };
   },
   props: ['content', 'visible', 'selectedArt'],
   methods: {
+    convertLan(_content) {
+      if (!this.converter) {
+        return _content;
+      }
+      return this.converter(_content);
+    },
     handleCommand(command) {
       const commandArr = command.split(':');
       switch (commandArr[0]) {
+        case 'converter':
+          this.language = commandArr[1];
+          this.converter = converters[this.language];
+          break;
         case 'font':
           this.fontSize = commandArr[1];
           switch (this.fontSize) {
-            case 'small':
-              this.descriptionSize = 'mini';
+            case 'large':
+              this.descriptionSize = 'medium';
               break;
             case 'normal':
               this.descriptionSize = 'small';
               break;
-            case 'large':
-              this.descriptionSize = 'medium';
-              break;
+            case 'small':
+              this.descriptionSize = 'mini';
           }
           break;
         case 'space':

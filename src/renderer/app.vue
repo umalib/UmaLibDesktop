@@ -110,6 +110,7 @@ export default {
         if (this.appVersion < r.data.version) {
           this.$notify({
             dangerouslyUseHTMLString: true,
+            duration: 0,
             message: `发现新版本 v${r.data.version}！请前往下载：<a href='${r.data.url}' target='_blank'>下载地址</a>`,
             title: '',
             type: 'info',
