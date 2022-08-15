@@ -9,13 +9,8 @@ const prisma = new PrismaClient({
 });
 
 function countBase64(content) {
-  let index = 0,
-    count = 0;
-  while ((index = content.indexOf('src="data:image')) !== -1) {
-    count += 1;
-    content = content.substring(index + 1);
-  }
-  return count;
+  const result = content.match(/<img\s+src="data:image\/\w+;base64,[^<>]*">/g);
+  return result ? result.length : 0;
 }
 
 async function task() {

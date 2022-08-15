@@ -10,9 +10,7 @@ ipcRenderer.on('artChannel', (_, res) => {
 
 module.exports = {
   async get(action, args) {
-    const id = await MD5.hex(
-      action + JSON.stringify(args) + new Date().getTime(),
-    );
+    const id = MD5.hex(action + JSON.stringify(args) + new Date().getTime());
     ipcRenderer.send('artChannel', {
       id,
       action,
