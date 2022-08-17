@@ -56,7 +56,7 @@ async function task() {
   (await prisma.tag.findMany()).forEach(tag => {
     if (tag.cover && tag.cover.startsWith('data:image')) {
       const outFile = saveFile(tag.cover, tag.name, coverPath);
-      csv += `"Image ${tag.name}","${outFile.hex}","${outFile.file}"\n`;
+      csv += `"${tag.name}","${outFile.hex}","${outFile.file}"\n`;
       logger.info(`image ${tag.name}: ${outFile.file}`);
     }
   });
