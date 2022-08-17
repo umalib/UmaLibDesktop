@@ -2,6 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const { writeFileSync } = require('fs');
 const { join, resolve } = require('path');
 const { coverPath, imgPath, path } = require('./config.js');
+const { formatTimeStamp } = require('../src/renderer/utils/renderer-utils.js');
 const MD5 = new (require('jshashes').MD5)();
 const logger = require('log4js').getLogger('exporter');
 logger.level = 'info';
@@ -48,19 +49,24 @@ async function task() {
         const outFile = saveFile(imgStr, `${art.id}-${i + 1}`, imgPath);
         csv += `"Image ${art.id}-${i + 1}","${outFile.hex}","${
           outFile.file
-        }"\n`;
+        }","${art.name}","${formatTimeStamp(
+          art.uploadTime * 1000,
+        )}","${art.translator || art.author}"\r\n`;
         logger.info(`image ${art.id}-${i + 1}: ${outFile.file}`);
       }
     }
   }
   (await prisma.tag.findMany()).forEach(tag => {
     if (tag.cover && tag.cover.startsWith('data:image')) {
+      count++;
       const outFile = saveFile(tag.cover, tag.name, coverPath);
-      csv += `"${tag.name}","${outFile.hex}","${outFile.file}"\n`;
+      csv += `"${tag.name}",,"${outFile.file}"\n`;
       logger.info(`image ${tag.name}: ${outFile.file}`);
     }
   });
-  writeFileSync(`${imgPath}/dict.csv`, csv);
+  writeFileSync(`${imgPath}/dict.csv`, `\uFEFF${csv}`, {
+    encoding: 'utf8',
+  });
   logger.info(`all: ${count}`);
 }
 
