@@ -2,7 +2,6 @@ const { PrismaClient } = require('@prisma/client');
 const { writeFileSync } = require('fs');
 const { join, resolve } = require('path');
 const { coverPath, imgPath, path } = require('./config.js');
-const { formatTimeStamp } = require('../src/renderer/utils/renderer-utils.js');
 const MD5 = new (require('jshashes').MD5)();
 const logger = require('log4js').getLogger('exporter');
 logger.level = 'info';
@@ -49,9 +48,9 @@ async function task() {
         const outFile = saveFile(imgStr, `${art.id}-${i + 1}`, imgPath);
         csv += `"Image ${art.id}-${i + 1}","${outFile.hex}","${
           outFile.file
-        }","${art.name}","${formatTimeStamp(
+        }","${art.name}","${new Date(
           art.uploadTime * 1000,
-        )}","${art.translator || art.author}"\r\n`;
+        ).toLocaleString()}","${art.translator || art.author}"\r\n`;
         logger.info(`image ${art.id}-${i + 1}: ${outFile.file}`);
       }
     }
