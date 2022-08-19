@@ -45,10 +45,10 @@ async function task() {
       hash = lineArr[1],
       url = lineArr[2];
     if (url.startsWith('http')) {
-      if (name.startsWith('Image ')) {
+      if (name.indexOf('Image ') !== -1) {
         md5dict[hash] = url;
       } else {
-        logger.info(url);
+        logger.info(name, url);
         await prisma.tag.update({
           data: { cover: url },
           where: { id: tag2Id[name] },
