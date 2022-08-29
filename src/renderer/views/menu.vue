@@ -136,7 +136,10 @@
                     v-if="search.id2Tag[tagId].name.length > 9"
                     :content="search.id2Tag[tagId].name"
                   >
-                    <el-tag size="mini">
+                    <el-tag
+                      :type="search.elTagTypes[search.id2Tag[tagId].type]"
+                      size="mini"
+                    >
                       {{ search.id2Tag[tagId].name.substring(0, 4) }}…{{
                         search.id2Tag[tagId].name.substring(
                           search.id2Tag[tagId].name.length - 4,
@@ -144,7 +147,11 @@
                       }}
                     </el-tag>
                   </el-tooltip>
-                  <el-tag v-else size="mini">
+                  <el-tag
+                    v-else
+                    :type="search.elTagTypes[search.id2Tag[tagId].type]"
+                    size="mini"
+                  >
                     {{ search.id2Tag[tagId].name }}
                   </el-tag>
                 </span>
@@ -213,6 +220,7 @@
 
 <script>
 import connector from '@/renderer/utils/connector';
+import EmbeddedData from '@/renderer/utils/data';
 import { formatTimeStamp, splitList } from '@/renderer/utils/renderer-utils';
 import ShowArticle from '@/renderer/views/sub-components/show-article';
 
@@ -257,6 +265,7 @@ export default {
       search: {
         id2Tag: {},
         novels: [],
+        elTagTypes: EmbeddedData.elTagTypes,
       },
       selectedArt: {
         author: '',
@@ -297,7 +306,10 @@ export default {
       }
       if (art.tagLabels.length === 0) {
         art.tags.forEach(tagId =>
-          art.tagLabels.push(this.search.id2Tag[tagId].name),
+          art.tagLabels.push({
+            name: this.search.id2Tag[tagId].name,
+            elType: this.search.elTagTypes[this.search.id2Tag[tagId].type],
+          }),
         );
       }
     },

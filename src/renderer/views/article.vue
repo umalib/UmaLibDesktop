@@ -188,7 +188,11 @@
                 <span v-if="search.id2Tag[tagId].name.length > 9">
                   {{ search.id2Tag[tagId].name }}
                 </span>
-                <el-tag size="mini" style="margin-right: 10px">
+                <el-tag
+                  :type="search.tagType2ElTagType[search.id2Tag[tagId].type]"
+                  size="mini"
+                  style="margin-right: 10px"
+                >
                   {{ search.tagType2Name[search.id2Tag[tagId].type] }}
                 </el-tag>
                 <el-button
@@ -531,6 +535,7 @@ export default {
         tagCascaderOptions: [],
         tagOptions: [],
         tagType2Name: EmbeddedData.tagTypes,
+        tagType2ElTagType: EmbeddedData.elTagTypes,
       },
       selectedArt: {
         author: '',
@@ -625,7 +630,12 @@ export default {
       }
       if (art.tagLabels.length === 0) {
         art.tags.forEach(tagId =>
-          art.tagLabels.push(this.search.id2Tag[tagId].name),
+          art.tagLabels.push({
+            name: this.search.id2Tag[tagId].name,
+            elType: this.search.tagType2ElTagType[
+              this.search.id2Tag[tagId].type
+            ],
+          }),
         );
       }
     },
@@ -804,7 +814,7 @@ export default {
         name: art.name,
         note: art.note,
         source: art.source,
-        tags: art.tagLabels,
+        tags: art.tagLabels.map(label => label.name),
         translator: art.translator,
         uploadTime: art.uploadTime,
       };

@@ -46,10 +46,11 @@
             <el-descriptions-item :span="2" label="标签">
               <el-tag
                 v-for="tagLabel in selectedArt.tagLabels"
-                :key="tagLabel"
+                :key="tagLabel.name"
+                :type="tagLabel.elType"
                 size="mini"
               >
-                {{ convertLan(tagLabel) }}
+                {{ convertLan(tagLabel.name) }}
               </el-tag>
             </el-descriptions-item>
             <el-descriptions-item :span="2" label="备注">
