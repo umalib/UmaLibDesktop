@@ -44,7 +44,7 @@
               <template v-slot="{ option }">
                 <span>
                   {{ option.label }}
-                  <el-tag size="mini">{{
+                  <el-tag :type="tagType2ElTagType[option.type]" size="mini">{{
                     typeOptions[option.type].label
                   }}</el-tag>
                 </span>
@@ -214,6 +214,7 @@ export default {
       tagLoading: true,
       tagResult: '',
       tags: [],
+      tagType2ElTagType: EmbeddedData.elTagTypes,
       toMergedAuthors: [],
       toMergedTags: [],
       typeOptions: EmbeddedData.tagTypes.map((x, i) => {

@@ -67,7 +67,7 @@
                 :content="search.id2Tag[tagId].name"
               >
                 <el-tag
-                  :type="search.elTagTypes[search.id2Tag[tagId].type]"
+                  :type="search.tagType2ElTagType[search.id2Tag[tagId].type]"
                   size="mini"
                 >
                   {{ search.id2Tag[tagId].name.substring(0, 4) }}…{{
@@ -79,7 +79,7 @@
               </el-tooltip>
               <el-tag
                 v-else
-                :type="search.elTagTypes[search.id2Tag[tagId].type]"
+                :type="search.tagType2ElTagType[search.id2Tag[tagId].type]"
                 size="mini"
               >
                 {{ search.id2Tag[tagId].name }}
@@ -210,7 +210,7 @@ export default {
       },
       search: {
         id2Tag: {},
-        elTagTypes: EmbeddedData.elTagTypes,
+        tagType2ElTagType: EmbeddedData.elTagTypes,
       },
       selectedArt: {
         author: '',
@@ -257,7 +257,9 @@ export default {
         art.tags.forEach(tagId =>
           art.tagLabels.push({
             name: this.search.id2Tag[tagId].name,
-            elType: this.search.elTagTypes[this.search.id2Tag[tagId].type],
+            elType: this.search.tagType2ElTagType[
+              this.search.id2Tag[tagId].type
+            ],
           }),
         );
       }

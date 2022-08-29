@@ -534,8 +534,8 @@ export default {
         sensitiveTags: [],
         tagCascaderOptions: [],
         tagOptions: [],
-        tagType2Name: EmbeddedData.tagTypes,
         tagType2ElTagType: EmbeddedData.elTagTypes,
+        tagType2Name: EmbeddedData.tagTypes,
       },
       selectedArt: {
         author: '',
