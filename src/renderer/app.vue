@@ -28,6 +28,8 @@
           <i class="el-icon-info" />
         </el-tooltip>
       </small>
+    </el-row>
+    <el-row>
       <el-col :offset="4" :span="16">
         <p>
           <el-alert
