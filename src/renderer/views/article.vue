@@ -749,6 +749,7 @@ export default {
       });
       if (pubResult) {
         this.$notify({
+          message: '',
           title: `作品 ${this.newText.name} ${
             this.newText.id === undefined ? '发布' : '编辑'
           }成功！`,
@@ -839,6 +840,7 @@ export default {
           this.visible.random = true;
         } else {
           this.$notify({
+            message: '',
             title: '无可返回的怪文书！',
             type: 'error',
           });
@@ -852,6 +854,7 @@ export default {
           this.visible.content = true;
         } else {
           this.$notify({
+            message: '',
             title: '无可返回的怪文书！',
             type: 'error',
           });

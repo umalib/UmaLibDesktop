@@ -117,6 +117,7 @@ export default {
           });
         } else {
           this.$notify({
+            message: '',
             title: '已更新到最新版本',
             type: 'success',
           });

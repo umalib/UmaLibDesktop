@@ -152,6 +152,7 @@ export default {
       if (this.keyword === (await connector.get('getPwd', {}))) {
         connector.get('isSafe', {}).then();
         this.$notify({
+          message: '',
           title: '格林……是你吗？',
           type: 'warning',
         });
@@ -159,6 +160,7 @@ export default {
         await this.$router.push('/empty');
       } else {
         this.$notify({
+          message: '',
           title: '退下，无礼者！',
           type: 'error',
         });

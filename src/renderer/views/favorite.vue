@@ -243,6 +243,7 @@ export default {
         });
       } else {
         this.$notify({
+          message: '',
           title: '导出收藏夹已取消',
           type: 'warning',
         });
@@ -289,18 +290,21 @@ export default {
       const favList = await connector.get('importFavorites', {});
       if (!favList) {
         this.$notify({
+          message: '',
           title: '导入收藏夹已取消',
           type: 'warning',
         });
       } else if (favList.length !== undefined) {
         this.favorites = favList;
         this.$notify({
+          message: '',
           title: '收藏夹导入成功！',
           type: 'success',
         });
         this.searchArticle();
       } else {
         this.$notify({
+          message: '',
           title: '请选取正确的导出文件！',
           type: 'error',
         });
