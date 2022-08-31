@@ -749,10 +749,9 @@ export default {
       });
       if (pubResult) {
         this.$notify({
-          message: `作品 ${this.newText.name} ${
+          title: `作品 ${this.newText.name} ${
             this.newText.id === undefined ? '发布' : '编辑'
           }成功！`,
-          title: '',
           type: 'success',
         });
         this.visible.publish = false;
@@ -761,8 +760,8 @@ export default {
         this.searchArticle();
       } else {
         this.$notify({
-          message: `内部错误！请联系开发者！`,
-          title: '',
+          message: '请联系开发者！',
+          title: '内部错误！',
           type: 'error',
         });
       }
@@ -840,8 +839,7 @@ export default {
           this.visible.random = true;
         } else {
           this.$notify({
-            message: `无可返回的怪文书！`,
-            title: '',
+            title: '无可返回的怪文书！',
             type: 'error',
           });
         }
@@ -854,8 +852,7 @@ export default {
           this.visible.content = true;
         } else {
           this.$notify({
-            message: `无可返回的怪文书！`,
-            title: '',
+            title: '无可返回的怪文书！',
             type: 'error',
           });
         }

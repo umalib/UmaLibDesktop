@@ -112,15 +112,20 @@ export default {
             dangerouslyUseHTMLString: true,
             duration: 0,
             message: `发现新版本 v${r.data.version}！请前往下载：<a href='${r.data.url}' target='_blank'>下载地址</a>`,
-            title: '',
+            title: '发现新版本',
             type: 'info',
+          });
+        } else {
+          this.$notify({
+            title: '已更新到最新版本',
+            type: 'success',
           });
         }
       })
       .catch(() =>
         this.$notify({
-          message: '新版本请求失败！请检查网络连接……',
-          title: '',
+          message: '请检查网络连接……',
+          title: '版本检查失败！',
           type: 'warning',
         }),
       );
@@ -134,8 +139,8 @@ export default {
     async refreshPage(path) {
       await this.$router.push('/empty');
       this.$notify({
-        message: `使用数据库：${path || '内置'}`,
-        title: '',
+        message: `${path || '内置'}`,
+        title: '切换到数据库',
         type: 'success',
       });
       this.builtInDb = !path;

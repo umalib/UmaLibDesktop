@@ -152,16 +152,14 @@ export default {
       if (this.keyword === (await connector.get('getPwd', {}))) {
         connector.get('isSafe', {}).then();
         this.$notify({
-          message: '格林……是你吗？',
-          title: '',
+          title: '格林……是你吗？',
           type: 'warning',
         });
         this.$emit('is-safe');
         await this.$router.push('/empty');
       } else {
         this.$notify({
-          message: '退下，无礼者！',
-          title: '',
+          title: '退下，无礼者！',
           type: 'error',
         });
       }

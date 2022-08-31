@@ -237,14 +237,13 @@ export default {
       const path = await connector.get('exportFavorites', {});
       if (path) {
         this.$notify({
-          message: `收藏夹导出成功！${path}`,
-          title: '',
+          message: `${path}`,
+          title: '收藏夹导出成功！',
           type: 'success',
         });
       } else {
         this.$notify({
-          message: `导出收藏夹已取消`,
-          title: '',
+          title: '导出收藏夹已取消',
           type: 'warning',
         });
       }
@@ -290,22 +289,19 @@ export default {
       const favList = await connector.get('importFavorites', {});
       if (!favList) {
         this.$notify({
-          message: `导入收藏夹已取消`,
-          title: '',
+          title: '导入收藏夹已取消',
           type: 'warning',
         });
       } else if (favList.length !== undefined) {
         this.favorites = favList;
         this.$notify({
-          message: `收藏夹导入成功！`,
-          title: '',
+          title: '收藏夹导入成功！',
           type: 'success',
         });
         this.searchArticle();
       } else {
         this.$notify({
-          message: `请选取正确的导出文件！`,
-          title: '',
+          title: '请选取正确的导出文件！',
           type: 'error',
         });
       }
