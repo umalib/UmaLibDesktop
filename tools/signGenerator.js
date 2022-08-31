@@ -1,9 +1,10 @@
 const { sm2 } = require('sm-crypto');
 const { keyPair } = require('./config');
 const logger = require('log4js').getLogger('generator');
+const embeddedData = require('../src/renderer/utils/data');
 logger.level = 'info';
 
-const msg = '内容：NGA赛马娘翻译交流群 开发：风之低吟（NGA） 版本：1.9.0';
+const msg = embeddedData.signInfo.content;
 logger.info(msg);
 logger.info(keyPair.publicKey);
 logger.info(

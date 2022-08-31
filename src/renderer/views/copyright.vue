@@ -95,7 +95,7 @@
               16 Feb 2021
             </el-link>
           </el-descriptions-item>
-          <el-descriptions-item label="electron">19.0.9</el-descriptions-item>
+          <el-descriptions-item label="electron">19.0.11</el-descriptions-item>
           <el-descriptions-item label="vue">2.7.8</el-descriptions-item>
           <el-descriptions-item label="vue-router">3.5.4</el-descriptions-item>
           <el-descriptions-item label="vue-quill-editor">

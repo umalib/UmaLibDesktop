@@ -793,15 +793,15 @@ const staffList = [
   return l.indexOf(v) === i;
 });
 
-export default {
+module.exports = {
   editors: editorList,
   recommendations,
   signInfo: {
-    content: '内容：NGA赛马娘翻译交流群 开发：风之低吟（NGA） 版本：1.9.0',
+    content: '内容：NGA赛马娘翻译交流群 开发：风之低吟（NGA） 版本：1.9.1',
     pubKey:
       '04f7c5d1bf43e06c4a119deb999c33a488fc38d1a7f6387cdc0001ed190d6b304846b3d2931fb15f819c6e57ac7ce119f8c68e376a5631d5ccfc1f712a51187123',
     sign:
-      '3046022100dd8cd65f19b675989e6f4cee2c5712bfcf5f83b742114736bed603b39f26aad6022100a882a460e481abe77236f3ef0c51db7f5e595256a98459417bdbf717b10c24be',
+      '3044022050207defc8be8dff71cc9007d62db7d1123ff659c1ea45a7435581668499c0920220223f87b5f4a4b62e5695461d7e82227e8ccbe46a3b8a10a6d17015e90aade7b6',
   },
   staffs: staffList,
   tagTypes: ['其他', '角色', '系列', '长篇/合集', '争议/不适'],
