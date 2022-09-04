@@ -26,16 +26,16 @@
         </el-table-column>
         <el-table-column label="标签">
           <template v-slot="cell">
-            <span v-for="tagLabel in cell.row['tagLabels']" :key="tagLabel">
-              <el-tooltip v-if="tagLabel.length > 9" :content="tagLabel">
-                <el-tag size="mini">
-                  {{ tagLabel.substring(0, 4) }}…{{
-                    tagLabel.substring(tagLabel.length - 4)
+            <span v-for="label in cell.row['tagLabels']" :key="label.name">
+              <el-tooltip v-if="label.name.length > 9" :content="label.name">
+                <el-tag :type="label.elType" size="mini">
+                  {{ label.name.substring(0, 4) }}…{{
+                    label.name.substring(label.name.length - 4)
                   }}
                 </el-tag>
               </el-tooltip>
-              <el-tag v-else size="mini">
-                {{ tagLabel }}
+              <el-tag v-else :type="label.type" size="mini">
+                {{ label.name }}
               </el-tag>
             </span>
           </template>
