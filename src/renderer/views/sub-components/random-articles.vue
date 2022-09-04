@@ -34,7 +34,7 @@
                   }}
                 </el-tag>
               </el-tooltip>
-              <el-tag v-else :type="label.type" size="mini">
+              <el-tag v-else :type="label.elType" size="mini">
                 {{ label.name }}
               </el-tag>
             </span>
