@@ -12,6 +12,11 @@ const prisma = new PrismaClient({
   datasources: { db: { url: `file:${join(resolve(android))}` } },
 });
 
+function countBase64(content) {
+  const result = content.match(/<img\s+src="data:image\/\w+;base64,[^<>]*">/g);
+  return result ? result.length : 0;
+}
+
 async function task() {
   const tagList = (
     await prisma.tag.findMany({
@@ -29,14 +34,15 @@ async function task() {
       },
     })
   ).map(tag => tag.id);
-  logger.info(tagList);
-  const artList = (
+  logger.info(`tags to be removed: ${tagList.join(', ')}`);
+  const toRmList = (
     await prisma['tagged'].findMany({ where: { tagId: { in: tagList } } })
   ).map(tagged => tagged.artId);
+  logger.info(`articles to be removed: ${toRmList.join(', ')}`);
   await prisma['tagged'].deleteMany({
-    where: { OR: [{ artId: { in: artList } }, { tagId: { in: tagList } }] },
+    where: { OR: [{ artId: { in: toRmList } }, { tagId: { in: tagList } }] },
   });
-  await prisma.article.deleteMany({ where: { id: { in: artList } } });
+  await prisma.article.deleteMany({ where: { id: { in: toRmList } } });
   await prisma.tag.deleteMany({ where: { id: { in: tagList } } });
   await prisma.tag.deleteMany({
     where: {
@@ -51,7 +57,27 @@ async function task() {
       description: '',
     },
   });
+  let count = 0;
+  const artList = await prisma.article.findMany();
+  for (const art of artList) {
+    const tmpCount = countBase64(art.content);
+    if (tmpCount > 0) {
+      count += tmpCount;
+      logger.info(`${art.id} [${art.name}]\t${tmpCount}`);
+      art.content = art.content.replace(
+        /<img\s+src="data:image[^"]+"[^>]*>/g,
+        '[图片]',
+      );
+      await prisma.article.update({
+        data: { content: art.content },
+        where: { id: art.id },
+      });
+    }
+  }
+  logger.info(`art count: ${artList.length}; base64 count: ${count}`);
   logger.info('clean done');
+  await prisma.$queryRaw`vacuum;`;
+  logger.info('vacuum done');
 }
 
 task().then(async () => {

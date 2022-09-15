@@ -41,6 +41,9 @@ async function task() {
   );
   for (const line of csv) {
     const lineArr = line.split(',');
+    if (lineArr.length < 3) {
+      continue;
+    }
     const name = lineArr[0],
       hash = lineArr[1],
       url = lineArr[2];
