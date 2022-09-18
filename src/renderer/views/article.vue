@@ -750,9 +750,7 @@ export default {
       if (pubResult) {
         this.$notify({
           message: `${this.newText.name}`,
-          title: `作品 ${
-            this.newText.id === undefined ? '发布' : '编辑'
-          }成功！`,
+          title: `作品${this.newText.id === undefined ? '发布' : '编辑'}成功！`,
           type: 'success',
         });
         this.visible.publish = false;
