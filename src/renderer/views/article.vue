@@ -749,8 +749,8 @@ export default {
       });
       if (pubResult) {
         this.$notify({
-          message: '',
-          title: `作品 ${this.newText.name} ${
+          message: `${this.newText.name}`,
+          title: `作品 ${
             this.newText.id === undefined ? '发布' : '编辑'
           }成功！`,
           type: 'success',
