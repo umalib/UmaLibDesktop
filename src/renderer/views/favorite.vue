@@ -15,138 +15,20 @@
         </el-button-group>
       </el-row>
 
-      <div class="block">
-        <el-pagination
-          :current-page="param.pageNum"
-          :hide-on-single-page="count <= 10"
-          :page-size="param.offset"
-          :page-sizes="[10, 20, 25, 50]"
-          :total="count"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
-      <el-table
-        v-loading="articleLoading"
-        :data="articles"
-        class="article-table"
-        row-key="id"
-        stripe
-        style="width: 100%"
+      <article-table
+        :articles="articles"
+        :count="count"
+        :el-tag-map="search.tagType2ElTagType"
+        :id2-tag="search.id2Tag"
+        :layout="'favorite'"
+        :loading="articleLoading"
+        :param="param"
+        @current-change="handleCurrentChange"
+        @size-change="handleSizeChange"
         @sort-change="handleSortChange"
-      >
-        <el-table-column
-          :index="param.offset * (param.pageNum - 1) + 1"
-          fixed
-          type="index"
-          width="54"
-        />
-        <el-table-column
-          fixed
-          label="标题"
-          prop="name"
-          sortable="custom"
-          width="200"
-        >
-          <template v-slot="cell">
-            <el-link
-              :underline="false"
-              type="primary"
-              @click="showArticle(cell.row['id'])"
-            >
-              {{ cell.row['name'] ? cell.row['name'] : '「无题」' }}
-            </el-link>
-          </template>
-        </el-table-column>
-        <el-table-column label="标签" width="140">
-          <template v-slot="cell">
-            <span v-for="tagId in cell.row['tags']" :key="tagId">
-              <el-tooltip
-                v-if="search.id2Tag[tagId].name.length > 9"
-                :content="search.id2Tag[tagId].name"
-              >
-                <el-tag
-                  :type="search.tagType2ElTagType[search.id2Tag[tagId].type]"
-                  size="mini"
-                >
-                  {{ search.id2Tag[tagId].name.substring(0, 4) }}…{{
-                    search.id2Tag[tagId].name.substring(
-                      search.id2Tag[tagId].name.length - 4,
-                    )
-                  }}
-                </el-tag>
-              </el-tooltip>
-              <el-tag
-                v-else
-                :type="search.tagType2ElTagType[search.id2Tag[tagId].type]"
-                size="mini"
-              >
-                {{ search.id2Tag[tagId].name }}
-              </el-tag>
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column label="作者" prop="author" width="150" />
-        <el-table-column label="译者" prop="translator" width="150" />
-        <el-table-column label="备注" prop="note" width="400" />
-        <el-table-column
-          fixed="right"
-          label="上传时间"
-          prop="uploadTime"
-          sortable="custom"
-          width="125"
-        >
-          <template v-slot="cell">
-            {{ formatTimeStamp(cell.row['uploadTime']) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="来源" prop="source" sortable="custom">
-          <template v-slot="cell">
-            <el-tooltip
-              v-if="cell.row['source'].startsWith('http')"
-              :content="cell.row['source']"
-            >
-              <el-link
-                :href="cell.row['source']"
-                target="_blank"
-                type="primary"
-              >
-                外部链接
-              </el-link>
-            </el-tooltip>
-            <span v-else>{{ cell.row['source'].toUpperCase() }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          fixed="right"
-          label=""
-          style="text-align: center"
-          width="64"
-        >
-          <template v-slot="cell">
-            <el-button
-              icon="el-icon-delete"
-              round
-              size="mini"
-              type="danger"
-              @click="removeFavorite(cell.row['id'])"
-            />
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="block">
-        <el-pagination
-          :current-page="param.pageNum"
-          :hide-on-single-page="count <= 10"
-          :page-size="param.offset"
-          :page-sizes="[10, 20, 25, 50]"
-          :total="count"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
+        @art-show="showArticle"
+        @favorite-delete="removeFavorite($event)"
+      />
       <el-backtop />
 
       <show-article
@@ -164,8 +46,7 @@
 
 <script>
 import connector from '@/renderer/utils/connector';
-import EmbeddedData from '@/renderer/utils/data';
-import { formatTimeStamp } from '@/renderer/utils/renderer-utils';
+import ArticleTable from '@/renderer/views/sub-components/article-table';
 import ShowArticle from '@/renderer/views/sub-components/show-article';
 
 async function fillArticles(_vue, param) {
@@ -192,7 +73,7 @@ async function fillArticles(_vue, param) {
 
 export default {
   name: 'FavoriteView',
-  components: { ShowArticle },
+  components: { ArticleTable, ShowArticle },
   data() {
     return {
       articleLoading: true,
@@ -210,7 +91,6 @@ export default {
       },
       search: {
         id2Tag: {},
-        tagType2ElTagType: EmbeddedData.elTagTypes,
       },
       selectedArt: {
         author: '',
@@ -255,16 +135,10 @@ export default {
       }
       if (art.tagLabels.length === 0) {
         art.tags.forEach(tagId =>
-          art.tagLabels.push({
-            name: this.search.id2Tag[tagId].name,
-            elType: this.search.tagType2ElTagType[
-              this.search.id2Tag[tagId].type
-            ],
-          }),
+          art.tagLabels.push(this.search.id2Tag[tagId]),
         );
       }
     },
-    formatTimeStamp,
     handleCurrentChange(val) {
       this.param.pageNum = val;
       this.searchArticle();

@@ -5,7 +5,7 @@
     class="recommend-article"
     title="作品推荐"
     width="80%"
-    @close="closeDialog"
+    @close="$emit('recommend-close')"
   >
     <el-row>
       <el-col :offset="2" :span="20">
@@ -19,7 +19,7 @@
                     {{ creatorType[creator.type] }}
                     <el-link
                       type="primary"
-                      @click="$emit('show-someone', creator.name)"
+                      @click="$emit('someone-show', creator.name)"
                     >
                       {{ creator.name }}
                     </el-link>
@@ -37,7 +37,7 @@
                       ——
                       <el-link
                         type="primary"
-                        @click="$emit('show-someone', rec.name)"
+                        @click="$emit('someone-show', rec.name)"
                       >
                         {{ rec.name }}
                       </el-link>
@@ -56,7 +56,7 @@
                     {{ novel.isNovel ? '长篇小说' : '短篇合集' }}
                     <el-link
                       type="primary"
-                      @click="$emit('show-novel', novel.id)"
+                      @click="$emit('novel-show', novel.id)"
                     >
                       {{ novel.title }}
                     </el-link>
@@ -74,7 +74,7 @@
                       ——
                       <el-link
                         type="primary"
-                        @click="$emit('show-someone', rec.name)"
+                        @click="$emit('someone-show', rec.name)"
                       >
                         {{ rec.name }}
                       </el-link>
@@ -91,7 +91,7 @@
                   <el-divider v-if="i !== 0 && !tag.noDivider" />
                   <strong>
                     系列
-                    <el-link type="primary" @click="$emit('show-tag', tag.id)">
+                    <el-link type="primary" @click="$emit('tag-show', tag.id)">
                       {{ tag.title }}
                     </el-link>
                   </strong>
@@ -108,7 +108,7 @@
                       ——
                       <el-link
                         type="primary"
-                        @click="$emit('show-someone', rec.name)"
+                        @click="$emit('someone-show', rec.name)"
                       >
                         {{ rec.name }}
                       </el-link>
@@ -127,7 +127,7 @@
                     作品
                     <el-link
                       type="primary"
-                      @click="$emit('show-art', article.id)"
+                      @click="$emit('art-show', article.id)"
                     >
                       {{ article.title }}
                     </el-link>
@@ -145,7 +145,7 @@
                       ——
                       <el-link
                         type="primary"
-                        @click="$emit('show-someone', rec.name)"
+                        @click="$emit('someone-show', rec.name)"
                       >
                         {{ rec.name }}
                       </el-link>
@@ -208,11 +208,11 @@
                 <ul>
                   <li>
                     <span>
-                      <el-link type="primary" @click="$emit('show-tag', 211)">
+                      <el-link type="primary" @click="$emit('tag-show', 211)">
                         【目白城】
                       </el-link>
                       最初由X年后的马娘的一篇二创作品
-                      <el-link type="primary" @click="$emit('show-art', 3447)">
+                      <el-link type="primary" @click="$emit('art-show', 3447)">
                         目白城：起源
                       </el-link>
                       为基础，结合其下方吐槽内容产生的匿名版系列梗文。创作方向为“目白麦昆将自己一心同体追寻幸福的方式用夸张化的财阀力量扩展到了一片区域，是马娘们追寻幸福（强调婚姻等方向）所在地”，故而被称之为目白城系列。
@@ -224,7 +224,7 @@
                   </li>
                   <li>
                     <span>
-                      <el-link type="primary" @click="$emit('show-tag', 223)">
+                      <el-link type="primary" @click="$emit('tag-show', 223)">
                         【鸭葱】
                       </el-link>
                       出自日本谚语：鸭子背着大葱来（鴨が葱を背負って来る），意为本来就很棒的事变得愈发符合自己心意了（好事成双）。该梗文创作往往以“我被前辈教导过，要和担当马娘保持适当的距离感”开头，随后在这种理念下反而了做出各种让对方愈发好感度上升的行为，最终训练员成为了背着大葱被吃干抹净的那只鸭子。
@@ -232,7 +232,7 @@
                   </li>
                   <li>
                     <span>
-                      <el-link type="primary" @click="$emit('show-tag', 200)">
+                      <el-link type="primary" @click="$emit('tag-show', 200)">
                         【寝系列】
                       </el-link>
                       段子文，最开始基于室友在睡前和你搭话突然谈起一个不知所谓话题的情景为基础。往往以“睡前听XXX说说话吧”开头，以“好了，话说完了，你可以睡了”作为结尾。话题内容比较无厘头+天马行空。其中存在“XX寝”的亚种（XX为角色名）。其中“铃鹿寝”是日站非常离谱的创作内容，旨在让无声铃鹿这种清秀系的角色说出各种过激离谱发言，如刻意希望阅读，请注意心灵卫生保护。
@@ -240,12 +240,12 @@
                   </li>
                   <li>
                     <span>
-                      <el-link type="primary" @click="$emit('show-tag', 194)">
+                      <el-link type="primary" @click="$emit('tag-show', 194)">
                         【大进综合征】
                       </el-link>
                       从角色成田大进的my
                       page发言“如果你成为了家长，孩子一定会很郁闷吧……又热血、又爱管闲事、又爱操心什么的。”超展开产生的梗创作风潮。核心可以总结为【马娘误以为自己已经和对方是老夫老妻+孩子都有了】的一种有精神性症状的综合征（第一个由成田大进发病，故命名）。该梗作品创作较早，涉及到某些角色的早期刻板印象。建议先从
-                      <el-link type="primary" @click="$emit('show-art', 569)">
+                      <el-link type="primary" @click="$emit('art-show', 569)">
                         爱丽速子 大进综合征 研究报告1期
                       </el-link>
                       开始阅读。
@@ -253,7 +253,7 @@
                   </li>
                   <li>
                     <span>
-                      <el-link type="primary" @click="$emit('show-tag', 199)">
+                      <el-link type="primary" @click="$emit('tag-show', 199)">
                         【实验记录系列】
                       </el-link>
                       以科学狂魔爱丽速子的“伪科学实验报告”格式进行各种奇怪的研究方向的主题创作。
@@ -261,7 +261,7 @@
                   </li>
                   <li>
                     <span>
-                      <el-link type="primary" @click="$emit('show-tag', 218)">
+                      <el-link type="primary" @click="$emit('tag-show', 218)">
                         【铃鹿甜点系列】
                       </el-link>
                       无声铃鹿用自己“异次元的逃亡者”的夸张速度能力，在日本各地找寻各种甜点点心，并发表品味观点的系列作。翻译内容较少，日后会有增补。
@@ -269,7 +269,7 @@
                   </li>
                   <li>
                     <span>
-                      <el-link type="primary" @click="$emit('show-tag', 219)">
+                      <el-link type="primary" @click="$emit('tag-show', 219)">
                         【霸王世代已经烂掉了】
                       </el-link>
                       爱慕织姬一脸冷漠的吐槽和自己同世代的霸王时代（好歌剧、名将怒涛等人）的不检点风纪行为。但是其实自己才是做的最过火的那个（所以说这个世代真的烂掉了。）
@@ -277,7 +277,7 @@
                   </li>
                   <li>
                     <span>
-                      <el-link type="primary" @click="$emit('show-tag', 213)">
+                      <el-link type="primary" @click="$emit('tag-show', 213)">
                         【藏头系列】
                       </el-link>
                       就是藏头书。因为翻译的问题，无法做到中日完美对应藏头。文后会附带日文原文藏头句。
@@ -285,7 +285,7 @@
                   </li>
                   <li>
                     <span>
-                      <el-link type="primary" @click="$emit('show-tag', 192)">
+                      <el-link type="primary" @click="$emit('tag-show', 192)">
                         【名作文学】
                       </el-link>
                       各类世界名作（中日欧美）的化用梗文
@@ -293,11 +293,11 @@
                   </li>
                   <li>
                     <span>
-                      <el-link type="primary" @click="$emit('show-tag', 191)">
+                      <el-link type="primary" @click="$emit('tag-show', 191)">
                         【动机黑暗的训练员】
                       </el-link>
                       动机不纯，想着找大小姐类型马娘吃软饭or榨取金钱，结果反过来被捕食的搞笑向。可从
-                      <el-link type="primary" @click="$emit('show-art', 3465)">
+                      <el-link type="primary" @click="$emit('art-show', 3465)">
                         黑暗训练员VS大小姐马娘 之 起源篇
                       </el-link>
                       开始阅读
@@ -305,7 +305,7 @@
                   </li>
                   <li>
                     <span>
-                      <el-link type="primary" @click="$emit('show-tag', 182)">
+                      <el-link type="primary" @click="$emit('tag-show', 182)">
                         【UNJASH】
                       </el-link>
                       梗名来源于日本搞笑组合UN -
@@ -314,7 +314,7 @@
                   </li>
                   <li>
                     <span>
-                      <el-link type="primary" @click="$emit('show-tag', 184)">
+                      <el-link type="primary" @click="$emit('tag-show', 184)">
                         【Yogibo广告】
                       </el-link>
                       出自一家现实中接受退役竞赛马养老的牧场————Yogibi凡尔赛假日牧场，其因为募集赛马养老资金而开发多样商品，作为现成的形象代言人，牧场中的马儿自然就可以作为广告中的宣传大使。目前生活在Yogibo养老的马娘企划马有谷水琴蕾，曾在此生活的有大树快车和名将怒涛。
@@ -322,7 +322,7 @@
                   </li>
                   <li>
                     <span>
-                      <el-link type="primary" @click="$emit('show-tag', 208)">
+                      <el-link type="primary" @click="$emit('tag-show', 208)">
                         【特雷森观察】
                       </el-link>
                       一开始出自于匿名版中因版权原因未能实装的黑历史形象马，2005年经典三冠马大震撼和2011年经典三冠马黄金巨匠之间对特雷森内的各种荒唐故事的版内下出现并进行点评，尤其是在匿名版中对二人形象的完善之后，使得以池添谦一作为主战骑手的问题儿童军团们（即希望队）因为自己的问题被隔离在组合屋，就变成大震撼以噗咿前辈的姿态来组合屋游玩和黄金巨匠一起吐槽特雷森内的各种搞笑故事。该类文往往以类似双口相声的对话形式由一句突然发言开头搭配第二人的吐槽引出本次观察的主题，再引出整个对话，从中完善了以往怪文书中所不曾展现的对特雷森学园人物风景的补充。
@@ -365,7 +365,7 @@
       </el-col>
     </el-row>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="$emit('close-recommend')">关闭</el-button>
+      <el-button @click="$emit('recommend-close')">关闭</el-button>
     </span>
   </el-dialog>
 </template>
@@ -383,11 +383,6 @@ export default {
     };
   },
   props: ['saveMe', 'visible'],
-  methods: {
-    closeDialog() {
-      this.$emit('close-recommend');
-    },
-  },
 };
 </script>
 

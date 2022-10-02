@@ -125,220 +125,39 @@
               style="line-height: 42px; margin-left: 5px"
               @change="changePrevents"
             >
-              屏蔽争议/不适的作品
+              认知过滤
             </el-checkbox>
           </el-tooltip>
         </el-col>
       </el-row>
 
-      <div class="block">
-        <el-pagination
-          :current-page="param.pageNum"
-          :hide-on-single-page="count <= 10"
-          :page-size="param.offset"
-          :page-sizes="[10, 20, 25, 50]"
-          :total="count"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
-      <el-table
-        v-loading="articleLoading"
-        :data="articles"
-        :default-sort="{ prop: 'uploadTime', order: 'descending' }"
-        class="article-table"
-        row-key="id"
-        stripe
-        style="width: 100%"
+      <article-table
+        :articles="articles"
+        :count="count"
+        :editor="cue >= 10"
+        :favorites="favorites"
+        :id2-tag="search.id2Tag"
+        :layout="'main'"
+        :loading="articleLoading"
+        :param="param"
+        @art-delete="deleteArticle"
+        @art-edit="showEditDialog"
+        @art-show="showArticle"
+        @creator-change="handleAuthorLink"
+        @current-change="handleCurrentChange"
+        @favorite-change="changeFavorites"
+        @size-change="handleSizeChange"
         @sort-change="handleSortChange"
-      >
-        <el-table-column
-          :index="param.offset * (param.pageNum - 1) + 1"
-          fixed
-          type="index"
-          width="54"
-        />
-        <el-table-column
-          fixed
-          label="标题"
-          prop="name"
-          sortable="custom"
-          width="200"
-        >
-          <template v-slot="cell">
-            <el-link
-              :underline="false"
-              type="primary"
-              @click="showArticle(cell.row['id'])"
-            >
-              {{ cell.row['name'] ? cell.row['name'] : '「无题」' }}
-            </el-link>
-          </template>
-        </el-table-column>
-        <el-table-column label="标签" width="140">
-          <template v-slot="cell">
-            <el-tooltip
-              v-for="tagId in cell.row['tags']"
-              :key="tagId"
-              effect="light"
-              placement="right"
-            >
-              <div slot="content">
-                <span v-if="search.id2Tag[tagId].name.length > 9">
-                  {{ search.id2Tag[tagId].name }}
-                </span>
-                <el-tag
-                  :type="search.tagType2ElTagType[search.id2Tag[tagId].type]"
-                  size="mini"
-                  style="margin-right: 10px"
-                >
-                  {{ search.tagType2Name[search.id2Tag[tagId].type] }}
-                </el-tag>
-                <el-button
-                  circle
-                  icon="el-icon-plus"
-                  size="mini"
-                  type="success"
-                  @click="handleTagLink(tagId, true)"
-                />
-                <el-button
-                  circle
-                  icon="el-icon-minus"
-                  size="mini"
-                  type="danger"
-                  @click="handleTagLink(tagId)"
-                />
-              </div>
-              <el-link
-                :underline="false"
-                type="primary"
-                @click="handleTagLinkWithReplace(tagId)"
-              >
-                <el-tag v-if="search.id2Tag[tagId].name.length > 9" size="mini">
-                  {{ search.id2Tag[tagId].name.substring(0, 4) }}…{{
-                    search.id2Tag[tagId].name.substring(
-                      search.id2Tag[tagId].name.length - 4,
-                    )
-                  }}
-                </el-tag>
-                <el-tag v-else size="mini">
-                  {{ search.id2Tag[tagId].name }}
-                </el-tag>
-              </el-link>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-        <el-table-column label="作者" prop="author" width="150">
-          <template v-slot="cell">
-            <el-link
-              v-if="cell.row['author']"
-              :underline="false"
-              type="primary"
-              @click="handleAuthorLink(cell.row['author'])"
-            >
-              {{ cell.row['author'] }}
-            </el-link>
-          </template>
-        </el-table-column>
-        <el-table-column label="译者" prop="translator" width="150">
-          <template v-slot="cell">
-            <el-link
-              v-if="cell.row['translator']"
-              :underline="false"
-              type="primary"
-              @click="handleAuthorLink(cell.row['translator'])"
-            >
-              {{ cell.row['translator'] }}
-            </el-link>
-          </template>
-        </el-table-column>
-        <el-table-column label="备注" prop="note" width="400" />
-        <el-table-column
-          fixed="right"
-          label="上传时间"
-          prop="uploadTime"
-          sortable="custom"
-          width="125"
-        >
-          <template v-slot="cell">
-            {{ formatTimeStamp(cell.row['uploadTime']) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="来源" prop="source" sortable="custom">
-          <template v-slot="cell">
-            <el-tooltip
-              v-if="cell.row['source'].startsWith('http')"
-              :content="cell.row['source']"
-            >
-              <el-link
-                :href="cell.row['source']"
-                target="_blank"
-                type="primary"
-              >
-                外部链接
-              </el-link>
-            </el-tooltip>
-            <span v-else>{{ cell.row['source'].toUpperCase() }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          :width="cue >= 10 ? 150 : 107"
-          fixed="right"
-          label=""
-          style="text-align: center"
-        >
-          <template v-slot="cell">
-            <el-button-group>
-              <el-button
-                v-if="cue >= 10"
-                icon="el-icon-edit"
-                round
-                size="mini"
-                type="primary"
-                @click="showEditDialog(cell.row['id'])"
-              />
-              <el-button
-                :icon="
-                  favorites[cell.row['id']]
-                    ? 'el-icon-star-on'
-                    : 'el-icon-star-off'
-                "
-                :type="favorites[cell.row['id']] ? 'success' : 'info'"
-                round
-                size="mini"
-                @click="changeFavorites(cell.row['id'])"
-              />
-              <el-button
-                icon="el-icon-delete"
-                round
-                size="mini"
-                type="danger"
-                @click="deleteArticle(cell.row['id'])"
-              />
-            </el-button-group>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="block">
-        <el-pagination
-          :current-page="param.pageNum"
-          :hide-on-single-page="count <= 10"
-          :page-size="param.offset"
-          :page-sizes="[10, 20, 25, 50]"
-          :total="count"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
+        @tag-change="handleTagLink"
+        @tag-replace="handleTagLinkWithReplace"
+      />
       <el-backtop />
 
       <show-article
         :content="content"
         :selected-art="selectedArt"
         :visible="visible.content"
-        @close-art="
+        @art-close="
           content = '';
           visible.content = false;
         "
@@ -351,27 +170,27 @@
         :tag-options="search.tagOptions"
         :title="publishTitle"
         :visible="visible.publish"
-        @close-pub="visible.publish = false"
-        @publish-article="publish"
-        @reset-art="resetNewArt"
+        @art-reset="resetNewArt"
+        @article-publish="publish"
+        @pub-close="visible.publish = false"
       />
 
       <random-articles
         :id2-tag="search.id2Tag"
         :random-list="randomList"
         :visible="visible.random"
-        @close-random="visible.random = false"
-        @show-art="showArticle"
+        @random-close="visible.random = false"
+        @art-show="showArticle"
       />
 
       <recommended-articles
         :save-me="saveMe"
         :visible="visible.recommend"
-        @close-recommend="visible.recommend = false"
-        @show-art="showArticle"
-        @show-novel="$router.push(`/menu/${$event}`)"
-        @show-someone="showSomeoneFromRec"
-        @show-tag="showTagFromRec"
+        @art-show="showArticle"
+        @novel-show="$router.push(`/menu/${$event}`)"
+        @recommend-close="visible.recommend = false"
+        @someone-show="showSomeoneFromRec"
+        @tag-show="showTagFromRec"
       />
     </el-col>
   </el-row>
@@ -380,17 +199,15 @@
 <script>
 import connector from '@/renderer/utils/connector';
 import EmbeddedData from '@/renderer/utils/data';
-import {
-  formatTimeStamp,
-  getNewTextObj,
-} from '@/renderer/utils/renderer-utils';
+import { getNewTextObj } from '@/renderer/utils/renderer-utils';
 import 'quill/dist/quill.core.css'; // import styles
 import 'quill/dist/quill.snow.css'; // for snow theme
 // import 'quill/dist/quill.bubble.css'; // for bubble theme
-import PubArticle from '@/renderer/views/sub-components/pub-article';
+import ArticleTable from '@/renderer/views/sub-components/article-table';
 import RandomArticles from '@/renderer/views/sub-components/random-articles';
 import RecommendedArticles from '@/renderer/views/sub-components/recommended-articles';
 import ShowArticle from '@/renderer/views/sub-components/show-article';
+import PubArticle from '@/renderer/views/sub-components/pub-article';
 
 function creator2SelectOption(x) {
   return { value: x, label: x };
@@ -496,7 +313,13 @@ function updateFavorites(_vue, favList) {
 
 export default {
   name: 'ArticleView',
-  components: { RecommendedArticles, RandomArticles, PubArticle, ShowArticle },
+  components: {
+    ArticleTable,
+    PubArticle,
+    RecommendedArticles,
+    RandomArticles,
+    ShowArticle,
+  },
   data() {
     return {
       articles: [],
@@ -534,8 +357,6 @@ export default {
         sensitiveTags: [],
         tagCascaderOptions: [],
         tagOptions: [],
-        tagType2ElTagType: EmbeddedData.elTagTypes,
-        tagType2Name: EmbeddedData.tagTypes,
       },
       selectedArt: {
         author: '',
@@ -630,12 +451,7 @@ export default {
       }
       if (art.tagLabels.length === 0) {
         art.tags.forEach(tagId =>
-          art.tagLabels.push({
-            name: this.search.id2Tag[tagId].name,
-            elType: this.search.tagType2ElTagType[
-              this.search.id2Tag[tagId].type
-            ],
-          }),
+          art.tagLabels.push(this.search.id2Tag[tagId]),
         );
       }
     },
@@ -655,7 +471,6 @@ export default {
         node.text.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
       );
     },
-    formatTimeStamp,
     handleAuthorLink(someone) {
       this.param.someone = someone;
       this.param.pageNum = 1;
@@ -833,7 +648,6 @@ export default {
         if (this.randomList.length) {
           this.randomList.forEach(x => {
             x.tags.sort(this.tagComparator);
-            this.fillArticleTags(x);
           });
           this.visible.random = true;
         } else {

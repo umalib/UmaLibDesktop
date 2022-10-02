@@ -9,7 +9,7 @@
     width="80%"
     @close="
       $refs.pubContent && ($refs.pubContent.wrap.scrollTop = 0);
-      $emit('close-pub');
+      $emit('pub-close');
     "
   >
     <el-scrollbar ref="pubContent" style="height: 100%">
@@ -139,13 +139,13 @@
       </el-col>
     </el-scrollbar>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="$emit('publish-article')">
+      <el-button type="primary" @click="$emit('article-publish')">
         发布
       </el-button>
-      <el-button type="danger" @click="$emit('reset-art')">
+      <el-button type="danger" @click="$emit('art-reset')">
         重置
       </el-button>
-      <el-button @click="$emit('close-pub')">取消</el-button>
+      <el-button @click="$emit('pub-close')">取消</el-button>
     </span>
   </el-dialog>
 </template>

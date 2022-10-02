@@ -8,7 +8,7 @@
     width="80%"
     @close="
       $refs.artContent && ($refs.artContent.wrap.scrollTop = 0);
-      $emit('close-art');
+      $emit('art-close');
     "
   >
     <el-scrollbar ref="artContent" style="height: 100%">
@@ -47,7 +47,7 @@
               <el-tag
                 v-for="tagLabel in selectedArt.tagLabels"
                 :key="tagLabel.name"
-                :type="tagLabel.elType"
+                :type="elTypeMap[tagLabel.type]"
                 size="mini"
               >
                 {{ convertLan(tagLabel.name) }}
@@ -78,7 +78,7 @@
     </el-scrollbar>
     <span slot="footer" class="dialog-footer">
       <el-col :offset="10" :span="4">
-        <el-button @click="$emit('close-art')">
+        <el-button @click="$emit('art-close')">
           关闭
         </el-button>
       </el-col>
@@ -151,8 +151,9 @@
 </template>
 
 <script>
-import { formatTimeStamp } from '@/renderer/utils/renderer-utils';
 import { Converter } from 'opencc-js';
+import { formatTimeStamp } from '@/renderer/utils/renderer-utils';
+import EmbeddedData from '@/renderer/utils/data';
 
 const converters = {
   cn: Converter({ from: 'hk', to: 'cn' }),
@@ -167,6 +168,7 @@ export default {
       aaFont: '',
       converter: undefined,
       descriptionSize: 'small',
+      elTypeMap: EmbeddedData.elTagTypes,
       fontSize: 'normal',
       language: 'no',
       segmentSpace: 'normal',
