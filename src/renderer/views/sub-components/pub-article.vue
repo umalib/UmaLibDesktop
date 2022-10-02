@@ -153,6 +153,14 @@
 <script>
 export default {
   name: 'pub-article',
+  props: [
+    'authorOptions',
+    'newText',
+    'publishDisable',
+    'tagOptions',
+    'title',
+    'visible',
+  ],
   data() {
     return {
       editorOptions: {
@@ -190,14 +198,7 @@ export default {
       },
     };
   },
-  props: [
-    'authorOptions',
-    'newText',
-    'publishDisable',
-    'tagOptions',
-    'title',
-    'visible',
-  ],
+  emits: ['art-reset', 'article-publish', 'pub-close'],
 };
 </script>
 

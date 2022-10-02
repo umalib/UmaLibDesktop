@@ -92,10 +92,13 @@
             :layout="'menu'"
             :loading="loading.article"
             :param="param"
+            @art-show="
+              $emit('history-add', $event);
+              showArticle($event);
+            "
             @current-change="handleCurrentChange"
             @size-change="handleSizeChange"
             @sort-change="handleSortChange"
-            @art-show="showArticle"
           />
 
           <show-article

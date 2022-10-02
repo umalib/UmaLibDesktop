@@ -2,24 +2,15 @@
   <el-row>
     <el-col :offset="2" :span="20" style="text-align: center">
       <el-row>
-        <h1>个人文库</h1>
-      </el-row>
-      <el-row style="margin: 10px auto;">
-        <el-button-group>
-          <el-button type="primary" @click="importFavorites">
-            导入
-          </el-button>
-          <el-button type="primary" @click="exportFavorites">
-            导出
-          </el-button>
-        </el-button-group>
+        <h1>借阅记录</h1>
       </el-row>
 
       <article-table
         :articles="articles"
         :count="count"
+        :el-tag-map="search.tagType2ElTagType"
         :id2-tag="search.id2Tag"
-        :layout="'favorite'"
+        :layout="'history'"
         :loading="articleLoading"
         :param="param"
         @art-show="
@@ -27,7 +18,6 @@
           showArticle($event);
         "
         @current-change="handleCurrentChange"
-        @favorite-delete="removeFavorite($event)"
         @size-change="handleSizeChange"
         @sort-change="handleSortChange"
       />
@@ -74,8 +64,9 @@ async function fillArticles(_vue, param) {
 }
 
 export default {
-  name: 'FavoriteView',
+  name: 'history',
   components: { ArticleTable, ShowArticle },
+  props: ['history', 'saveMe'],
   data() {
     return {
       articleLoading: true,
@@ -83,7 +74,6 @@ export default {
       content: '',
       contentVisible: false,
       count: 0,
-      favorites: [],
       id2Art: {},
       param: {
         offset: 10,
@@ -105,32 +95,19 @@ export default {
       },
     };
   },
-  props: ['saveMe'],
+  emits: ['history-add'],
   async created() {
     const data = await connector.get('getTags', {});
     this.search.id2Tag = data.tags;
-    this.favorites = await connector.get('getFavorites', {});
+    this.favorites = this.history
+      .filter((e, i, l) => i === l.lastIndexOf(e))
+      .filter((_, i, r) => i >= r.length - 50);
+    this.$emit('history-update', this.favorites);
     await fillArticles(this, {
-      ids: this.favorites,
+      ids: this.favorites.reverse(),
     });
   },
   methods: {
-    async exportFavorites() {
-      const path = await connector.get('exportFavorites', {});
-      if (path) {
-        this.$notify({
-          message: `${path}`,
-          title: '收藏夹导出成功！',
-          type: 'success',
-        });
-      } else {
-        this.$notify({
-          message: '',
-          title: '导出收藏夹已取消',
-          type: 'warning',
-        });
-      }
-    },
     fillArticleTags(art) {
       if (!art.tagLabels) {
         art.tagLabels = [];
@@ -162,45 +139,14 @@ export default {
       }
       this.searchArticle();
     },
-    async importFavorites() {
-      const favList = await connector.get('importFavorites', {});
-      if (!favList) {
-        this.$notify({
-          message: '',
-          title: '导入收藏夹已取消',
-          type: 'warning',
-        });
-      } else if (favList.length !== undefined) {
-        this.favorites = favList;
-        this.$notify({
-          message: '',
-          title: '收藏夹导入成功！',
-          type: 'success',
-        });
-        this.searchArticle();
-      } else {
-        this.$notify({
-          message: '',
-          title: '请选取正确的导出文件！',
-          type: 'error',
-        });
-      }
-    },
     searchArticle() {
       window.scrollTo(0, 0);
       this.contentVisible = false;
       fillArticles(this, {
-        ids: this.favorites,
+        ids: this.favorites.reverse(),
         sortBy: this.param.sortBy,
         page: this.param.pageNum,
         offset: this.param.offset,
-      });
-    },
-    async removeFavorite(id) {
-      this.favorites = await connector.get('removeFavorite', id);
-      this.searchArticle();
-      this.$message({
-        message: `取消收藏 ${this.articles[this.id2Art[id]].name}`,
       });
     },
     async showArticle(id) {

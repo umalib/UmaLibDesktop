@@ -33,10 +33,11 @@ import ArticleTable from '@/renderer/views/sub-components/article-table';
 
 export default {
   name: 'random-articles',
+  props: ['id2Tag', 'randomList', 'visible'],
   components: {
     ArticleTable,
   },
-  props: ['id2Tag', 'randomList', 'visible'],
+  emits: ['art-show', 'random-close'],
 };
 </script>
 

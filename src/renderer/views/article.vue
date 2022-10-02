@@ -142,7 +142,10 @@
         :param="param"
         @art-delete="deleteArticle"
         @art-edit="showEditDialog"
-        @art-show="showArticle"
+        @art-show="
+          $emit('history-add', $event);
+          showArticle($event);
+        "
         @creator-change="handleAuthorLink"
         @current-change="handleCurrentChange"
         @favorite-change="changeFavorites"
@@ -179,14 +182,20 @@
         :id2-tag="search.id2Tag"
         :random-list="randomList"
         :visible="visible.random"
+        @art-show="
+          $emit('history-add', $event);
+          showArticle($event);
+        "
         @random-close="visible.random = false"
-        @art-show="showArticle"
       />
 
       <recommended-articles
         :save-me="saveMe"
         :visible="visible.recommend"
-        @art-show="showArticle"
+        @art-show="
+          $emit('history-add', $event);
+          showArticle($event);
+        "
         @novel-show="$router.push(`/menu/${$event}`)"
         @recommend-close="visible.recommend = false"
         @someone-show="showSomeoneFromRec"

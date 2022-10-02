@@ -5,10 +5,11 @@ import ElementUI from 'element-ui';
 import App from '@/renderer/app.vue';
 
 import ArticleView from '@/renderer/views/article.vue';
-import CopyrightView from '@/renderer/views/copyright.vue';
-import FavoriteView from '@/renderer/views/favorite.vue';
 import ManageView from '@/renderer/views/manage.vue';
 import MenuView from '@/renderer/views/menu.vue';
+import FavoriteView from '@/renderer/views/favorite.vue';
+import HistoryView from '@/renderer/views/history.vue';
+import CopyrightView from '@/renderer/views/copyright.vue';
 import EmptyView from '@/renderer/views/empty.vue';
 
 import 'element-ui/lib/theme-chalk/index.css';
@@ -37,6 +38,7 @@ const router = new VueRouter({
       name: 'Favorite',
       component: FavoriteView,
     },
+    { path: '/history', name: 'History', component: HistoryView },
     { path: '/copyright', name: 'Copyright', component: CopyrightView },
     {
       path: '/empty',

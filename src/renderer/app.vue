@@ -4,8 +4,11 @@
       v-if="saveMeId > -4"
       :built-in-db="builtInDb"
       :cue="cue"
+      :history="history"
       :save-me="saveMeId"
       @is-safe="isSafe"
+      @history-add="history.push($event)"
+      @history-update="history = $event"
     />
     <el-divider />
     <el-row style="text-align: center">
@@ -60,12 +63,13 @@ document.title = '赛马娘同人集中楼大书库';
 export default {
   data() {
     return {
+      appVersion: undefined,
+      builtInDb: true,
       colorClz: '',
       cue: 0,
-      builtInDb: true,
+      history: [],
       saveMeId: -4,
       signInfo: EmbeddedData.signInfo,
-      appVersion: undefined,
     };
   },
 

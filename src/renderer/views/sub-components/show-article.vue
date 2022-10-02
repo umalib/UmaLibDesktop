@@ -163,6 +163,7 @@ const converters = {
 
 export default {
   name: 'ShowArticle',
+  props: ['content', 'visible', 'selectedArt'],
   data() {
     return {
       aaFont: '',
@@ -174,7 +175,7 @@ export default {
       segmentSpace: 'normal',
     };
   },
-  props: ['content', 'visible', 'selectedArt'],
+  emits: ['art-close'],
   methods: {
     convertLan(_content) {
       if (!this.converter) {

@@ -295,19 +295,25 @@ async function createWindow() {
         },
       },
       {
-        label: '总目表',
+        label: '总目',
         click() {
           mainWindow.webContents.send('menuEvent', '/menu/m');
         },
       },
       {
-        label: '收藏夹',
+        label: '个人文库',
         click() {
           mainWindow.webContents.send('menuEvent', '/favorites');
         },
       },
       {
-        label: '鸣谢',
+        label: '借阅记录',
+        click() {
+          mainWindow.webContents.send('menuEvent', '/history');
+        },
+      },
+      {
+        label: '建设碑',
         click() {
           mainWindow.webContents.send('menuEvent', '/copyright');
         },

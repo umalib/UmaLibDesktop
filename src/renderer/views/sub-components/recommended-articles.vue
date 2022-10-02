@@ -375,6 +375,7 @@ import EmbeddedData from '@/renderer/utils/data';
 
 export default {
   name: 'RecommendedArticles',
+  props: ['saveMe', 'visible'],
   data() {
     return {
       activeName: 'creator-recommend',
@@ -382,7 +383,7 @@ export default {
       recommendations: EmbeddedData.recommendations,
     };
   },
-  props: ['saveMe', 'visible'],
+  emits: ['novel-show', 'recommend-close', 'someone-show', 'tag-show'],
 };
 </script>
 

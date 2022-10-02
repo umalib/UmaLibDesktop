@@ -170,13 +170,23 @@
       <el-table-column v-else label="译者" prop="translator" width="150" />
 
       <el-table-column
-        v-if="layout === 'main' || layout === 'menu' || layout === 'favorite'"
+        v-if="
+          layout === 'main' ||
+            layout === 'menu' ||
+            layout === 'favorite' ||
+            layout === 'history'
+        "
         label="备注"
         prop="note"
         width="400"
       />
       <el-table-column
-        v-if="layout === 'main' || layout === 'menu' || layout === 'favorite'"
+        v-if="
+          layout === 'main' ||
+            layout === 'menu' ||
+            layout === 'favorite' ||
+            layout === 'history'
+        "
         label="来源"
         prop="source"
         sortable="custom"
@@ -281,12 +291,6 @@ import { formatTimeStamp } from '@/renderer/utils/renderer-utils';
 
 export default {
   name: 'ArticleTable',
-  data() {
-    return {
-      elTagMap: EmbeddedData.elTagTypes,
-      tagType2Name: EmbeddedData.tagTypes,
-    };
-  },
   props: [
     'articles',
     'count',
@@ -296,6 +300,25 @@ export default {
     'layout',
     'loading',
     'param',
+  ],
+  data() {
+    return {
+      elTagMap: EmbeddedData.elTagTypes,
+      tagType2Name: EmbeddedData.tagTypes,
+    };
+  },
+  emits: [
+    'art-delete',
+    'art-edit',
+    'art-show',
+    'creator-change',
+    'current-change',
+    'favorite-change',
+    'favorite-delete',
+    'size-change',
+    'sort-change',
+    'tag-change',
+    'tag-replace',
   ],
   methods: {
     formatTimeStamp,
