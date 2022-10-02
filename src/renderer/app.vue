@@ -113,7 +113,18 @@ export default {
     axios
       .get('https://umalib.github.io/UmaLibDesktop/update-info.json')
       .then(r => {
-        if (this.appVersion < r.data.version) {
+        const appVerArr = [
+          Number(this.appVersion.substring(0, 1)),
+          Number(this.appVersion.substring(2)),
+        ];
+        const remoteVerArr = [
+          Number(r.data.version.substring(0, 1)),
+          Number(r.data.version.substring(2)),
+        ];
+        if (
+          appVerArr[0] < remoteVerArr[0] ||
+          (appVerArr[0] === remoteVerArr[0] && appVerArr[1] < remoteVerArr[1])
+        ) {
           this.$notify({
             dangerouslyUseHTMLString: true,
             duration: 0,
