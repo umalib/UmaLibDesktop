@@ -672,6 +672,7 @@ export default {
           this.content = this.selectedArt.content;
           delete this.selectedArt.content;
           this.fillArticleTags(this.selectedArt);
+          this.$emit('history-add', this.selectedArt.id);
           this.visible.content = true;
         } else {
           this.$notify({
