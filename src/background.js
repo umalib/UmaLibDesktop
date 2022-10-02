@@ -313,7 +313,7 @@ async function createWindow() {
         },
       },
       {
-        label: '建设碑',
+        label: '纪念碑',
         click() {
           mainWindow.webContents.send('menuEvent', '/copyright');
         },
