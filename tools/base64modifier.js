@@ -31,6 +31,13 @@ function removeBase64(content) {
   return { ret, count };
 }
 
+function removeQuote(src) {
+  if (src.startsWith('"')) {
+    return eval(src);
+  }
+  return src;
+}
+
 async function task() {
   const csv = readFileSync(`${imgPath}/dict.csv`)
     .toString()
@@ -44,9 +51,9 @@ async function task() {
     if (lineArr.length < 3) {
       continue;
     }
-    const name = lineArr[0],
-      hash = lineArr[1],
-      url = lineArr[2];
+    const name = removeQuote(lineArr[0]),
+      hash = removeQuote(lineArr[1]),
+      url = removeQuote(lineArr[2]);
     if (url.startsWith('http')) {
       if (name.indexOf('Image ') !== -1) {
         md5dict[hash] = url;
