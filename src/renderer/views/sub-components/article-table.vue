@@ -109,19 +109,21 @@
       >
         <template v-slot="cell">
           <span v-for="tagId in cell.row['tags']" :key="tagId">
-            <el-tooltip
-              v-if="id2Tag[tagId].name > 9"
-              :content="id2Tag[tagId].name"
-            >
-              <el-tag :type="elTagMap[id2Tag[tagId].type]" size="mini">
-                {{ id2Tag[tagId].name.substring(0, 4) }}…{{
-                  id2Tag[tagId].name.substring(id2Tag[tagId].name.length - 4)
-                }}
+            <template v-if="tagId !== novelTag">
+              <el-tooltip
+                v-if="id2Tag[tagId].name.length > 9"
+                :content="id2Tag[tagId].name"
+              >
+                <el-tag :type="elTagMap[id2Tag[tagId].type]" size="mini">
+                  {{ id2Tag[tagId].name.substring(0, 4) }}…{{
+                    id2Tag[tagId].name.substring(id2Tag[tagId].name.length - 4)
+                  }}
+                </el-tag>
+              </el-tooltip>
+              <el-tag v-else :type="elTagMap[id2Tag[tagId].type]" size="mini">
+                {{ id2Tag[tagId].name }}
               </el-tag>
-            </el-tooltip>
-            <el-tag v-else :type="elTagMap[id2Tag[tagId].type]" size="mini">
-              {{ id2Tag[tagId].name }}
-            </el-tag>
+            </template>
           </span>
         </template>
       </el-table-column>
@@ -299,6 +301,7 @@ export default {
     'id2Tag',
     'layout',
     'loading',
+    'novelTag',
     'param',
   ],
   data() {

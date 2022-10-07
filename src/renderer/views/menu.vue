@@ -91,6 +91,7 @@
             :id2-tag="search.id2Tag"
             :layout="'menu'"
             :loading="loading.article"
+            :novel-tag="param.tagId"
             :param="param"
             @art-show="
               $emit('history-add', $event);
@@ -131,7 +132,6 @@ async function fillArticles(_vue, param) {
   _vue.id2Art = {};
   _vue.count = data.count;
   data.list.forEach(x => {
-    x.tags = x.tags.filter(id => id !== _vue.param.tagId);
     x.tags.sort(_vue.tagComparator);
     _vue.id2Art[x.id] = _vue.articles.length;
     _vue.articles.push(x);
