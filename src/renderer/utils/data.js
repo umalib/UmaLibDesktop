@@ -797,11 +797,11 @@ module.exports = {
   editors: editorList,
   recommendations,
   signInfo: {
-    content: '内容：NGA赛马娘翻译交流群 开发：风之低吟（NGA） 版本：1.10.0',
+    content: '内容：NGA赛马娘翻译交流群 开发：风之低吟（NGA） 版本：1.10.1',
     pubKey:
       '04f7c5d1bf43e06c4a119deb999c33a488fc38d1a7f6387cdc0001ed190d6b304846b3d2931fb15f819c6e57ac7ce119f8c68e376a5631d5ccfc1f712a51187123',
     sign:
-      '30450221009a425b7e0133e30894cac6124dcfa3834048f6e08c0388a0226082a570a09b7402203b57de9f6f18885e557219fc6995424c15cd49dc4830c5907ddff81b5d2619d3',
+      '304502210081df310177eaf55178aa670861762d26d832cd61cbc215f7a2ef53d05917facc02201b8d1e939562d0439c652faa60100dbe4a7e2d2c617dc749bd74574a784cd78e',
   },
   staffs: staffList,
   tagTypes: ['其他', '角色', '系列', '长篇/合集', '争议/不适'],
