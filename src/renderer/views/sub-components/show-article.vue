@@ -63,7 +63,9 @@
         <el-col
           :class="
             `ql-editor ${
-              selectedArt.tagLabels.indexOf('AA') !== -1 ? 'Saitamaar' : ''
+              selectedArt.tagLabels.filter(x => x.name === 'AA').length > 0
+                ? 'Saitamaar'
+                : ''
             }`
           "
           :offset="2"
