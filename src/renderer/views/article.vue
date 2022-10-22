@@ -691,9 +691,11 @@ export default {
       this.param.keyword = '';
       this.searchArticle();
     },
-    showTagFromRec(tagId) {
+    showTagFromRec(tagId, restIds) {
+      console.log(tagId, restIds);
       this.visible.recommend = false;
-      this.param.tagIds = [tagId];
+      this.param.tagIds =
+        restIds && restIds.length ? [tagId, ...restIds] : [tagId];
       this.param.noTagIds = [];
       this.param.someone = '';
       this.param.keyword = '';
