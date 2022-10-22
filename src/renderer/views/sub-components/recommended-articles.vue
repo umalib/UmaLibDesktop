@@ -13,7 +13,7 @@
           <el-tab-pane label="作者/译者推荐" name="creator-recommend">
             <el-scrollbar style="height: 100%">
               <div v-for="(creator, i) in recommendations.creators" :key="i">
-                <div v-if="saveMe === -3 || !creator.r">
+                <div v-if="isShown(creator.r)">
                   <el-divider v-if="i !== 0" />
                   <strong>
                     {{ creatorType[creator.type] }}
@@ -50,7 +50,7 @@
           <el-tab-pane label="长篇/合集推荐" name="novel-recommend">
             <el-scrollbar style="height: 100%">
               <div v-for="(novel, i) in recommendations.novels" :key="i">
-                <div v-if="saveMe === -3 || !novel.r">
+                <div v-if="isShown(novel.r)">
                   <el-divider v-if="i !== 0" />
                   <strong>
                     {{ novel.isNovel ? '长篇小说' : '短篇合集' }}
@@ -87,7 +87,7 @@
           <el-tab-pane label="系列推荐" name="series-recommend">
             <el-scrollbar style="height: 100%">
               <div v-for="(tag, i) in recommendations.series" :key="i">
-                <div v-if="saveMe === -3 || !tag.r">
+                <div v-if="isShown(tag.r)">
                   <el-divider v-if="i !== 0 && !tag.noDivider" />
                   <strong>
                     系列
@@ -121,7 +121,7 @@
           <el-tab-pane label="单篇作品推荐" name="art-recommend">
             <el-scrollbar style="height: 100%">
               <div v-for="(article, i) in recommendations.articles" :key="i">
-                <div v-if="saveMe === -3 || !article.r">
+                <div v-if="isShown(article.r)">
                   <el-divider v-if="i !== 0 && !article.noDivider" />
                   <strong>
                     作品
@@ -349,7 +349,7 @@
                 </span>
                 <br />
                 <span>
-                  如需要阅读，请于页面右侧取消“屏蔽争议/不适的作品”的勾选项。
+                  如需要阅读，请于搜索栏右侧取消“认知过滤”的勾选。
                 </span>
               </el-card>
               <el-divider />
@@ -382,6 +382,11 @@ export default {
       creatorType: ['作者', '译者', '译/作者'],
       recommendations: EmbeddedData.recommendations,
     };
+  },
+  methods: {
+    isShown(isR18) {
+      return this.saveMe === -3 || !isR18;
+    },
   },
   emits: ['novel-show', 'recommend-close', 'someone-show', 'tag-show'],
 };
