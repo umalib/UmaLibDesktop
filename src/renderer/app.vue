@@ -12,7 +12,10 @@
     />
     <el-divider />
     <el-row style="text-align: center">
-      <small :style="cue >= 10 ? 'font-weight: bold' : ''" @click="cue++">
+      <small
+        :style="{ 'font-weight': cue >= 10 ? 'bold' : 'initial' }"
+        @click="cue++"
+      >
         {{ signInfo.content }}
         <el-tooltip effect="light" placement="top">
           <div slot="content">

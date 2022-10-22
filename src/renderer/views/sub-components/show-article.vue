@@ -59,15 +59,15 @@
           </el-descriptions>
         </el-col>
       </el-row>
-      <el-row :class="`ql-snow ${fontSize}-font ${segmentSpace}-space`">
+      <el-row :class="['ql-snow', `${fontSize}-font`, `${segmentSpace}-space`]">
         <el-col
-          :class="
-            `ql-editor ${
-              selectedArt.tagLabels.filter(x => x.name === 'AA').length > 0
-                ? 'Saitamaar'
-                : ''
-            }`
-          "
+          :class="[
+            'ql-editor',
+            {
+              Saitamaar:
+                selectedArt.tagLabels.filter(x => x.name === 'AA').length > 0,
+            },
+          ]"
           :offset="2"
           :span="20"
           v-html="convertLan(content)"
