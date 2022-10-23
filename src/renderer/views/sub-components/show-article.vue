@@ -261,11 +261,13 @@ div.uma-article div.el-dialog__body {
     }
   }
 
-  .ql-editor.Saitamaar p {
+  .ql-editor.Saitamaar {
     font-family: 'Saitamaar', sans-serif;
-    white-space: pre;
-    font-weight: 400;
-    line-height: 1.125;
+    p {
+      white-space: pre;
+      font-weight: 400;
+      line-height: 1.125;
+    }
   }
 }
 </style>
