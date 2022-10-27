@@ -88,16 +88,29 @@
             <el-scrollbar style="height: 100%">
               <div v-for="(tag, i) in recommendations.series" :key="i">
                 <div v-if="isShown(tag.r)">
-                  <el-divider v-if="i !== 0 && !tag.noDivider" />
+                  <el-divider v-if="i !== 0" />
                   <strong>
                     系列
                     <el-link
                       type="primary"
-                      @click="$emit('tag-show', tag.id, tag.others)"
+                      @click="$emit('tag-show', tag.id, tag.join)"
                     >
                       {{ tag.title }}
                     </el-link>
                   </strong>
+                  <div v-if="tag.others">
+                    <div v-for="oTag in tag.others" :key="oTag.id">
+                      <strong>
+                        系列
+                        <el-link
+                          type="primary"
+                          @click="$emit('tag-show', oTag.id)"
+                        >
+                          {{ oTag.title }}
+                        </el-link>
+                      </strong>
+                    </div>
+                  </div>
                   <el-card
                     v-for="rec in tag.recommendations"
                     :key="rec.name"
@@ -123,9 +136,12 @@
           </el-tab-pane>
           <el-tab-pane label="单篇作品推荐" name="art-recommend">
             <el-scrollbar style="height: 100%">
-              <div v-for="(article, i) in recommendations.articles" :key="i">
+              <div
+                v-for="(article, i) in recommendations.articles"
+                :key="article.id"
+              >
                 <div v-if="isShown(article.r)">
-                  <el-divider v-if="i !== 0 && !article.noDivider" />
+                  <el-divider v-if="i !== 0" />
                   <strong>
                     作品
                     <el-link
@@ -135,6 +151,19 @@
                       {{ article.title }}
                     </el-link>
                   </strong>
+                  <div v-if="article.others">
+                    <div v-for="oArt in article.others" :key="oArt.id">
+                      <strong>
+                        作品
+                        <el-link
+                          type="primary"
+                          @click="$emit('art-show', oArt.id)"
+                        >
+                          {{ oArt.title }}
+                        </el-link>
+                      </strong>
+                    </div>
+                  </div>
                   <el-card
                     v-for="rec in article.recommendations"
                     :key="rec.name"

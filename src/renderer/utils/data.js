@@ -93,7 +93,7 @@ const recommendations = {
             '陪睡道起家的实力译者',
             '腾讯文档外链、折叠和折叠标题吐槽是其特色',
             '一己之力推动了目白城系列的翻译进程',
-            '其用心程度，年糕看了都要嫁一个女儿',
+            '其用心程度，年糕看了一定会不计代价绑也要请到目白城的罢',
           ],
         },
       ],
@@ -324,82 +324,10 @@ const recommendations = {
         },
       ],
     },
-  ],
-  series: [
-    {
-      id: 196,
-      title: '学生会会议',
-      recommendations: [
-        {
-          name: '女人的名字',
-          reason: [
-            '早期的一个很有趣的系列，虽然现在来看会有很多ooc，但是看怪文书就是要开心嘛',
-          ],
-        },
-      ],
-    },
-    {
-      id: 200,
-      title: '寝系列',
-      recommendations: [
-        {
-          name: '黑羽仙洛',
-          reason: [
-            '好，睡前听小编我说句话吧。',
-            '你有听说过寝系列吗？',
-            '传闻有的马娘喜欢在睡前和你讲讲故事，可她们口中所道出的话语，并不是每个人都有福消受。如果你有兴趣挑战一下自我，不妨试试这篇：《はい、寝之特雷森内裤大作战》',
-            '更有传闻，有一位叫做无声铃鹿的马娘，她的睡前故事是最为令人闻风丧胆的东西……如果你在探索大书库的时候发现了这种内容，请躲得越远越好哦。',
-            '好，我讲完了，你可以睡了。',
-          ],
-        },
-      ],
-    },
-    {
-      id: 204,
-      title: '数码夫妻婚后日常',
-      recommendations: [],
-    },
-    {
-      id: 205,
-      title: '数码生放送',
-      noDivider: true,
-      recommendations: [
-        {
-          name: 'byslm',
-          reason: [
-            '【数码夫妻婚后日常】【数码生放送】是两个按时间顺序推进前后之间存在联系的系列，合称为【数码夫妻系列】。',
-            '算是个人觉得翻的作品中最有烟火气的类型了，婚后日常系列主要是数码与丈夫结婚后遇到的各种事情，生放送系列与直播类似，有时会穿插数码意义不明的话语。',
-            '如果喜欢数码的话请务必去看，由于是所翻的早期作品所以可能存在错字错词不太通顺的地方，还希望喜欢数码的读者不要向我丢石头orz。',
-            '能看到这里的读者，再次感谢。衷心希望你也喜欢那个爱讲黄段子，喜欢马娘与丈夫，作为训练员尽心尽力以及在数码后面默默辅助的代理训练员丈夫。',
-          ],
-        },
-      ],
-    },
-    {
-      id: 10,
-      title: 'TS训练员系列',
-      others: [22, 29],
-      recommendations: [
-        {
-          name: '鬼道',
-          reason: [
-            'TS訓練員',
-            '顧名思義，就是關於性轉成馬娘的訓練員的故事，主要的看點便是在訓練員夾雜在男性和女性之間的性別認同感混淆，以及馬娘對其主動出擊時的性別倒錯感，雄性的意識困於雌性的身體之內，在本應是女性卻極為主動的擔當馬娘帶領下，一步步連心靈都變成完全的雌性，中間的掙扎及最後的沉淪便是最大的看點，主要推薦文為：【魯道夫 TS訓練員】、【愛慕織姬 TS訓練員】、【天狼星象徵 TS訓練員】等',
-          ],
-        },
-        {
-          name: '风之低吟',
-          reason: [
-            'TS训练员并没有单独的标签，在大书库内被视为【TS】、【马娘化】和【百合】等多个Tag的综合',
-            '目前TS训练员基本都由鬼道佬贡献，如想观赏，请认准鬼道佬的译作',
-            '不得不说该系列真的健全又涩气',
-          ],
-        },
-      ],
-    },
     {
       id: 311,
-      title: '爆进之神系列',
+      title: '爆进之神',
+      isNovel: false,
       recommendations: [
         {
           name: '鬼道',
@@ -435,12 +363,100 @@ const recommendations = {
         },
       ],
     },
-    { id: 211, title: '目白城', recommendations: [] },
-    { id: 303, title: '目白城设定', noDivider: true, recommendations: [] },
     {
-      id: 304,
-      title: '目白城电视台',
-      noDivider: true,
+      id: 229,
+      title: '两人三足，目标是星光闪耀的舞台！',
+      isNovel: true,
+      recommendations: [
+        {
+          name: '风之低吟',
+          reason: ['甜甜甜甜甜甜甜'],
+        },
+      ],
+    },
+  ],
+  series: [
+    {
+      id: 196,
+      title: '学生会会议',
+      recommendations: [
+        {
+          name: '女人的名字',
+          reason: [
+            '早期的一个很有趣的系列，虽然现在来看会有很多ooc，但是看怪文书就是要开心嘛',
+          ],
+        },
+      ],
+    },
+    {
+      id: 200,
+      title: '寝系列',
+      recommendations: [
+        {
+          name: '黑羽仙洛',
+          reason: [
+            '好，睡前听小编我说句话吧。',
+            '你有听说过寝系列吗？',
+            '传闻有的马娘喜欢在睡前和你讲讲故事，可她们口中所道出的话语，并不是每个人都有福消受。如果你有兴趣挑战一下自我，不妨试试这篇：《はい、寝之特雷森内裤大作战》',
+            '更有传闻，有一位叫做无声铃鹿的马娘，她的睡前故事是最为令人闻风丧胆的东西……如果你在探索大书库的时候发现了这种内容，请躲得越远越好哦。',
+            '好，我讲完了，你可以睡了。',
+          ],
+        },
+      ],
+    },
+    {
+      id: 204,
+      title: '数码夫妻婚后日常',
+      others: [
+        {
+          id: 205,
+          title: '数码生放送',
+        },
+      ],
+      recommendations: [
+        {
+          name: 'byslm',
+          reason: [
+            '【数码夫妻婚后日常】【数码生放送】是两个按时间顺序推进前后之间存在联系的系列，合称为【数码夫妻系列】。',
+            '算是个人觉得翻的作品中最有烟火气的类型了，婚后日常系列主要是数码与丈夫结婚后遇到的各种事情，生放送系列与直播类似，有时会穿插数码意义不明的话语。',
+            '如果喜欢数码的话请务必去看，由于是所翻的早期作品所以可能存在错字错词不太通顺的地方，还希望喜欢数码的读者不要向我丢石头orz。',
+            '能看到这里的读者，再次感谢。衷心希望你也喜欢那个爱讲黄段子，喜欢马娘与丈夫，作为训练员尽心尽力以及在数码后面默默辅助的代理训练员丈夫。',
+          ],
+        },
+      ],
+    },
+    {
+      id: 10,
+      title: 'TS训练员系列',
+      join: [22, 29],
+      recommendations: [
+        {
+          name: '鬼道',
+          reason: [
+            'TS訓練員',
+            '顧名思義，就是關於性轉成馬娘的訓練員的故事，主要的看點便是在訓練員夾雜在男性和女性之間的性別認同感混淆，以及馬娘對其主動出擊時的性別倒錯感，雄性的意識困於雌性的身體之內，在本應是女性卻極為主動的擔當馬娘帶領下，一步步連心靈都變成完全的雌性，中間的掙扎及最後的沉淪便是最大的看點，主要推薦文為：【魯道夫 TS訓練員】、【愛慕織姬 TS訓練員】、【天狼星象徵 TS訓練員】等',
+          ],
+        },
+        {
+          name: '风之低吟',
+          reason: [
+            'TS训练员并没有单独的标签，在大书库内被视为【TS】、【马娘化】和【百合】等多个Tag的综合',
+            '目前TS训练员基本都由鬼道佬贡献，如想观赏，请认准鬼道佬的译作',
+            '不得不说该系列真的健全又涩气',
+          ],
+        },
+      ],
+    },
+    {
+      id: 211,
+      title: '目白城',
+      others: [
+        { id: 303, title: '目白城设定' },
+        {
+          id: 304,
+          title: '目白城电视台',
+        },
+      ],
       recommendations: [
         {
           name: 'Takatoshi',
@@ -564,14 +580,16 @@ const recommendations = {
         },
       ],
     },
+
     {
       id: 1381,
       title: '无声铃鹿，毕业后的进路决定',
-    },
-    {
-      id: 2062,
-      title: '无声铃鹿，工作寻找中',
-      noDivider: true,
+      others: [
+        {
+          id: 2062,
+          title: '无声铃鹿，工作寻找中',
+        },
+      ],
       recommendations: [
         {
           name: '黑羽仙洛',
@@ -594,12 +612,13 @@ const recommendations = {
         },
       ],
     },
-    { id: 1746, title: '优秀素质，从毕业到同居' },
-    { id: 1747, title: '优秀素质，妊娠抑郁', noDivider: true },
     {
-      id: 2501,
-      title: '优秀素质小姐，也到了这个岁数了',
-      noDivider: true,
+      id: 1746,
+      title: '优秀素质，从毕业到同居',
+      others: [
+        { id: 1747, title: '优秀素质，妊娠抑郁' },
+        { id: 2501, title: '优秀素质小姐，也到了这个岁数了' },
+      ],
       recommendations: [
         {
           name: '黑羽仙洛',
@@ -929,6 +948,63 @@ const staffList = [
 ].filter((v, i, l) => {
   return l.indexOf(v) === i;
 });
+
+recommendations.creators.sort((a, b) => {
+  const rA = !!a.r,
+    rB = !!b.r;
+  if (rA === rB) {
+    if (a.recommendations.length === b.recommendations.length) {
+      if (a.type === b.type) {
+        return a.name > b.name ? 1 : -1;
+      }
+      return a.type - b.type;
+    }
+    return b.recommendations.length - a.recommendations.length;
+  }
+  return rA - rB;
+});
+
+recommendations.novels.sort((a, b) => {
+  const rA = !!a.r,
+    rB = !!b.r;
+  if (rA === rB) {
+    if (a.recommendations.length === b.recommendations.length) {
+      if (a.isNovel === b.isNovel) {
+        return a.title > b.title ? 1 : -1;
+      }
+      return b.isNovel - a.isNovel;
+    }
+    return b.recommendations.length - a.recommendations.length;
+  }
+  return rA - rB;
+});
+
+function getLen(l) {
+  if (!l || !l.length) {
+    return 0;
+  }
+  return l.length;
+}
+
+function tagArtComparator(a, b) {
+  const rA = !!a.r,
+    rB = !!b.r;
+  if (rA === rB) {
+    if (a.recommendations.length === b.recommendations.length) {
+      const lenA = getLen(a.others),
+        lenB = getLen(b.others);
+      if (lenA === lenB) {
+        return a.id - b.id;
+      }
+      return lenB - lenA;
+    }
+    return b.recommendations.length - a.recommendations.length;
+  }
+  return rA - rB;
+}
+
+recommendations.articles.sort(tagArtComparator);
+recommendations.series.sort(tagArtComparator);
 
 module.exports = {
   editors: editorList,
