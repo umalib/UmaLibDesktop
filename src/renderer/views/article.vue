@@ -692,7 +692,6 @@ export default {
       this.searchArticle();
     },
     showTagFromRec(tagId, restIds) {
-      console.log(tagId, restIds);
       this.visible.recommend = false;
       this.param.tagIds =
         restIds && restIds.length ? [tagId, ...restIds] : [tagId];
