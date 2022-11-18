@@ -66,6 +66,18 @@ if (!getBackgroundColor()) {
   logger.info('read background-color: ' + getBackgroundColor());
 }
 
+function chooseTitles() {
+  let rand = Math.random();
+  rand -= 0.1007;
+  if (rand < 0) {
+    return titles.mejiro;
+  }
+  rand -= 0.1998;
+  if (rand < 0) {
+    return titles.agnes;
+  }
+  return titles.origin;
+}
 const storeEvents = {
   pathConf: MD5.hex(dbManage.getPath()),
   getOrCreateConfig() {
@@ -166,19 +178,7 @@ const storeEvents = {
     return app.getVersion();
   },
 
-  chooseTitles() {
-    let rand = Math.random();
-    rand -= 0.1007;
-    if (rand < 0) {
-      return titles.mejiro;
-    }
-    rand -= 0.1998;
-    if (rand < 0) {
-      return titles.agnes;
-    }
-    return titles.origin;
-  },
-  titles: this.chooseTitles(),
+  titles: chooseTitles(),
   getTitles() {
     return this.titles;
   },
