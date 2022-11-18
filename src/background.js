@@ -13,7 +13,7 @@ const {
 } = require('electron');
 const { createProtocol } = require('vue-cli-plugin-electron-builder/lib');
 const dbManage = require('@/db-manage');
-const { themes } = require('@/main-config');
+const { titles, themes } = require('@/main-config');
 
 const { readdirSync, readFileSync, writeFileSync } = require('fs');
 const MD5 = new (require('jshashes').MD5)();
@@ -165,6 +165,23 @@ const storeEvents = {
   checkVersion() {
     return app.getVersion();
   },
+
+  chooseTitles() {
+    let rand = Math.random();
+    rand -= 0.1007;
+    if (rand < 0) {
+      return titles.mejiro;
+    }
+    rand -= 0.1998;
+    if (rand < 0) {
+      return titles.agnes;
+    }
+    return titles.origin;
+  },
+  titles: this.chooseTitles(),
+  getTitles() {
+    return this.titles;
+  },
 };
 
 // Scheme must be registered before the app is ready
@@ -283,37 +300,49 @@ async function createWindow() {
     label: '功能',
     submenu: [
       {
-        label: '大书库',
+        label: storeEvents.titles.a,
+        sublabel: '文章列表',
+        tooltip: '文章列表',
         click() {
           mainWindow.webContents.send('menuEvent', '/list');
         },
       },
       {
-        label: '管理处',
-        click() {
-          mainWindow.webContents.send('menuEvent', '/manage');
-        },
-      },
-      {
-        label: '总目',
+        label: storeEvents.titles.b,
+        sublabel: '长篇/合集目录',
+        tooltip: '长篇/合集目录',
         click() {
           mainWindow.webContents.send('menuEvent', '/menu/m');
         },
       },
       {
-        label: '个人文库',
+        label: storeEvents.titles.c,
+        sublabel: '收藏夹',
+        tooltip: '收藏夹',
         click() {
           mainWindow.webContents.send('menuEvent', '/favorites');
         },
       },
       {
-        label: '借阅记录',
+        label: storeEvents.titles.d,
+        sublabel: '阅读历史',
+        tooltip: '阅读历史',
         click() {
           mainWindow.webContents.send('menuEvent', '/history');
         },
       },
       {
-        label: '纪念碑',
+        label: storeEvents.titles.e,
+        sublabel: '管理',
+        tooltip: '管理',
+        click() {
+          mainWindow.webContents.send('menuEvent', '/manage');
+        },
+      },
+      {
+        label: storeEvents.titles.f,
+        sublabel: '鸣谢',
+        tooltip: '鸣谢',
         click() {
           mainWindow.webContents.send('menuEvent', '/copyright');
         },

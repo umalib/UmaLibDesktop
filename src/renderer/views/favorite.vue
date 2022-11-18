@@ -2,7 +2,7 @@
   <el-row>
     <el-col :offset="2" :span="20" style="text-align: center">
       <el-row>
-        <h1>个人文库</h1>
+        <h1>{{ titles.c }}</h1>
       </el-row>
       <el-row style="margin: 10px auto;">
         <el-button-group>
@@ -105,7 +105,7 @@ export default {
       },
     };
   },
-  props: ['saveMe'],
+  props: ['saveMe', 'titles'],
   async created() {
     const data = await connector.get('getTags', {});
     this.search.id2Tag = data.tags;

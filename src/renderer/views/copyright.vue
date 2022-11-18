@@ -2,8 +2,9 @@
   <el-row>
     <el-col :offset="2" :span="20" style="text-align: center">
       <el-row>
+        <h1>{{ titles.g }}</h1>
         <el-tooltip v-if="saveMe > 0" content="纪念碑注视着你……">
-          <h1>纪念碑</h1>
+          <h1>{{ titles.f }}</h1>
         </el-tooltip>
         <el-tooltip v-else content="以虚空吟唱者之名！">
           <h1>旧神方尖碑</h1>
@@ -140,7 +141,7 @@ import EmbeddedData from '@/renderer/utils/data';
 
 export default {
   name: 'copyright',
-  props: ['saveMe'],
+  props: ['saveMe', 'titles'],
   data() {
     return {
       creators: [],

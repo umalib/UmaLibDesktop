@@ -2,7 +2,7 @@
   <el-row>
     <el-col :offset="2" :span="20" style="text-align: center">
       <el-row>
-        <h1>大书库</h1>
+        <h1>{{ titles.a }}</h1>
       </el-row>
       <el-row>
         <el-col :offset="10" :span="4">
@@ -384,7 +384,7 @@ export default {
       },
     };
   },
-  props: ['builtInDb', 'cue', 'saveMe'],
+  props: ['builtInDb', 'cue', 'saveMe', 'titles'],
   async created() {
     updateFavorites(this, await connector.get('getFavorites'));
     await getTagsFromServer(this);

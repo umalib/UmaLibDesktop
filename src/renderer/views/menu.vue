@@ -2,7 +2,7 @@
   <el-row>
     <el-col :offset="2" :span="20" style="text-align: center">
       <el-row>
-        <h1>长篇/合集总目</h1>
+        <h1>{{ titles.b }}</h1>
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :replace="true" :to="{ path: '/menu/m' }">
             总目
@@ -176,7 +176,7 @@ export default {
       },
     };
   },
-  props: ['saveMe'],
+  props: ['saveMe', 'titles'],
   async created() {
     const _vue = this;
 

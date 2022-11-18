@@ -2,7 +2,7 @@
   <el-row>
     <el-col :offset="2" :span="20" style="text-align: center">
       <el-row>
-        <h1>借阅记录</h1>
+        <h1>{{ titles.d }}</h1>
       </el-row>
 
       <article-table
@@ -66,7 +66,7 @@ async function fillArticles(_vue, param) {
 export default {
   name: 'history',
   components: { ArticleTable, ShowArticle },
-  props: ['history', 'saveMe'],
+  props: ['history', 'saveMe', 'titles'],
   data() {
     return {
       articleLoading: true,

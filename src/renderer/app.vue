@@ -6,6 +6,7 @@
       :cue="cue"
       :history="history"
       :save-me="saveMeId"
+      :titles="titles"
       @is-safe="isSafe"
       @history-add="history.push($event)"
       @history-update="history = $event"
@@ -73,6 +74,7 @@ export default {
       history: [],
       saveMeId: -4,
       signInfo: EmbeddedData.signInfo,
+      titles: {},
     };
   },
 
@@ -152,6 +154,7 @@ export default {
       );
     this.builtInDb = await connector.get('checkDb', {});
     this.saveMeId = await connector.get('saveMe', {});
+    this.titles = await connector.get('getTitles', {});
   },
   methods: {
     isSafe() {
