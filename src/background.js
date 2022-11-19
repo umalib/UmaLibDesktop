@@ -68,13 +68,25 @@ if (!getBackgroundColor()) {
 
 function chooseTitles() {
   let rand = Math.random();
-  rand -= 0.1007;
+  rand -= 0.04;
   if (rand < 0) {
     return titles.mejiro;
   }
-  rand -= 0.1998;
+  rand -= 0.04;
   if (rand < 0) {
     return titles.agnes;
+  }
+  rand -= 0.04;
+  if (rand < 0) {
+    return titles.satono;
+  }
+  rand -= 0.04;
+  if (rand < 0) {
+    return titles.traincen;
+  }
+  rand -= 0.04;
+  if (rand < 0) {
+    return titles.oguri;
   }
   return titles.origin;
 }
