@@ -2,7 +2,7 @@
   <el-row>
     <el-col :offset="2" :span="20" style="text-align: center">
       <el-row>
-        <h1>{{ titles.b }}</h1>
+        <h1>{{ titles.menu }}</h1>
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :replace="true" :to="{ path: '/menu/m' }">
             总目

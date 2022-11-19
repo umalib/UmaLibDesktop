@@ -2,7 +2,7 @@
   <el-row>
     <el-col :offset="2" :span="20">
       <el-row style="text-align: center">
-        <h1>{{ titles.e }}</h1>
+        <h1>{{ titles.manage }}</h1>
       </el-row>
       <el-tabs v-if="cue >= 10" v-model="activeName" @tab-click="changeTab">
         <el-tab-pane label="创作者管理" name="author-management">

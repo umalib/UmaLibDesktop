@@ -2,7 +2,7 @@
   <el-row>
     <el-col :offset="2" :span="20" style="text-align: center">
       <el-row>
-        <h1>{{ titles.a }}</h1>
+        <h1>{{ titles.list }}</h1>
       </el-row>
       <el-row>
         <el-col :offset="10" :span="4">

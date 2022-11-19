@@ -300,7 +300,7 @@ async function createWindow() {
     label: '功能',
     submenu: [
       {
-        label: storeEvents.titles.a,
+        label: storeEvents.titles.list,
         sublabel: '文章列表',
         tooltip: '文章列表',
         click() {
@@ -308,7 +308,7 @@ async function createWindow() {
         },
       },
       {
-        label: storeEvents.titles.b,
+        label: storeEvents.titles.menu,
         sublabel: '长篇/合集目录',
         tooltip: '长篇/合集目录',
         click() {
@@ -316,7 +316,7 @@ async function createWindow() {
         },
       },
       {
-        label: storeEvents.titles.c,
+        label: storeEvents.titles.favorite,
         sublabel: '收藏夹',
         tooltip: '收藏夹',
         click() {
@@ -324,7 +324,7 @@ async function createWindow() {
         },
       },
       {
-        label: storeEvents.titles.d,
+        label: storeEvents.titles.history,
         sublabel: '阅读历史',
         tooltip: '阅读历史',
         click() {
@@ -332,7 +332,7 @@ async function createWindow() {
         },
       },
       {
-        label: storeEvents.titles.e,
+        label: storeEvents.titles.manage,
         sublabel: '管理',
         tooltip: '管理',
         click() {
@@ -340,7 +340,7 @@ async function createWindow() {
         },
       },
       {
-        label: storeEvents.titles.f,
+        label: storeEvents.titles.copyright,
         sublabel: '鸣谢',
         tooltip: '鸣谢',
         click() {

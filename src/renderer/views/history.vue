@@ -2,7 +2,7 @@
   <el-row>
     <el-col :offset="2" :span="20" style="text-align: center">
       <el-row>
-        <h1>{{ titles.d }}</h1>
+        <h1>{{ titles.history }}</h1>
       </el-row>
 
       <article-table
