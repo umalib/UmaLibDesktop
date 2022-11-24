@@ -436,29 +436,37 @@ module.exports = {
       });
     }
     if (param.keyword) {
-      const condition = [];
-      param.keyword
-        .split(' ')
-        .filter(str => str.length > 0)
-        .forEach(k => {
-          condition.push({
-            name: {
-              contains: k,
-            },
-          });
-          condition.push({
-            note: {
-              contains: k,
-            },
-          });
-          condition.push({
-            source: {
-              contains: k,
-            },
-          });
-        });
+      const keys = param.keyword.split(/\s/).filter(c => c.length > 0);
       findManyOptions.where.AND.push({
-        OR: condition,
+        OR: [
+          {
+            AND: keys.map(c => {
+              return {
+                name: {
+                  contains: c,
+                },
+              };
+            }),
+          },
+          {
+            AND: keys.map(c => {
+              return {
+                note: {
+                  contains: c,
+                },
+              };
+            }),
+          },
+          {
+            OR: keys.map(c => {
+              return {
+                source: {
+                  contains: c,
+                },
+              };
+            }),
+          },
+        ],
       });
     }
     if (param.someone) {
