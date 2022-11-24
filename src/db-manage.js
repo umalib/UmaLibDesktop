@@ -436,24 +436,29 @@ module.exports = {
       });
     }
     if (param.keyword) {
-      findManyOptions.where.AND.push({
-        OR: [
-          {
+      const condition = [];
+      param.keyword
+        .split(' ')
+        .filter(str => str.length > 0)
+        .forEach(k => {
+          condition.push({
             name: {
-              contains: param.keyword,
+              contains: k,
             },
-          },
-          {
+          });
+          condition.push({
             note: {
-              contains: param.keyword,
+              contains: k,
             },
-          },
-          {
+          });
+          condition.push({
             source: {
-              contains: param.keyword,
+              contains: k,
             },
-          },
-        ],
+          });
+        });
+      findManyOptions.where.AND.push({
+        OR: condition,
       });
     }
     if (param.someone) {
