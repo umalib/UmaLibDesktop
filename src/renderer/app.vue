@@ -62,8 +62,6 @@ import connector from '@/renderer/utils/connector';
 import EmbeddedData from '@/renderer/utils/data';
 import axios from 'axios';
 
-document.title = '赛马娘同人集中楼大书库';
-
 export default {
   data() {
     return {
@@ -155,6 +153,7 @@ export default {
     this.builtInDb = await connector.get('checkDb', {});
     this.saveMeId = await connector.get('saveMe', {});
     this.titles = await connector.get('getTitles', {});
+    document.title = this.titles.name;
   },
   methods: {
     isSafe() {
