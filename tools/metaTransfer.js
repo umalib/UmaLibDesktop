@@ -35,12 +35,24 @@ async function task() {
     });
   }
   if (creators) {
-    await prisma.creator.create({
-      data: {
-        names: creators.names,
-      },
-    });
+    if ((await prisma.creator.count()) > 0) {
+      await prisma.creator.update({
+        where: {
+          id: 1,
+        },
+        data: {
+          names: creators.names,
+        },
+      });
+    } else {
+      await prisma.creator.create({
+        data: {
+          names: creators.names,
+        },
+      });
+    }
   }
+  await prisma.$queryRaw`vacuum;`;
   await prisma.$disconnect();
 }
 

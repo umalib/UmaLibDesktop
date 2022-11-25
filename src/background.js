@@ -201,18 +201,33 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } },
 ]);
 
+function getDefaultFullScreen() {
+  return configStore.get('full-screen');
+}
+
+function setDefaultFullScreen(isFullScreen) {
+  configStore.set('full-screen', isFullScreen);
+  return isFullScreen;
+}
+
+if (getDefaultFullScreen() === undefined) {
+  setDefaultFullScreen(true);
+}
+
 async function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1600,
     height: 900,
+    minWidth: 720,
+    minHeight: 480,
     show: false,
     title: '赛马娘同人集中楼大书库',
     webPreferences: {
+      contextIsolation: false,
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-      contextIsolation: false,
     },
   });
 
@@ -268,7 +283,10 @@ async function createWindow() {
     // Load the index.html when not in development
     await mainWindow.loadURL('app://./index.html');
   }
-  mainWindow.maximize();
+  if (getDefaultFullScreen()) {
+    logger.info('set full screen');
+    mainWindow.maximize();
+  }
   mainWindow.show();
 
   const template = [];
@@ -278,8 +296,63 @@ async function createWindow() {
     });
   }
   template.push({
-    label: '文件',
+    label: '功能',
     submenu: [
+      {
+        label: storeEvents.titles.list,
+        sublabel: '文章列表',
+        tooltip: '文章列表',
+        accelerator: process.platform === 'darwin' ? 'Cmd+1' : 'Ctrl+1',
+        click() {
+          mainWindow.webContents.send('menuEvent', '/list');
+        },
+      },
+      {
+        label: storeEvents.titles.menu,
+        sublabel: '长篇/合集目录',
+        tooltip: '长篇/合集目录',
+        accelerator: process.platform === 'darwin' ? 'Cmd+2' : 'Ctrl+2',
+        click() {
+          mainWindow.webContents.send('menuEvent', '/menu/m');
+        },
+      },
+      {
+        label: storeEvents.titles.favorite,
+        sublabel: '收藏夹',
+        tooltip: '收藏夹',
+        accelerator: process.platform === 'darwin' ? 'Cmd+3' : 'Ctrl+3',
+        click() {
+          mainWindow.webContents.send('menuEvent', '/favorites');
+        },
+      },
+      {
+        label: storeEvents.titles.history,
+        sublabel: '阅读历史',
+        tooltip: '阅读历史',
+        accelerator: process.platform === 'darwin' ? 'Cmd+4' : 'Ctrl+4',
+        click() {
+          mainWindow.webContents.send('menuEvent', '/history');
+        },
+      },
+      {
+        label: storeEvents.titles.manage,
+        sublabel: '管理',
+        tooltip: '管理',
+        accelerator: process.platform === 'darwin' ? 'Cmd+5' : 'Ctrl+5',
+        click() {
+          mainWindow.webContents.send('menuEvent', '/manage');
+        },
+      },
+      {
+        label: storeEvents.titles.copyright,
+        sublabel: '鸣谢',
+        tooltip: '鸣谢',
+        accelerator: process.platform === 'darwin' ? 'Cmd+6' : 'Ctrl+6',
+        click() {
+          mainWindow.webContents.send('menuEvent', '/copyright');
+        },
+      },
+      { type: 'separator' },
       {
         label: '选择数据库',
         async click() {
@@ -304,61 +377,8 @@ async function createWindow() {
           mainWindow.webContents.send('refreshPage', '');
         },
       },
-      { label: '刷新', role: 'reload' },
-      { role: 'quit', label: '退出' },
-    ],
-  });
-  template.push({
-    label: '功能',
-    submenu: [
-      {
-        label: storeEvents.titles.list,
-        sublabel: '文章列表',
-        tooltip: '文章列表',
-        click() {
-          mainWindow.webContents.send('menuEvent', '/list');
-        },
-      },
-      {
-        label: storeEvents.titles.menu,
-        sublabel: '长篇/合集目录',
-        tooltip: '长篇/合集目录',
-        click() {
-          mainWindow.webContents.send('menuEvent', '/menu/m');
-        },
-      },
-      {
-        label: storeEvents.titles.favorite,
-        sublabel: '收藏夹',
-        tooltip: '收藏夹',
-        click() {
-          mainWindow.webContents.send('menuEvent', '/favorites');
-        },
-      },
-      {
-        label: storeEvents.titles.history,
-        sublabel: '阅读历史',
-        tooltip: '阅读历史',
-        click() {
-          mainWindow.webContents.send('menuEvent', '/history');
-        },
-      },
-      {
-        label: storeEvents.titles.manage,
-        sublabel: '管理',
-        tooltip: '管理',
-        click() {
-          mainWindow.webContents.send('menuEvent', '/manage');
-        },
-      },
-      {
-        label: storeEvents.titles.copyright,
-        sublabel: '鸣谢',
-        tooltip: '鸣谢',
-        click() {
-          mainWindow.webContents.send('menuEvent', '/copyright');
-        },
-      },
+      { type: 'separator' },
+      { label: '退出', role: 'quit' },
     ],
   });
   template.push({
@@ -380,18 +400,34 @@ async function createWindow() {
       { label: '全选', role: 'selectAll' },
     ],
   });
-  const colorSubMenu = [];
-  themes.forEach(c => {
-    colorSubMenu.push({
-      label: c.label,
-      click() {
-        setRendererBackgroundColor(c.color);
-      },
-    });
-  });
   template.push({
-    label: '主题',
-    submenu: colorSubMenu,
+    label: '界面',
+    submenu: [
+      {
+        label: '主题',
+        submenu: themes.map(c => {
+          return {
+            label: c.label,
+            click() {
+              setRendererBackgroundColor(c.color);
+            },
+          };
+        }),
+      },
+      { label: '刷新', role: 'reload' },
+      { type: 'separator' },
+      { label: '全屏', role: 'togglefullscreen' },
+      { label: '最小化', role: 'minimize' },
+      { label: '重置', role: 'resetzoom' },
+      {
+        label: '启动时最大化',
+        type: 'checkbox',
+        checked: getDefaultFullScreen(),
+        click(event) {
+          setDefaultFullScreen(event.checked);
+        },
+      },
+    ],
   });
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
   setRendererBackgroundColor();
