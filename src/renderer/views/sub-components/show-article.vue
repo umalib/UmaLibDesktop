@@ -28,17 +28,33 @@
               {{ formatTimeStamp(selectedArt.uploadTime) }}
             </el-descriptions-item>
             <el-descriptions-item label="来源">
-              <el-link
+              <span
                 v-if="
                   selectedArt.source && selectedArt.source.startsWith('http')
                 "
-                :href="selectedArt.source"
-                style="font-size: inherit;"
-                target="_blank"
-                type="primary"
               >
-                {{ selectedArt.source }}
-              </el-link>
+                <span v-if="selectedArt.source.indexOf(']|[') !== -1">
+                  <el-link
+                    v-for="src in selectedArt.source.split(']|[')"
+                    :key="src"
+                    :href="src"
+                    style="display: block; font-size: inherit;"
+                    target="_blank"
+                    type="primary"
+                  >
+                    {{ src }}
+                  </el-link>
+                </span>
+                <el-link
+                  v-else
+                  :href="selectedArt.source"
+                  style="font-size: inherit;"
+                  target="_blank"
+                  type="primary"
+                >
+                  {selectArt.source}
+                </el-link>
+              </span>
               <span v-else>
                 {{ selectedArt.source ? selectedArt.source.toUpperCase() : '' }}
               </span>

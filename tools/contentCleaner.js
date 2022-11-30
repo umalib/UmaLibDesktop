@@ -23,6 +23,10 @@ function cleaner(content) {
   return content;
 }
 
+function cleanBlank(src) {
+  return src.replace(/^\s*/, '').replace(/\s*$/, '');
+}
+
 logger.info(`cleaning db ${path}`);
 
 async function task() {
@@ -54,13 +58,11 @@ async function task() {
         );
       }
     }
-    const author = art.author.replace(/^\s*/, '').replace(/\s*$/, '');
-    const translator = art.translator.replace(/^\s*/, '').replace(/\s*$/, '');
-    const name = art.name.replace(/^\s*/, '').replace(/\s*$/, '');
-    let source = art.source;
-    if (source.startsWith(' ')) {
-      source = source.replace(/^\s+/, '');
-    }
+    const author = cleanBlank(art.author);
+    const translator = cleanBlank(art.translator);
+    const name = cleanBlank(art.name);
+    const note = cleanBlank(art.note);
+    let source = cleanBlank(art.source);
     if (source.startsWith('[')) {
       source = source.substring(1);
     }
@@ -101,6 +103,9 @@ async function task() {
     if (art.source.length !== source.length) {
       flags.push('source');
     }
+    if (art.note.length !== note.length) {
+      flags.push('note');
+    }
     if (flags.length) {
       logger.info(
         `update ${flags.join(', ')} of article ${art.id} [${art.name}]`,
@@ -110,8 +115,9 @@ async function task() {
           name,
           author,
           translator,
-          content,
+          note,
           source,
+          content,
         },
         where: {
           id: art.id,
