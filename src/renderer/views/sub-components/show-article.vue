@@ -52,7 +52,7 @@
                   target="_blank"
                   type="primary"
                 >
-                  {selectArt.source}
+                  {{ selectedArt.source }}
                 </el-link>
               </span>
               <span v-else>
