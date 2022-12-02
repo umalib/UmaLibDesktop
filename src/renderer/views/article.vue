@@ -628,7 +628,7 @@ export default {
     async showEditDialog(id) {
       const art = this.articles[this.id2Art[id]];
       this.fillArticleTags(art);
-      this.publishTitle = `修改作品 ${art.name}`;
+      this.publishTitle = `正在修改 ${art.name}`;
       this.newText = {
         author: art.author,
         content: await connector.get('getArtContent', id),

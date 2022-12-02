@@ -142,7 +142,11 @@
       <el-button type="primary" @click="$emit('article-publish')">
         发布
       </el-button>
-      <el-button type="danger" @click="$emit('art-reset')">
+      <el-button
+        :disabled="newText.id"
+        type="danger"
+        @click="$emit('art-reset')"
+      >
         重置
       </el-button>
       <el-button @click="$emit('pub-close')">取消</el-button>
