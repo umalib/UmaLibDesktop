@@ -34,16 +34,20 @@
                 "
               >
                 <span v-if="selectedArt.source.indexOf(']|[') !== -1">
-                  <el-link
-                    v-for="src in selectedArt.source.split(']|[')"
+                  <span
+                    v-for="(src, index) in selectedArt.source.split(']|[')"
                     :key="src"
-                    :href="src"
-                    style="display: block; font-size: inherit;"
-                    target="_blank"
-                    type="primary"
                   >
-                    {{ src }}
-                  </el-link>
+                    <br v-if="index !== 0" />
+                    <el-link
+                      :href="src"
+                      style="font-size: inherit;"
+                      target="_blank"
+                      type="primary"
+                    >
+                      {{ src }}
+                    </el-link>
+                  </span>
                 </span>
                 <el-link
                   v-else
