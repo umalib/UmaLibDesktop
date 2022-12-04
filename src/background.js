@@ -300,7 +300,7 @@ async function createWindow() {
     submenu: [
       {
         label: storeEvents.titles.list,
-        subLabel: '文章列表',
+        sublabel: '文章列表',
         toolTip: '文章列表',
         accelerator: process.platform === 'darwin' ? 'Cmd+1' : 'Ctrl+1',
         click() {
@@ -309,7 +309,7 @@ async function createWindow() {
       },
       {
         label: storeEvents.titles.menu,
-        subLabel: '长篇/合集目录',
+        sublabel: '长篇/合集目录',
         toolTip: '长篇/合集目录',
         accelerator: process.platform === 'darwin' ? 'Cmd+2' : 'Ctrl+2',
         click() {
@@ -318,7 +318,7 @@ async function createWindow() {
       },
       {
         label: storeEvents.titles.favorite,
-        subLabel: '收藏夹',
+        sublabel: '收藏夹',
         toolTip: '收藏夹',
         accelerator: process.platform === 'darwin' ? 'Cmd+3' : 'Ctrl+3',
         click() {
@@ -327,7 +327,7 @@ async function createWindow() {
       },
       {
         label: storeEvents.titles.history,
-        subLabel: '阅读历史',
+        sublabel: '阅读历史',
         toolTip: '阅读历史',
         accelerator: process.platform === 'darwin' ? 'Cmd+4' : 'Ctrl+4',
         click() {
@@ -336,7 +336,7 @@ async function createWindow() {
       },
       {
         label: storeEvents.titles.manage,
-        subLabel: '管理',
+        sublabel: '管理',
         toolTip: '管理',
         accelerator: process.platform === 'darwin' ? 'Cmd+5' : 'Ctrl+5',
         click() {
@@ -345,7 +345,7 @@ async function createWindow() {
       },
       {
         label: storeEvents.titles.copyright,
-        subLabel: '鸣谢',
+        sublabel: '鸣谢',
         toolTip: '鸣谢',
         accelerator: process.platform === 'darwin' ? 'Cmd+6' : 'Ctrl+6',
         click() {
@@ -421,8 +421,8 @@ async function createWindow() {
       { label: '重置', role: 'resetzoom' },
       {
         label: '启动时最大化',
-        subLabel: '启动时是否将窗口最大化',
-        toolTip: '启动时是否将窗口最大化',
+        sublabel: '是/否',
+        toolTip: '是/否',
         type: 'checkbox',
         checked: getDefaultFullScreen(),
         click(event) {
