@@ -80,6 +80,15 @@ const titles = {
     copyright: '柜台', // 鸣谢
     name: '小栗帽的幸福食堂', // 大书库
   },
+  bourbon: {
+    list: '作战模拟', // 文章列表
+    menu: '势力情报', // 长篇合集目录
+    favorite: '驾驶员休息室', // 收藏夹
+    history: '作战记录', // 历史记录
+    manage: '维修室', // 元数据管理
+    copyright: '状态一览', // 鸣谢
+    name: '美浦波旁格纳库', // 大书库
+  },
 };
 
 module.exports = {
