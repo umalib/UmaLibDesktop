@@ -123,11 +123,28 @@
         <el-divider />
         <el-col :offset="8" :span="8">
           <el-input
-            v-model="keyword"
+            v-if="failure > 2"
+            v-model="password"
+            disabled
+            placeholder="枯树洞已不会回应你……"
+          />
+          <el-input
+            v-else
+            v-model="password"
             placeholder="枯树洞看着你"
             style="width: 100%"
           >
-            <el-button slot="append" @click="jump">爱丽丝</el-button>
+            <el-button slot="append" @click="jump">
+              爱丽丝{{
+                failure === 0
+                  ? '？'
+                  : new Array(failure)
+                      .join(',')
+                      .split(',')
+                      .map(() => '！')
+                      .join('')
+              }}
+            </el-button>
           </el-input>
         </el-col>
       </el-row>
@@ -146,7 +163,8 @@ export default {
     return {
       creators: [],
       editors: EmbeddedData.editors,
-      keyword: '',
+      failure: 0,
+      password: '',
       staffs: EmbeddedData.staffs,
     };
   },
@@ -156,7 +174,7 @@ export default {
   },
   methods: {
     async jump() {
-      if (this.keyword === (await connector.get('getPwd', {}))) {
+      if (this.password === (await connector.get('getPwd', {}))) {
         connector.get('isSafe', {}).then();
         this.$notify({
           message: '',
@@ -171,6 +189,9 @@ export default {
           title: '退下，无礼者！',
           type: 'error',
         });
+        if (++this.failure > 2) {
+          this.password = '';
+        }
       }
     },
   },
