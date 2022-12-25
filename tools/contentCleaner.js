@@ -140,6 +140,26 @@ async function task() {
       });
     }
   }
+  await prisma.tagged.deleteMany({
+    where: {
+      OR: [
+        {
+          NOT: {
+            artId: {
+              in: articles.map(x => x.id),
+            },
+          },
+        },
+        {
+          NOT: {
+            tagId: {
+              in: tags.map(x => x.id),
+            },
+          },
+        },
+      ],
+    },
+  });
 }
 
 task().then(async () => {
