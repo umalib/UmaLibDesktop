@@ -153,7 +153,7 @@ module.exports = {
         artId,
       },
     });
-    await prisma.article.deleteMany({
+    await prisma.article.delete({
       where: {
         id: artId,
       },
@@ -587,7 +587,7 @@ module.exports = {
         }
       }
       await prisma['tagged'].deleteMany({ where: { tagId } });
-      await prisma.tag.deleteMany({ where: { id: tagId } });
+      await prisma.tag.delete({ where: { id: tagId } });
     }
     if (param['tagLabel']) {
       await prisma.tag.update({
