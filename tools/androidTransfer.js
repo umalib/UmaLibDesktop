@@ -1,10 +1,12 @@
 const { PrismaClient } = require('@prisma/client');
 const { copyFileSync } = require('fs');
 const { join, resolve } = require('path');
-const { path, android } = require('./config.js');
+const { path } = require('./config.js');
 const logger = require('log4js').getLogger('transfer');
 logger.level = 'info';
 
+const android = path.replace('data/', 'data/android/');
+logger.info(`transfer ${path} to ${android}`);
 copyFileSync(path, android);
 logger.info('copy done');
 
