@@ -117,8 +117,8 @@ export default {
       .get('https://umalib.github.io/UmaLibDesktop/update-info.json')
       .then(r => {
         const appVerArr = [
-          Number(this.appVersion.substring(0, 1)),
-          Number(this.appVersion.substring(2)),
+          Number(this.appVersion.app.substring(0, 1)),
+          Number(this.appVersion.app.substring(2)),
         ];
         const remoteVerArr = [
           Number(r.data.version.substring(0, 1)),

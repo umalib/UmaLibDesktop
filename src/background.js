@@ -109,6 +109,7 @@ const storeEvents = {
   getOrCreateConfig() {
     const defaultConf = {
       favorites: [],
+      dbVersion: 0,
     };
     let ret = configStore.get(this.pathConf);
     if (!ret) {
@@ -201,7 +202,7 @@ const storeEvents = {
   },
 
   checkVersion() {
-    return app.getVersion();
+    return { app: app.getVersion(), db: this.getOrCreateConfig().dbVersion };
   },
 
   titles: chooseTitles(),
