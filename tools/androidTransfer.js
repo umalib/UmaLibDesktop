@@ -5,7 +5,7 @@ const { path } = require('./config.js');
 const logger = require('log4js').getLogger('transfer');
 logger.level = 'info';
 
-const android = path.replace('data/', 'data/android/');
+const android = path.replace(/data\/(slib\/)?/, 'data/android/');
 logger.info(`transfer ${path} to ${android}`);
 copyFileSync(path, android);
 logger.info('copy done');
