@@ -1,5 +1,4 @@
 const { PrismaClient } = require('@prisma/client');
-const { join, resolve } = require('path');
 
 let logger = null;
 let embeddedDbPath = null;
@@ -137,15 +136,10 @@ module.exports = {
       ).names,
     );
   },
-  config(_isDevelopment, _logger) {
-    embeddedDbPath = _isDevelopment
-      ? join(resolve('./prisma/main.db'))
-      : join(process.resourcesPath, './prisma/main.db');
-    dbPath = embeddedDbPath;
+  config(_logger, _dbPath) {
     logger = _logger;
-    if (_isDevelopment) {
-      logger.level = 'debug';
-    }
+    embeddedDbPath = _dbPath;
+    dbPath = embeddedDbPath;
   },
   async deleteArt(artId) {
     await prisma['tagged'].deleteMany({

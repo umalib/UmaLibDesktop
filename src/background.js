@@ -15,11 +15,17 @@ const { createProtocol } = require('vue-cli-plugin-electron-builder/lib');
 const dbManage = require('@/db-manage');
 const { titles, themes } = require('@/main-config');
 
-const { readdirSync, readFileSync, writeFileSync } = require('fs');
+const {
+  existsSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+  copyFileSync,
+} = require('fs');
 const MD5 = new (require('jshashes').MD5)();
 const log4js = require('log4js');
 const { homedir } = require('os');
-const { join } = require('path');
+const { resolve, join } = require('path');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -42,10 +48,18 @@ log4js.configure({
   },
 });
 const logger = log4js.getLogger('background');
+const dbLogger = log4js.getLogger('db-manage');
+const userDbPath = join(app.getPath('userData'), './main.db');
 if (isDevelopment) {
   logger.level = 'debug';
+  dbLogger.level = 'debug';
+  copyFileSync(join(resolve('./prisma/main.db')), userDbPath);
 }
-dbManage.config(isDevelopment, log4js.getLogger('db-manage'));
+
+if (!existsSync(userDbPath)) {
+  copyFileSync(join(process.resourcesPath, './prisma/main.db'), userDbPath);
+}
+dbManage.config(dbLogger, userDbPath);
 
 const configStore = new (require('electron-store'))();
 logger.debug(`use config path: ${configStore.path}`);
