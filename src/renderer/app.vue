@@ -124,6 +124,7 @@ export default {
           Number(r.data.version.substring(0, 1)),
           Number(r.data.version.substring(2)),
         ];
+        let notifyFlag = true;
         if (
           appVerArr[0] < remoteVerArr[0] ||
           (appVerArr[0] === remoteVerArr[0] && appVerArr[1] < remoteVerArr[1])
@@ -133,9 +134,22 @@ export default {
             duration: 0,
             message: `发现新版本 v${r.data.version}！请前往下载：<a href='${r.data.url}' target='_blank'>下载地址</a>`,
             title: '发现新版本',
-            type: 'info',
+            type: 'warning',
           });
-        } else {
+          notifyFlag = false;
+        }
+        const remoteDbVer = Number(r.data.dbVersion);
+        if (!this.appVersion.db || Number(this.appVersion.db) < remoteDbVer) {
+          this.$notify({
+            dangerouslyUseHTMLString: true,
+            duration: 0,
+            message: `发现新数据库版本 ${r.data.dbVersion}！点击下载：`,
+            title: '发现新数据库',
+            type: 'warning',
+          });
+          notifyFlag = false;
+        }
+        if (notifyFlag) {
           this.$notify({
             message: '',
             title: '已更新到最新版本',

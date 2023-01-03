@@ -26,6 +26,7 @@ const MD5 = new (require('jshashes').MD5)();
 const log4js = require('log4js');
 const { homedir } = require('os');
 const { resolve, join } = require('path');
+const axios = require('axios');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -58,6 +59,7 @@ if (isDevelopment) {
 
 if (!existsSync(userDbPath)) {
   copyFileSync(join(process.resourcesPath, './prisma/main.db'), userDbPath);
+  logger.info(`copy default database to user data folder: ${userDbPath}`);
 }
 dbManage.config(dbLogger, userDbPath);
 
@@ -228,6 +230,21 @@ function setDefaultFullScreen(isFullScreen) {
 if (getDefaultFullScreen() === undefined) {
   setDefaultFullScreen(true);
 }
+
+async function getDb() {
+  try {
+    const version = (
+      await axios.get('https://umalib.github.io/UmaLibDesktop/update-info.json')
+    ).data['db_version'];
+    return version;
+  } catch (e) {
+    logger.error(e);
+  }
+  return 0;
+}
+getDb().then(ret => {
+  console.log(ret);
+});
 
 async function createWindow() {
   // Create the browser window.
