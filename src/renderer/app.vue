@@ -52,6 +52,18 @@
         </p>
       </el-col>
     </el-row>
+    <el-dialog
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :show-close="false"
+      :visible="downloadDialog.visible"
+      center
+      :title="downloadDialog.title"
+      width="80%"
+    >
+      <p>{{ downloadDialog.info }}</p>
+      <el-progress :percentage="downloadDialog.progress" />
+    </el-dialog>
   </div>
 </template>
 
@@ -69,6 +81,12 @@ export default {
       builtInDb: true,
       colorClz: '',
       cue: 0,
+      downloadDialog: {
+        info: '',
+        progress: 0,
+        title: '数据库下载中……',
+        visible: false,
+      },
       history: [],
       saveMeId: -4,
       signInfo: EmbeddedData.signInfo,
@@ -143,7 +161,7 @@ export default {
           this.$notify({
             dangerouslyUseHTMLString: true,
             duration: 0,
-            message: `发现新数据库版本 ${r.data.dbVersion}！点击下载：`,
+            message: `发现新数据库版本 ${r.data.dbVersion}！<a on-click="downloadDb(${remoteDbVer})" href="javascript:void(0)">点击下载</a>`,
             title: '发现新数据库',
             type: 'warning',
           });
@@ -182,6 +200,30 @@ export default {
       });
       this.builtInDb = !path;
       this.saveMeId = await connector.get('saveMe', {});
+    },
+    async downloadDb(dbVersion) {
+      this.downloadDialog.progress = 0;
+      const _vue = this;
+      const ret = await axios.get({
+        url: 'https://umalib.github.io/UmaLibDesktop/main.db',
+        method: 'get',
+        responseType: 'blob',
+        params: {},
+        onDownloadProgress(e) {
+          _vue.downloadDialog.progress = Math.round((e.loaded * 100) / e.total);
+          _vue.downloadDialog.info = `已下载：${e.loaded}/${e.total}`;
+        },
+      });
+      try {
+        const blob = new Blob([ret]);
+        console.log(blob);
+      } catch (e) {
+        this.$notify({
+          message: '下载失败，请检查网络！',
+          title: '下载失败！',
+          type: 'error',
+        });
+      }
     },
   },
 };

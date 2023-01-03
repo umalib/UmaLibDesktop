@@ -231,21 +231,6 @@ if (getDefaultFullScreen() === undefined) {
   setDefaultFullScreen(true);
 }
 
-async function getDb() {
-  try {
-    const version = (
-      await axios.get('https://umalib.github.io/UmaLibDesktop/update-info.json')
-    ).data['db_version'];
-    return version;
-  } catch (e) {
-    logger.error(e);
-  }
-  return 0;
-}
-getDb().then(ret => {
-  console.log(ret);
-});
-
 async function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
