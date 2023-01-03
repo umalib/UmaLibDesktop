@@ -35,6 +35,9 @@
           <i class="el-icon-info" />
         </el-tooltip>
       </small>
+      <p>
+        <small>当前数据库位置：{{ currentDbPath }}</small>
+      </p>
     </el-row>
     <el-row>
       <el-col :offset="4" :span="16">
@@ -83,6 +86,7 @@ export default {
       builtInDb: true,
       colorClz: '',
       cue: 0,
+      currentDbPath: '',
       downloadDialog: {
         info: '',
         progress: 0,
@@ -139,7 +143,9 @@ export default {
 
     this.appVersion = await connector.get('checkVersion', {});
     axios
-      .get('https://umalib.github.io/UmaLibDesktop/update-info.json')
+      .get(
+        `https://umalib.github.io/UmaLibDesktop/update-info.json?${new Date().getTime()}`,
+      )
       .then(r => {
         const appVerArr = [
           Number(this.appVersion.app.substring(0, 1)),
@@ -196,7 +202,9 @@ export default {
           type: 'warning',
         }),
       );
-    this.builtInDb = await connector.get('checkDb', {});
+    const dbInfo = await connector.get('checkDb', {});
+    this.builtInDb = dbInfo.isEmbedded;
+    this.currentDbPath = dbInfo.current;
     this.saveMeId = await connector.get('saveMe', {});
     this.titles = await connector.get('getTitles', {});
     document.title = this.titles.name;
@@ -207,12 +215,13 @@ export default {
     },
     async refreshPage(path) {
       await this.$router.push('/empty');
+      this.builtInDb = path.isEmbedded;
+      this.currentDbPath = path.current;
       this.$notify({
-        message: `${path || '内置'}`,
-        title: '切换到数据库',
+        message: `${this.builtInDb ? '内置' : this.currentDbPath}`,
+        title: '切换数据库',
         type: 'success',
       });
-      this.builtInDb = !path;
       this.saveMeId = await connector.get('saveMe', {});
     },
     async downloadDb() {
@@ -222,7 +231,7 @@ export default {
       const B2M = 1024 * 1024;
       try {
         const ret = await axios.get(
-          'https://umalib.github.io/UmaLibDesktop/main.db',
+          `https://umalib.github.io/UmaLibDesktop/main.db?${new Date().getTime()}`,
           {
             responseType: 'blob',
             params: {},
@@ -257,14 +266,12 @@ export default {
           await connector.get('rollbackDb', {});
         }
       } catch (e) {
-        this.downloadDialog.visible = false;
         this.downloadDialog.info = '下载数据库失败，请检查网络！';
-        await connector.get('rollbackDb', {});
       }
-      setTimeout(() => {
+      setTimeout(async () => {
         this.downloadDialog.visible = false;
-        this.refreshPage();
-      }, 2000);
+        await this.refreshPage(await connector.get('checkDb', {}));
+      }, 1500);
     },
   },
 };

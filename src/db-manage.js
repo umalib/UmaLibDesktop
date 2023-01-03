@@ -18,7 +18,7 @@ async function changeDb(path) {
       },
     },
   });
-  return dbPath === embeddedDbPath ? '' : dbPath;
+  return { current: dbPath, isEmbedded: dbPath === embeddedDbPath };
 }
 
 async function getArts(findManyOptions, param) {
@@ -113,7 +113,7 @@ async function updateTags(artId, tags) {
 module.exports = {
   changeDb,
   checkDb() {
-    return dbPath === embeddedDbPath;
+    return { current: dbPath, isEmbedded: dbPath === embeddedDbPath };
   },
   async checkR18() {
     const tag = await prisma.tag.findFirst({

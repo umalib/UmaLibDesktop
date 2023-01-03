@@ -398,7 +398,10 @@ async function createWindow() {
           logger.info('dbManage.resetDb()');
           await dbManage.resetDb();
           storeEvents.resetConfig();
-          mainWindow.webContents.send('refreshPage', '');
+          mainWindow.webContents.send('refreshPage', {
+            current: userDbPath,
+            isEmbedded: true,
+          });
         },
       },
       {
