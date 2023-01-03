@@ -53,11 +53,15 @@ const userDbPath = join(app.getPath('userData'), './main.db');
 if (isDevelopment) {
   logger.level = 'debug';
   dbLogger.level = 'debug';
-  copyFileSync(join(resolve('./prisma/main.db')), userDbPath);
 }
 
 if (!existsSync(userDbPath)) {
-  copyFileSync(join(process.resourcesPath, './prisma/main.db'), userDbPath);
+  copyFileSync(
+    isDevelopment
+      ? join(resolve('./prisma/main.db'))
+      : join(process.resourcesPath, './prisma/main.db'),
+    userDbPath,
+  );
   logger.info(`copy default database to user data folder: ${userDbPath}`);
 }
 dbManage.config(dbLogger, userDbPath);

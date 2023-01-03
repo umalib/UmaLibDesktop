@@ -3,7 +3,10 @@
     <el-col :offset="2" :span="20" style="text-align: center">
       <el-row>
         <h1>{{ titles.name }}</h1>
-        <el-tooltip v-if="saveMe > 0" content="纪念碑注视着你……">
+        <el-tooltip
+          v-if="saveMe > 0"
+          :content="`${titles.copyright}注视着你……`"
+        >
           <h1>{{ titles.copyright }}</h1>
         </el-tooltip>
         <el-tooltip v-else content="以虚空吟唱者之名！">
