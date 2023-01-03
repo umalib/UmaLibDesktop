@@ -24,10 +24,7 @@ pnpm-debug.log*
 
 #Electron-builder output
 /dist_electron
-prisma/migrations
-/package-lock.json
-/tools/config.js
-/tools/remover.js
-/tools/input.js
-/tools/temp.out
+
 /data
+/tools
+/package-lock.json

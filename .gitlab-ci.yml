@@ -1,0 +1,20 @@
+pages:
+    stage: deploy
+    variables:
+        FF_USE_FASTZIP: "true"
+        ARTIFACT_COMPRESSION_LEVEL: "fastest"
+    tags:
+        - shell
+    rules:
+        - if: $CI_COMMIT_BRANCH == 'version'
+    script:
+        - git lfs fetch
+        - rm -rf public
+        - mkdir public
+        - mv docs/* public/
+        - DATE_STR=$(date +'%Y%m%d')
+        - DB_URL=https:\\/\\/gitgud.io\\/umalib\\/UmaLibDesktop\\/-\\/jobs\\/$CI_JOB_ID\\/artifacts\\/raw\\/public\\/$DATE_STR.zip
+        - sed -i '' s/TOFILL/$DB_URL/g public/update-info.json
+    artifacts:
+        paths:
+            - public
