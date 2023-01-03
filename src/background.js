@@ -26,7 +26,6 @@ const MD5 = new (require('jshashes').MD5)();
 const log4js = require('log4js');
 const { homedir } = require('os');
 const { resolve, join } = require('path');
-const axios = require('axios');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -106,12 +105,12 @@ function chooseTitles() {
   }
   return titles.origin;
 }
+
 const storeEvents = {
   pathConf: MD5.hex(dbManage.getPath()),
   getOrCreateConfig() {
     const defaultConf = {
       favorites: [],
-      dbVersion: 0,
     };
     let ret = configStore.get(this.pathConf);
     if (!ret) {
@@ -204,7 +203,11 @@ const storeEvents = {
   },
 
   checkVersion() {
-    return { app: app.getVersion(), db: this.getOrCreateConfig().dbVersion };
+    return { app: app.getVersion(), db: configStore.get('dbVersion') };
+  },
+  setDbVersion(version) {
+    configStore.set('dbVersion', version);
+    this.resetConfig();
   },
 
   titles: chooseTitles(),
@@ -392,6 +395,14 @@ async function createWindow() {
           await dbManage.resetDb();
           storeEvents.resetConfig();
           mainWindow.webContents.send('refreshPage', '');
+        },
+      },
+      {
+        label: '重载数据库',
+        sublabel: '从云端拉取数据库',
+        toolTip: '从云端拉取数据库',
+        click() {
+          mainWindow.webContents.send('reloadDb', '');
         },
       },
       { type: 'separator' },

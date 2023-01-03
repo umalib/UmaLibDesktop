@@ -17,7 +17,7 @@
       :data="articles"
       :default-sort="{
         prop: 'uploadTime',
-        order: layout === 'main' ? 'descending' : 'ascending',
+        order: layout === 'main' ? 'descending' : undefined,
       }"
       class="article-table"
       row-key="id"

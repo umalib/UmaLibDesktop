@@ -53,15 +53,17 @@
       </el-col>
     </el-row>
     <el-dialog
+      class="show-info"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       :show-close="false"
+      :title="downloadDialog.title"
       :visible="downloadDialog.visible"
       center
-      :title="downloadDialog.title"
-      width="80%"
+      width="40%"
     >
       <p>{{ downloadDialog.info }}</p>
+      <p>等待文件下载完成前请勿进行任何操作！否则将导致软件损坏！</p>
       <el-progress :percentage="downloadDialog.progress" />
     </el-dialog>
   </div>
@@ -86,6 +88,7 @@ export default {
         progress: 0,
         title: '数据库下载中……',
         visible: false,
+        aimVersion: 0,
       },
       history: [],
       saveMeId: -4,
@@ -130,6 +133,10 @@ export default {
       _vue.refreshPage(path);
     });
 
+    ipcRenderer.on('reloadDb', () => {
+      _vue.downloadDb();
+    });
+
     this.appVersion = await connector.get('checkVersion', {});
     axios
       .get('https://umalib.github.io/UmaLibDesktop/update-info.json')
@@ -156,14 +163,21 @@ export default {
           });
           notifyFlag = false;
         }
-        const remoteDbVer = Number(r.data.dbVersion);
-        if (!this.appVersion.db || Number(this.appVersion.db) < remoteDbVer) {
-          this.$notify({
-            dangerouslyUseHTMLString: true,
-            duration: 0,
-            message: `发现新数据库版本 ${r.data.dbVersion}！<a on-click="downloadDb(${remoteDbVer})" href="javascript:void(0)">点击下载</a>`,
-            title: '发现新数据库',
-            type: 'warning',
+        this.downloadDialog.aimVersion = Number(r.data['db_version']);
+        if (
+          !this.appVersion.db ||
+          Number(this.appVersion.db) < this.downloadDialog.aimVersion
+        ) {
+          this.$confirm(
+            `发现新数据库版本 ${this.downloadDialog.aimVersion}！是否下载？`,
+            '发现新数据库！',
+            {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning',
+            },
+          ).then(() => {
+            this.downloadDb();
           });
           notifyFlag = false;
         }
@@ -201,29 +215,56 @@ export default {
       this.builtInDb = !path;
       this.saveMeId = await connector.get('saveMe', {});
     },
-    async downloadDb(dbVersion) {
+    async downloadDb() {
+      this.downloadDialog.visible = true;
       this.downloadDialog.progress = 0;
       const _vue = this;
-      const ret = await axios.get({
-        url: 'https://umalib.github.io/UmaLibDesktop/main.db',
-        method: 'get',
-        responseType: 'blob',
-        params: {},
-        onDownloadProgress(e) {
-          _vue.downloadDialog.progress = Math.round((e.loaded * 100) / e.total);
-          _vue.downloadDialog.info = `已下载：${e.loaded}/${e.total}`;
-        },
-      });
+      const B2M = 1024 * 1024;
       try {
-        const blob = new Blob([ret]);
-        console.log(blob);
+        const ret = await axios.get(
+          'https://umalib.github.io/UmaLibDesktop/main.db',
+          {
+            responseType: 'blob',
+            params: {},
+            onDownloadProgress(e) {
+              if (e.total !== 0) {
+                _vue.downloadDialog.progress = Math.round(
+                  (e.loaded * 100) / e.total,
+                );
+                _vue.downloadDialog.info = `已下载：${(e.loaded / B2M).toFixed(
+                  2,
+                )}/${(e.total / B2M).toFixed(2)} MB`;
+              }
+            },
+          },
+        );
+        await connector.get(
+          'saveOnlineDb',
+          await new Promise(resolve => {
+            const fileReader = new FileReader();
+            fileReader.onload = function() {
+              resolve(this.result);
+            };
+            fileReader.readAsArrayBuffer(ret.data);
+          }),
+        );
+        const flag = await connector.get('checkR18', {});
+        if (flag !== undefined) {
+          this.downloadDialog.info = '下载完成！即将切换到下载数据库……';
+          await connector.get('setDbVersion', this.downloadDialog.aimVersion);
+        } else {
+          this.downloadDialog.info = '下载数据库失败，请检查网络！';
+          await connector.get('rollbackDb', {});
+        }
       } catch (e) {
-        this.$notify({
-          message: '下载失败，请检查网络！',
-          title: '下载失败！',
-          type: 'error',
-        });
+        this.downloadDialog.visible = false;
+        this.downloadDialog.info = '下载数据库失败，请检查网络！';
+        await connector.get('rollbackDb', {});
       }
+      setTimeout(() => {
+        this.downloadDialog.visible = false;
+        this.refreshPage();
+      }, 2000);
     },
   },
 };

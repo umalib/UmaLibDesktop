@@ -3,6 +3,7 @@
     :close-on-click-modal="false"
     :visible="visible"
     center
+    class="random-article"
     title="手气不错！"
     width="80%"
     @close="

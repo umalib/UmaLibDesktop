@@ -745,14 +745,19 @@ export default {
   }
 }
 
-div.el-dialog {
-  height: calc(100% - 60px);
-  margin: 30px auto !important;
+.uma-article,
+.new-article,
+.random-article,
+.recommend-article {
+  div.el-dialog {
+    height: calc(100% - 60px);
+    margin: 30px auto !important;
 
-  div.el-dialog__body {
-    height: calc(100% - 124px);
-    padding-top: 0;
-    padding-bottom: 0;
+    div.el-dialog__body {
+      height: calc(100% - 124px);
+      padding-top: 0;
+      padding-bottom: 0;
+    }
   }
 }
 

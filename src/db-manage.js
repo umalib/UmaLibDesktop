@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const { existsSync, copyFileSync, writeFileSync, rmSync } = require('fs');
 
 let logger = null;
 let embeddedDbPath = null;
@@ -638,6 +639,20 @@ module.exports = {
   },
   async resetDb() {
     await changeDb(embeddedDbPath);
+  },
+  async saveOnlineDb(arrayBuffer) {
+    await this.disconnect();
+    copyFileSync(embeddedDbPath, embeddedDbPath + '.backup');
+    writeFileSync(embeddedDbPath, Buffer.from(arrayBuffer));
+    await changeDb(embeddedDbPath);
+  },
+  async rollbackDb() {
+    if (existsSync(embeddedDbPath + '.backup')) {
+      await this.disconnect();
+      copyFileSync(embeddedDbPath + '.backup', embeddedDbPath);
+      rmSync(embeddedDbPath + '.backup');
+      await changeDb(embeddedDbPath);
+    }
   },
   async setTags(param) {
     await prisma.tag.updateMany({
