@@ -27,10 +27,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: npm install
-      - name: config prisma
-        run: npx prisma generate
       - name: Build
         run: npm run electron:build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Zip
         uses: edgarrc/action-7z@v1
         with:
