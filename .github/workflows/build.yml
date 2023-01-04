@@ -23,7 +23,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
       - name: Install dependencies
         run: npm install
       - name: Build
@@ -44,7 +43,7 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           name: Uma Library Desktop ${{ github.ref_name }}
-          body: TODO
+          body: created by Github Actions
           draft: false
           prerelease: false
           files: umalib-win64-${{ github.ref_name }}.zip
@@ -64,7 +63,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
       - name: Use Python 2.7
         uses: actions/setup-python@v4
         with:
@@ -73,8 +71,6 @@ jobs:
         run: node --version && python --version && ls -la /Users/runner/hostedtoolcache/Python/2.7.18/x64/bin/python
       - name: Install dependencies
         run: npm install
-      - name: Config prisma
-        run: npx prisma generate
       - name: Build
         run: npm run electron:build
         env:
@@ -88,7 +84,6 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           name: Uma Library Desktop ${{ github.ref_name }}
-          body: TODO
           files: umalib-mac-${{ github.ref_name }}.dmg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
