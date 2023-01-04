@@ -70,19 +70,25 @@ jobs:
         with:
           python-version: '2.7'
       - name: Test environment
-        run: node --version && python --version
+        run: node --version && python --version && ls -la /Users/runner/hostedtoolcache/Python/2.7.18/x64/bin/python
       - name: Install dependencies
         run: npm install
+      - name: Config prisma
+        run: npx prisma generate
       - name: Build
         run: npm run electron:build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PYTHON_PATH: /Users/runner/hostedtoolcache/Python/2.7.18/x64/bin/python
       - name: Move
         run: mv dist_electron/赛马娘同人集中楼大书库-*.dmg umalib-mac-${{ github.ref_name }}.dmg
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ github.ref_name }}
+          name: Uma Library Desktop ${{ github.ref_name }}
+          body: TODO
           files: umalib-mac-${{ github.ref_name }}.dmg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
