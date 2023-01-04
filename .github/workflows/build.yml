@@ -32,18 +32,24 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Move
+        run: move dist_electron\win-unpacked umalib
       - name: Zip
-        run: zip -r umalib-win64-${{ github.ref }} ./dist_electron/win_unpacked/
+        uses: thedoctor0/zip-release@main
+        with:
+          type: 'zip'
+          filename: 'umalib-win64-${{ github.ref_name }}.zip'
+          directory: './umalib/'
       - name: Create Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'ref/tags/')
+        if: startsWith(github.ref_name, 'ref/tags/')
         with:
-          tag_name: ${{ github.ref }}
-          name: Uma Library Desktop ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          name: Uma Library Desktop ${{ github.ref_name }}
           body: TODO
           draft: false
           prerelease: false
-          files: umalib-win64-${{ github.ref }}.zip
+          files: umalib-win64-${{ github.ref_name }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #  on-macos:
