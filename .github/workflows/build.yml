@@ -13,17 +13,18 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        node-version: [13.14.0]
+        node-version: [13.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
       - name: Install dependencies
         run: npm install
       - name: Build
