@@ -1,5 +1,6 @@
 {
   "name": "uma-library-desktop",
+  "description": "A library of doujin articles of Umamusume: Pretty Derby",
   "version": "2.0.0",
   "private": true,
   "author": "WindyWisper <umalib629@outlook.com>",

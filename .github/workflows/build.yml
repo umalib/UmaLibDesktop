@@ -55,12 +55,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Use Python 2.7
-        uses: actions/setup-python@v4
-        with:
-          python-version: '2.7'
-      - name: Test environment
-        run: node --version && python --version && ls -la /Users/runner/hostedtoolcache/Python/2.7.18/x64/bin/python
+#      - name: Use Python 2.7
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: '2.7'
+#      - name: Test environment
+#        run: node --version && python --version && ls -la /Users/runner/hostedtoolcache/Python/2.7.18/x64/bin/python
       - name: Install dependencies
         run: npm install
       - name: Build
@@ -68,7 +68,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PYTHON_PATH: /Users/runner/hostedtoolcache/Python/2.7.18/x64/bin/python
+#          PYTHON_PATH: /Users/runner/hostedtoolcache/Python/2.7.18/x64/bin/python
       - name: Release
         uses: softprops/action-gh-release@v1
         with:

@@ -11,7 +11,7 @@ module.exports = {
         },
         win: {
           icon: 'icons/256x256.png',
-          artifactName: 'umalib-win64-${version}.${ext}',
+          artifactName: 'umalib-win64-v${version}.${ext}',
           target: [{ target: '7z', arch: ['x64'] }],
         },
         extraResources: [
