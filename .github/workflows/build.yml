@@ -42,7 +42,6 @@ jobs:
           path: './umalib/'
       - name: Create Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'ref/tags/')
         with:
           tag_name: ${{ github.ref_name }}
           name: Uma Library Desktop ${{ github.ref_name }}
