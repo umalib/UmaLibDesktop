@@ -43,8 +43,9 @@ jobs:
           body: TODO
           draft: false
           prerelease: false
-          files: |
-            umalib-win64-${{ github.ref }}.zip
+          files: umalib-win64-${{ github.ref }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #  on-macos:
 #    runs-on: macos-latest
 #    strategy:
