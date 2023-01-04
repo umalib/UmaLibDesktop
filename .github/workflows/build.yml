@@ -30,14 +30,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Move
-        run: move dist_electron\win-unpacked umalib
-      - name: Zip
-        uses: thedoctor0/zip-release@main
-        with:
-          type: 'zip'
-          filename: 'umalib-win64-${{ github.ref_name }}.zip'
-          path: './umalib/'
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -46,7 +38,7 @@ jobs:
           body: created by Github Actions
           draft: false
           prerelease: false
-          files: umalib-win64-${{ github.ref_name }}.zip
+          files: ./dist_electron/umalib-win64-${{ github.ref_name }}.7z
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   on-macos:
@@ -77,13 +69,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PYTHON_PATH: /Users/runner/hostedtoolcache/Python/2.7.18/x64/bin/python
-      - name: Move
-        run: mv dist_electron/赛马娘同人集中楼大书库-*.dmg umalib-mac-${{ github.ref_name }}.dmg
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
           name: Uma Library Desktop ${{ github.ref_name }}
-          files: umalib-mac-${{ github.ref_name }}.dmg
+          files: ./dist_electron/umalib-mac-${{ github.ref_name }}.dmg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
