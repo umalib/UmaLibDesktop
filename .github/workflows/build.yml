@@ -10,7 +10,7 @@ on:
 
 jobs:
   on-windows:
-    runs-on: windows-latest
+    runs-on: windows-2019
     strategy:
       matrix:
         node-version: [14.x]
@@ -39,10 +39,10 @@ jobs:
         with:
           type: 'zip'
           filename: 'umalib-win64-${{ github.ref_name }}.zip'
-          directory: './umalib/'
+          path: './umalib/'
       - name: Create Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref_name, 'ref/tags/')
+        if: startsWith(github.ref, 'ref/tags/')
         with:
           tag_name: ${{ github.ref_name }}
           name: Uma Library Desktop ${{ github.ref_name }}
