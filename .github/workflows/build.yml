@@ -33,9 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Zip
-        uses: edgarrc/action-7z@v1
-        with:
-          args: 7z a -t7z -mx=9 umalib-win64-${{ github.ref }} ./dist_electron/win_unpacked/
+        run: zip -r umalib-win64-${{ github.ref }} ./dist_electron/win_unpacked/
       - name: Create Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'ref/tags/')
@@ -47,3 +45,9 @@ jobs:
           prerelease: false
           files: |
             umalib-win64-${{ github.ref }}.zip
+#  on-macos:
+#    runs-on: macos-latest
+#    strategy:
+#      matrix:
+#        node-version: [14.x]
+#        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
