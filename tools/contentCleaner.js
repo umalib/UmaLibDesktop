@@ -4,6 +4,8 @@ const { alignCenterImg, path } = require('./config.js');
 const logger = require('log4js').getLogger('cleaner');
 logger.level = 'info';
 
+logger.info(`clean ${path}, set image align to center? ${alignCenterImg}`);
+
 const prisma = new PrismaClient({
   datasources: {
     db: {
@@ -125,6 +127,7 @@ async function task() {
       });
     }
   }
+  logger.info('cleaning articles done!');
   const tags = await prisma.tag.findMany();
   for (const tag of tags) {
     const name = tag.name.replace(/^\s*/, '').replace(/\s*$/, '');
@@ -140,6 +143,7 @@ async function task() {
       });
     }
   }
+  logger.info('cleaning tags done!');
   await prisma.tagged.deleteMany({
     where: {
       OR: [
@@ -160,12 +164,11 @@ async function task() {
       ],
     },
   });
-}
-
-task().then(async () => {
+  logger.info('cleaning tagged done!');
   logger.info('clean done!');
   await prisma.$queryRaw`vacuum;`;
   logger.info('vacuum done!');
   await prisma.$disconnect();
-  logger.info('task done!');
-});
+}
+
+task().then(() => logger.info('task done!'));

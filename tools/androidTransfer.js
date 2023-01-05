@@ -36,16 +36,16 @@ async function task() {
       },
     })
   ).map(tag => tag.id);
-  logger.info(`tags to be removed: ${tagList.join(', ')}`);
   const toRmList = (
     await prisma['tagged'].findMany({ where: { tagId: { in: tagList } } })
   ).map(tagged => tagged.artId);
-  logger.info(`articles to be removed: ${toRmList.join(', ')}`);
   await prisma['tagged'].deleteMany({
     where: { OR: [{ artId: { in: toRmList } }, { tagId: { in: tagList } }] },
   });
   await prisma.article.deleteMany({ where: { id: { in: toRmList } } });
+  logger.info(`remove ${toRmList.length} articles: ${toRmList.join(', ')}`);
   await prisma.tag.deleteMany({ where: { id: { in: tagList } } });
+  logger.info(`remove ${tagList.length} tags: ${tagList.join(', ')}`);
   await prisma.tag.deleteMany({
     where: {
       taggedList: {
@@ -80,9 +80,7 @@ async function task() {
   logger.info('clean done');
   await prisma.$queryRaw`vacuum;`;
   logger.info('vacuum done');
+  await prisma.$disconnect();
 }
 
-task().then(async () => {
-  await prisma.$disconnect();
-  logger.info('task done');
-});
+task().then(() => logger.info('task done!'));

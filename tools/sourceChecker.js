@@ -4,6 +4,8 @@ const { path } = require('./config.js');
 const logger = require('log4js').getLogger('checker');
 logger.level = 'info';
 
+logger.info(`check sources from ${path}`);
+
 const prisma = new PrismaClient({
   datasources: {
     db: {

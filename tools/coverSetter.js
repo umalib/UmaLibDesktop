@@ -5,6 +5,8 @@ const { path, coverPath } = require('./config.js');
 const logger = require('log4js').getLogger('setter');
 logger.level = 'info';
 
+logger.info(`set tag covers of ${path} from ${coverPath}`);
+
 const prisma = new PrismaClient({
   datasources: {
     db: {
@@ -42,9 +44,10 @@ async function task() {
       logger.error(fileName);
     }
   }
+  logger.info('set done');
+  await prisma.$queryRaw`vacuum`;
+  logger.info('vacuum done');
+  await prisma.$disconnect();
 }
 
-task().then(async () => {
-  await prisma.$disconnect();
-  logger.info('task done');
-});
+task().then(() => logger.info('task done!'));

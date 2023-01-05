@@ -4,6 +4,8 @@ const { path } = require('./config.js');
 const logger = require('log4js').getLogger('cleaner');
 logger.level = 'info';
 
+logger.info(`clean unused data in ${path}`);
+
 const prisma = new PrismaClient({
   datasources: {
     db: {
@@ -11,8 +13,6 @@ const prisma = new PrismaClient({
     },
   },
 });
-
-logger.info(`cleaning db ${path}`);
 
 async function task() {
   const articles = (
@@ -43,12 +43,10 @@ async function task() {
       },
     },
   });
-}
-
-task().then(async () => {
   logger.info('clean done!');
   await prisma.$queryRaw`vacuum;`;
   logger.info('vacuum done!');
   await prisma.$disconnect();
-  logger.info('task done!');
-});
+}
+
+task().then(() => logger.info('task done!'));

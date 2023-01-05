@@ -6,6 +6,8 @@ const MD5 = new (require('jshashes').MD5)();
 const logger = require('log4js').getLogger('modifier');
 logger.level = 'info';
 
+logger.info(`modify images in ${path}, dictionary=${imgPath}/dict.csv`);
+
 const prisma = new PrismaClient({
   datasources: { db: { url: `file:${join(resolve(path))}` } },
 });
@@ -80,11 +82,9 @@ async function task() {
     }
   }
   logger.info('clean done');
-}
-
-task().then(async () => {
   await prisma.$queryRaw`vacuum`;
   logger.info('vacuum done');
   await prisma.$disconnect();
-  logger.info('task done');
-});
+}
+
+task().then(() => logger.info('task done!'));

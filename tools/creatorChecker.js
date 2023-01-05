@@ -4,6 +4,8 @@ const { path } = require('./config.js');
 const logger = require('log4js').getLogger('checker');
 logger.level = 'info';
 
+logger.info(`check creators in ${path}`);
+
 const prisma = new PrismaClient({
   datasources: {
     db: {
@@ -11,8 +13,6 @@ const prisma = new PrismaClient({
     },
   },
 });
-
-logger.info(`checking db ${path}`);
 
 async function task() {
   const creators = {};
@@ -45,9 +45,7 @@ async function task() {
     return b.count - a.count;
   });
   creatorArr.forEach(x => logger.info(`${x.name}\t${x.count}`));
+  await prisma.$disconnect();
 }
 
-task().then(async () => {
-  await prisma.$disconnect();
-  logger.info('task done!');
-});
+task().then(() => logger.info('task done!'));

@@ -6,6 +6,10 @@ const MD5 = new (require('jshashes').MD5)();
 const logger = require('log4js').getLogger('exporter');
 logger.level = 'info';
 
+logger.info(`export base64 images in ${path}`);
+logger.info(`article image path=${imgPath}`);
+logger.info(`tag cover path=${coverPath}`);
+
 const prisma = new PrismaClient({
   datasources: { db: { url: `file:${join(resolve(path))}` } },
 });
@@ -67,9 +71,7 @@ async function task() {
     encoding: 'utf8',
   });
   logger.info(`all: ${count}`);
+  await prisma.$disconnect();
 }
 
-task().then(async () => {
-  await prisma.$disconnect();
-  logger.info('task done');
-});
+task().then(() => logger.info('task done!'));

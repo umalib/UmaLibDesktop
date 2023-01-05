@@ -5,6 +5,8 @@ const { path, srcPath } = require('./config.js');
 const logger = require('log4js').getLogger('merger');
 logger.level = 'info';
 
+logger.info(`merge ${srcPath} into ${path}`);
+
 async function task() {
   const prisma = new PrismaClient({
     datasources: {
@@ -21,6 +23,7 @@ async function task() {
     },
   });
   await prisma.$disconnect();
+  logger.info(`get ${artList.length} articles from source db`);
   await dbManage.changeDb(path);
   for (const art of artList) {
     await dbManage.pubArticle({
@@ -37,4 +40,4 @@ async function task() {
   await dbManage.disconnect();
 }
 
-task().then(() => logger.info('task done'));
+task().then(() => logger.info('task done!'));

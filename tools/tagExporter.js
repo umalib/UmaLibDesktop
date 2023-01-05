@@ -162,9 +162,7 @@ async function task() {
       .join('\n'),
   );
   writeFileSync('temp.out', output);
+  await prisma.$disconnect();
 }
 
-task().then(async () => {
-  await prisma.$disconnect();
-  logger.info('task done!');
-});
+task().then(() => logger.info('task done!'));
