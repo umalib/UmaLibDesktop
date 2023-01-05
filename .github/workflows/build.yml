@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: build umalib
+name: umalib build and release
 
 on:
   push:
@@ -9,11 +9,11 @@ on:
       - "v*"
 
 jobs:
-  on-windows:
+  build-on-windows:
     runs-on: windows-2019
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [13.x]
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
@@ -41,7 +41,7 @@ jobs:
           files: ./dist_electron/umalib-win64-${{ github.ref_name }}.7z
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  on-macos:
+  build-on-macos:
     runs-on: macos-latest
     strategy:
       matrix:
@@ -55,12 +55,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-#      - name: Use Python 2.7
-#        uses: actions/setup-python@v4
-#        with:
-#          python-version: '2.7'
-#      - name: Test environment
-#        run: node --version && python --version && ls -la /Users/runner/hostedtoolcache/Python/2.7.18/x64/bin/python
       - name: Install dependencies
         run: npm install
       - name: Build
@@ -68,7 +62,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          PYTHON_PATH: /Users/runner/hostedtoolcache/Python/2.7.18/x64/bin/python
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
