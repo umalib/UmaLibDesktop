@@ -64,7 +64,7 @@ if (!existsSync(userDbPath)) {
   );
   logger.info(`copy default database to user data folder: ${userDbPath}`);
 }
-dbManage.config(dbLogger, userDbPath);
+dbManage.config(dbLogger, app.getPath('userData'), userDbPath);
 
 const configStore = new (require('electron-store'))();
 logger.debug(`use config path: ${configStore.path}`);
@@ -212,6 +212,7 @@ const storeEvents = {
   setDbVersion(version) {
     configStore.set('dbVersion', version);
     this.resetConfig();
+    dbManage.cleanBackupDb();
   },
 
   titles: chooseTitles(),

@@ -241,7 +241,9 @@ export default {
       const B2M = 1024 * 1024;
       try {
         const ret = await axios.get(
-          `https://umalib.github.io/UmaLibDesktop/main.db?${new Date().getTime()}`,
+          `https://umalib.github.io/UmaLibDesktop/${
+            this.downloadDialog.aimVersion
+          }.zip?${new Date().getTime()}`,
           {
             responseType: 'blob',
             params: {},
@@ -281,16 +283,16 @@ export default {
         );
         this.downloadDialog.info = '下载完成！即将切换到下载数据库……';
         this.downloadDialog.progress = 100;
-        await connector.get(
-          'saveOnlineDb',
-          await new Promise(resolve => {
+        await connector.get('saveOnlineDb', {
+          version: this.downloadDialog.aimVersion,
+          buffer: await new Promise(resolve => {
             const fileReader = new FileReader();
             fileReader.onload = function() {
               resolve(this.result);
             };
             fileReader.readAsArrayBuffer(ret.data);
           }),
-        );
+        });
         const flag = await connector.get('checkR18', {});
         if (flag !== undefined) {
           await connector.get('setDbVersion', this.downloadDialog.aimVersion);

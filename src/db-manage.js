@@ -1,10 +1,14 @@
 const { PrismaClient } = require('@prisma/client');
-const { existsSync, copyFileSync, writeFileSync, rmSync } = require('fs');
+const { existsSync, renameSync, copyFileSync, rmSync } = require('fs');
+const { zip } = require('compressing');
+const { join } = require('fs');
 
 let logger = null;
-let embeddedDbPath = null;
-let dbPath = null;
 let prisma = null;
+let embeddedDbPath = null;
+let backupPath = null;
+let dbPath = null;
+let userDataPath = null;
 
 async function changeDb(path) {
   if (prisma) {
@@ -123,6 +127,9 @@ module.exports = {
     });
     return tag ? tag.id : -1;
   },
+  cleanBackupDb() {
+    rmSync(backupPath);
+  },
   async copyright() {
     return JSON.parse(
       (
@@ -137,9 +144,11 @@ module.exports = {
       ).names,
     );
   },
-  config(_logger, _dbPath) {
+  config(_logger, _userPath, _dbPath) {
     logger = _logger;
+    userDataPath = _userPath;
     embeddedDbPath = _dbPath;
+    backupPath = embeddedDbPath + '.backup';
     dbPath = embeddedDbPath;
   },
   async deleteArt(artId) {
@@ -640,19 +649,21 @@ module.exports = {
   async resetDb() {
     await changeDb(embeddedDbPath);
   },
-  async saveOnlineDb(arrayBuffer) {
-    await this.disconnect();
-    copyFileSync(embeddedDbPath, embeddedDbPath + '.backup');
-    writeFileSync(embeddedDbPath, Buffer.from(arrayBuffer));
-    await changeDb(embeddedDbPath);
-  },
   async rollbackDb() {
-    if (existsSync(embeddedDbPath + '.backup')) {
+    if (existsSync(backupPath)) {
       await this.disconnect();
-      copyFileSync(embeddedDbPath + '.backup', embeddedDbPath);
-      rmSync(embeddedDbPath + '.backup');
+      rmSync(embeddedDbPath);
+      renameSync(backupPath, embeddedDbPath);
       await changeDb(embeddedDbPath);
     }
+  },
+  async saveOnlineDb(dbData) {
+    await this.disconnect();
+    copyFileSync(embeddedDbPath, backupPath);
+    rmSync(embeddedDbPath);
+    await zip.uncompress(Buffer.from(dbData.buffer), userDataPath);
+    renameSync(join(userDataPath, `${dbData.version}.db`), embeddedDbPath);
+    await changeDb(embeddedDbPath);
   },
   async setTags(param) {
     await prisma.tag.updateMany({
