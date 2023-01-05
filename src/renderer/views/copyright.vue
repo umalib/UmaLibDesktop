@@ -139,13 +139,7 @@
           >
             <el-button slot="append" @click="jump">
               爱丽丝{{
-                failure === 0
-                  ? '？'
-                  : new Array(failure)
-                      .join(',')
-                      .split(',')
-                      .map(() => '！')
-                      .join('')
+                failure === 0 ? '？' : new Array(failure + 1).join('！')
               }}
             </el-button>
           </el-input>
