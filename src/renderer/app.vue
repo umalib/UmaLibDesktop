@@ -36,7 +36,10 @@
         </el-tooltip>
       </small>
       <p>
-        <small>当前数据库位置：{{ currentDbPath }}</small>
+        <small>
+          当前数据库位置：{{ currentDbPath }}
+          <span v-if="builtInDb">（内置数据库 版本：{{ appVersion.db }}）</span>
+        </small>
       </p>
     </el-row>
     <el-row>
@@ -83,7 +86,10 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      appVersion: undefined,
+      appVersion: {
+        app: '',
+        db: 'loading...',
+      },
       builtInDb: true,
       colorClz: '',
       cue: 0,
@@ -220,6 +226,7 @@ export default {
       await this.$router.push('/empty');
       this.builtInDb = path.isEmbedded;
       this.currentDbPath = path.current;
+      this.appVersion = await connector.get('checkVersion', {});
       this.$notify({
         message: `${this.builtInDb ? '内置' : this.currentDbPath}`,
         title: '切换数据库',
