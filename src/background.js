@@ -207,10 +207,10 @@ const storeEvents = {
   },
 
   checkVersion() {
-    return { app: app.getVersion(), db: configStore.get('dbVersion') };
+    return { app: app.getVersion(), db: configStore.get('db-version') };
   },
   setDbVersion(version) {
-    configStore.set('dbVersion', version);
+    configStore.set('db-version', version);
     this.resetConfig();
     dbManage.cleanBackupDb();
   },
