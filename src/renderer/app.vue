@@ -95,7 +95,7 @@ export default {
       cue: 0,
       currentDbPath: '',
       downloadDialog: {
-        aimVersion: 0,
+        aimVersion: -1,
         size: '',
         loaded: 0,
         progress: 0,
@@ -151,39 +151,41 @@ export default {
     });
 
     this.appVersion = await connector.get('checkVersion', {});
-    axios
-      .get(
-        `https://umalib.github.io/UmaLibDesktop/update-info.json?${new Date().getTime()}`,
-      )
-      .then(r => {
-        const appVerArr = [
-          Number(this.appVersion.app.substring(0, 1)),
-          Number(this.appVersion.app.substring(2)),
-        ];
-        const remoteVerArr = [
-          Number(r.data.version.substring(0, 1)),
-          Number(r.data.version.substring(2)),
-        ];
-        let notifyFlag = true;
-        if (
-          appVerArr[0] < remoteVerArr[0] ||
-          (appVerArr[0] === remoteVerArr[0] && appVerArr[1] < remoteVerArr[1])
-        ) {
-          this.$notify({
-            dangerouslyUseHTMLString: true,
-            duration: 0,
-            message: `发现新版本 v${r.data.version}！请前往下载：<a href='${r.data.url}' target='_blank'>下载地址</a>`,
-            title: '发现新版本',
-            type: 'warning',
-          });
-          notifyFlag = false;
-        }
-        this.downloadDialog.aimVersion = Number(r.data['db_version']);
-        if (
-          !this.appVersion.db ||
-          Number(this.appVersion.db) < this.downloadDialog.aimVersion
-        ) {
-          this.$confirm(
+    try {
+      const remoteVer = (
+        await axios.get(
+          `https://umalib.github.io/UmaLibDesktop/update-info.json?${new Date().getTime()}`,
+        )
+      ).data;
+      const appVerArr = [
+        Number(this.appVersion.app.substring(0, 1)),
+        Number(this.appVersion.app.substring(2)),
+      ];
+      const remoteVerArr = [
+        Number(remoteVer.version.substring(0, 1)),
+        Number(remoteVer.version.substring(2)),
+      ];
+      let notifyFlag = true;
+      if (
+        appVerArr[0] < remoteVerArr[0] ||
+        (appVerArr[0] === remoteVerArr[0] && appVerArr[1] < remoteVerArr[1])
+      ) {
+        this.$notify({
+          title: '发现新版本',
+          message: `发现新版本 v${remoteVer.version}！请前往下载：<a href='${remoteVer.url}' target='_blank'>下载地址</a>`,
+          dangerouslyUseHTMLString: true,
+          type: 'warning',
+          duration: 0,
+        });
+        notifyFlag = false;
+      }
+      this.downloadDialog.aimVersion = remoteVer['db_version'];
+      if (
+        !this.appVersion.db ||
+        Number(this.appVersion.db) < this.downloadDialog.aimVersion
+      ) {
+        try {
+          await this.$confirm(
             `发现新数据库版本 ${this.downloadDialog.aimVersion}！是否下载？`,
             '发现新数据库！',
             {
@@ -191,26 +193,26 @@ export default {
               cancelButtonText: '取消',
               type: 'warning',
             },
-          ).then(() => {
-            this.downloadDb();
-          });
-          notifyFlag = false;
-        }
-        if (notifyFlag) {
-          this.$notify({
-            message: '',
-            title: '已更新到最新版本',
-            type: 'success',
-          });
-        }
-      })
-      .catch(() =>
+          );
+          await this.downloadDb();
+          // eslint-disable-next-line no-empty
+        } catch (_) {}
+        notifyFlag = false;
+      }
+      if (notifyFlag) {
         this.$notify({
-          message: '请检查网络连接……',
-          title: '版本检查失败！',
-          type: 'warning',
-        }),
-      );
+          title: '已更新到最新版本',
+          message: '',
+          type: 'success',
+        });
+      }
+    } catch (_) {
+      this.$notify({
+        title: '版本检查失败！',
+        message: '请检查网络连接！',
+        type: 'warning',
+      });
+    }
     const dbInfo = await connector.get('checkDb', {});
     this.builtInDb = dbInfo.isEmbedded;
     this.currentDbPath = dbInfo.current;
@@ -228,13 +230,30 @@ export default {
       this.currentDbPath = path.current;
       this.appVersion = await connector.get('checkVersion', {});
       this.$notify({
-        message: `${this.builtInDb ? '内置' : this.currentDbPath}`,
         title: '切换数据库',
+        message: `${this.builtInDb ? '内置' : this.currentDbPath}`,
         type: 'success',
       });
       this.saveMeId = await connector.get('saveMe', {});
     },
     async downloadDb() {
+      if (this.downloadDialog.aimVersion === 0) {
+        try {
+          const remoteVer = (
+            await axios.get(
+              `https://umalib.github.io/UmaLibDesktop/update-info.json?${new Date().getTime()}`,
+            )
+          ).data;
+          this.downloadDialog.aimVersion = remoteVer['db_version'];
+        } catch (_) {
+          this.$notify({
+            title: '数据库更新失败！',
+            message: '请检查网络连接！',
+            type: 'error',
+          });
+          return;
+        }
+      }
       this.downloadDialog.visible = true;
       this.downloadDialog.progress = 0;
       const _vue = this;
@@ -297,28 +316,28 @@ export default {
         if (flag !== undefined) {
           await connector.get('setDbVersion', this.downloadDialog.aimVersion);
           this.$notify({
-            duration: 0,
-            message: '数据库在线更新完成',
             title: `已启用内置主数据库，版本：${this.downloadDialog.aimVersion}`,
+            message: '数据库在线更新完成',
             type: 'success',
+            duration: 0,
           });
         } else {
           this.downloadDialog.info = '下载数据库失败，请检查网络！';
           this.$notify({
-            duration: 0,
-            message: '数据库更新文件损坏！',
             title: '数据库更新失败！',
+            message: '数据库更新文件损坏！',
             type: 'error',
+            duration: 0,
           });
           await connector.get('rollbackDb', {});
         }
       } catch (e) {
         this.downloadDialog.info = '下载数据库失败，请检查网络！';
         this.$notify({
-          duration: 0,
-          message: '网络连接异常！',
           title: '数据库更新失败！',
+          message: '请检查网络连接！',
           type: 'error',
+          duration: 0,
         });
       }
       setTimeout(async () => {
