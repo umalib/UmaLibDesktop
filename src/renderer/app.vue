@@ -65,7 +65,8 @@
       center
       width="40%"
     >
-      <p>{{ downloadDialog.info }}</p>
+      <p>{{ downloadDialog.size }}</p>
+      <p>{{ downloadDialog.speed }}</p>
       <p>等待文件下载完成前请勿进行任何操作！否则将导致软件损坏！</p>
       <el-progress :percentage="downloadDialog.progress" />
     </el-dialog>
@@ -88,11 +89,13 @@ export default {
       cue: 0,
       currentDbPath: '',
       downloadDialog: {
-        info: '',
+        aimVersion: 0,
+        size: '',
+        loaded: 0,
         progress: 0,
+        timeStamp: 0,
         title: '数据库下载中……',
         visible: false,
-        aimVersion: 0,
       },
       history: [],
       saveMeId: -4,
@@ -237,16 +240,40 @@ export default {
             params: {},
             onDownloadProgress(e) {
               if (e.total !== 0) {
-                _vue.downloadDialog.progress = Math.round(
-                  (e.loaded * 100) / e.total,
-                );
-                _vue.downloadDialog.info = `已下载：${(e.loaded / B2M).toFixed(
+                const percentage = Math.round((e.loaded * 100) / e.total);
+                _vue.downloadDialog.progress =
+                  percentage - 99 > 0 ? 99 : percentage;
+                _vue.downloadDialog.size = `已下载：${(e.loaded / B2M).toFixed(
                   2,
                 )}/${(e.total / B2M).toFixed(2)} MB`;
+
+                let speed =
+                  ((e.loaded - _vue.downloadDialog.loaded) * 1000) /
+                  (e.timeStamp - _vue.downloadDialog.timeStamp);
+                _vue.downloadDialog.loaded = e.loaded;
+                _vue.downloadDialog.timeStamp = e.timeStamp;
+                if (speed - 1024 < 0) {
+                  _vue.downloadDialog.speed = `下载速度：${speed.toFixed(
+                    2,
+                  )} Bps`;
+                } else {
+                  speed /= 1024;
+                  if (speed - 768 < 0) {
+                    _vue.downloadDialog.speed = `下载速度：${speed.toFixed(
+                      2,
+                    )} KBps`;
+                  } else {
+                    _vue.downloadDialog.speed = `下载速度：${(
+                      speed / 1024
+                    ).toFixed(2)} MBps`;
+                  }
+                }
               }
             },
           },
         );
+        this.downloadDialog.info = '下载完成！即将切换到下载数据库……';
+        this.downloadDialog.progress = 100;
         await connector.get(
           'saveOnlineDb',
           await new Promise(resolve => {
@@ -259,14 +286,31 @@ export default {
         );
         const flag = await connector.get('checkR18', {});
         if (flag !== undefined) {
-          this.downloadDialog.info = '下载完成！即将切换到下载数据库……';
           await connector.get('setDbVersion', this.downloadDialog.aimVersion);
+          this.$notify({
+            duration: 0,
+            message: '数据库在线更新完成',
+            title: `已启用内置主数据库，版本：${this.downloadDialog.aimVersion}`,
+            type: 'success',
+          });
         } else {
           this.downloadDialog.info = '下载数据库失败，请检查网络！';
+          this.$notify({
+            duration: 0,
+            message: '数据库更新文件损坏！',
+            title: '数据库更新失败！',
+            type: 'error',
+          });
           await connector.get('rollbackDb', {});
         }
       } catch (e) {
         this.downloadDialog.info = '下载数据库失败，请检查网络！';
+        this.$notify({
+          duration: 0,
+          message: '网络连接异常！',
+          title: '数据库更新失败！',
+          type: 'error',
+        });
       }
       setTimeout(async () => {
         this.downloadDialog.visible = false;
