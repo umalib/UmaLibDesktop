@@ -146,8 +146,20 @@ export default {
       _vue.refreshPage(path);
     });
 
-    ipcRenderer.on('reloadDb', () => {
-      _vue.downloadDb();
+    ipcRenderer.on('reloadDb', async () => {
+      try {
+        await _vue.$confirm(
+          `即将从云端重新拉取数据库！该操作耗时较长，中断可能导致数据损坏！内置数据库将被覆盖且原数据库无法找回！是否继续？`,
+          '即将重载数据库！',
+          {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          },
+        );
+        await _vue.downloadDb();
+        // eslint-disable-next-line no-empty
+      } catch (_) {}
     });
 
     this.appVersion = await connector.get('checkVersion', {});
