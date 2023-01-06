@@ -335,16 +335,17 @@ export default {
           });
         } else {
           this.downloadDialog.info = '下载数据库失败，请检查网络！';
+          await connector.get('rollbackDb', {});
           this.$notify({
             title: '数据库更新失败！',
             message: '数据库更新文件损坏！',
             type: 'error',
             duration: 0,
           });
-          await connector.get('rollbackDb', {});
         }
       } catch (e) {
         this.downloadDialog.info = '下载数据库失败，请检查网络！';
+        await connector.get('rollbackDb', {});
         this.$notify({
           title: '数据库更新失败！',
           message: '请检查网络连接！',
