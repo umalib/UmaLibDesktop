@@ -1037,11 +1037,12 @@ module.exports = {
   editors: editorList,
   recommendations,
   signInfo: {
-    content: '内容：NGA赛马娘翻译交流群 开发：风之低吟（NGA） 版本：2.0.0',
+    content:
+      '内容：NGA赛马娘翻译交流群 开发：风之低吟（NGA） 版本：2.0.0-alpha',
     pubKey:
       '04f7c5d1bf43e06c4a119deb999c33a488fc38d1a7f6387cdc0001ed190d6b304846b3d2931fb15f819c6e57ac7ce119f8c68e376a5631d5ccfc1f712a51187123',
     sign:
-      '304502202fcc49988fcac71b6011d3c63633f10f4b05cd5a35b72929b55b94b91d2f54d3022100865321b777d7a9f5608bb76c910deb1a6ff7d6b571a6a8b78ff97d90e4f27f14',
+      '304502200773c4e00f94455935ad214de037091b6c486a41bffb71dda623272456ec915a022100fd815e8668cc0eb5a68930f83b583ba158d78b091136ea0d73a724c40dc09c3a',
   },
   staffs: staffList,
   tagTypes: ['其他', '角色', '系列', '长篇/合集', '争议/不适'],

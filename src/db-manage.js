@@ -1,7 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const { existsSync, renameSync, copyFileSync, rmSync } = require('fs');
 const { zip } = require('compressing');
-const { join } = require('fs');
+const { join } = require('path');
 
 let logger = null;
 let prisma = null;
@@ -662,7 +662,13 @@ module.exports = {
     copyFileSync(embeddedDbPath, backupPath);
     rmSync(embeddedDbPath);
     await zip.uncompress(Buffer.from(dbData.buffer), userDataPath);
-    renameSync(join(userDataPath, `${dbData.version}.db`), embeddedDbPath);
+    const newDbPath = join(userDataPath, `${dbData.version}.db`);
+    logger.debug(
+      `unzip ${newDbPath} success? ${existsSync(
+        newDbPath,
+      )}. move it to ${embeddedDbPath}`,
+    );
+    renameSync(newDbPath, embeddedDbPath);
     await changeDb(embeddedDbPath);
   },
   async setTags(param) {
