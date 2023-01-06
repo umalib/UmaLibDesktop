@@ -29,8 +29,6 @@ function cleanBlank(src) {
   return src.replace(/^\s*/, '').replace(/\s*$/, '');
 }
 
-logger.info(`cleaning db ${path}`);
-
 async function task() {
   const articles = await prisma.article.findMany();
   for (const art of articles) {
