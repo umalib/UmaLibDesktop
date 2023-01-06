@@ -328,8 +328,8 @@ export default {
         if (flag !== undefined) {
           await connector.get('setDbVersion', this.downloadDialog.aimVersion);
           this.$notify({
-            title: `已启用内置主数据库，版本：${this.downloadDialog.aimVersion}`,
-            message: '数据库在线更新完成',
+            title: '数据库在线更新完成',
+            message: `已启用内置主数据库，版本：${this.downloadDialog.aimVersion}`,
             type: 'success',
             duration: 0,
           });
