@@ -29,5 +29,5 @@ prisma/migrations
 /tools/config.js
 /tools/remover.js
 /tools/input.js
-/tools/temp.out
+/tools/analysis-*
 /data

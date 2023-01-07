@@ -2,8 +2,10 @@ const { PrismaClient } = require('@prisma/client');
 const { writeFileSync } = require('fs');
 const { join, resolve } = require('path');
 const { path } = require('./config.js');
-const logger = require('log4js').getLogger('exporter');
+const logger = require('log4js').getLogger('analyser');
 logger.level = 'info';
+
+logger.info(`analyze article data in db ${path}`);
 
 const prisma = new PrismaClient({
   datasources: {
@@ -12,8 +14,6 @@ const prisma = new PrismaClient({
     },
   },
 });
-
-logger.info(`checking db ${path}`);
 
 function comparator(a, b) {
   if (a.count === b.count) {
@@ -36,19 +36,20 @@ function stringifyCreators(creators) {
     }
     return b.a - a.a;
   });
-  return temp.map(x => `${x.c}:${x.a}`).join(', ');
+  return temp.map(x => `${x.c}(${x.a})`).join(' ');
 }
 
 function print(x, cb) {
   cb(
-    `${x.name}\t${x.count}${
-      x.creators ? '/' + x.all + '\t' + stringifyCreators(x.creators) : ''
+    `${x.name},${x.count}${
+      x.creators ? '/' + x.all + ',' + stringifyCreators(x.creators) : ''
     }`,
   );
 }
 
 async function task() {
   const id2creator = {};
+  const creatorCount = {};
   (
     await prisma.article.findMany({
       select: {
@@ -60,6 +61,13 @@ async function task() {
   ).forEach(x => {
     const creator = x.translator ? x.translator : x.author;
     id2creator[x.id] = creator.split('/');
+    for (const c of id2creator[x.id]) {
+      if (creatorCount[c] === undefined) {
+        creatorCount[c] = 1;
+      } else {
+        creatorCount[c] += 1;
+      }
+    }
   });
   const tags = await prisma.tag.findMany({
     include: {
@@ -127,6 +135,7 @@ async function task() {
     }
     creatorSta.push({
       name: c,
+      count: creatorCount[c],
       val: tempList.sort((a, b) => {
         if (a.count === b.count) {
           return a.name > b.name ? 1 : -1;
@@ -135,7 +144,12 @@ async function task() {
       }),
     });
   }
-  creatorSta.sort((a, b) => (a.name > b.name ? 1 : -1));
+  creatorSta.sort((a, b) => {
+    if (a.count === b.count) {
+      return a.name > b.name ? 1 : -1;
+    }
+    return b.count - a.count;
+  });
 
   // const cb = console.log;
   // characters.forEach(x => print(x, cb));
@@ -148,20 +162,28 @@ async function task() {
   function cb(s) {
     output += s + '\n';
   }
+  cb('Character,Short/All,Creators');
   characters.forEach(x => print(x, cb));
-  cb('');
+  cb('\nSeries,Count');
   series.forEach(x => print(x, cb));
-  cb('');
+  cb('\nTag,Count');
   others.forEach(x => print(x, cb));
-  cb('');
+  cb('\nCreator,Count,Tags');
   cb(
     creatorSta
       .map(
-        x => `${x.name}\t${x.val.map(v => v.name + ':' + v.count).join(', ')}`,
+        x =>
+          `${x.name},${x.count},${x.val
+            .map(v => `${v.name}(${v.count})`)
+            .join(' ')}`,
       )
       .join('\n'),
   );
-  writeFileSync('temp.out', output);
+  const date = new Date();
+  writeFileSync(
+    `analysis-${date.getFullYear()}${date.getMonth()}${date.getDate()}.csv`,
+    `\uFEFF${output}`,
+  );
   await prisma.$disconnect();
 }
 
