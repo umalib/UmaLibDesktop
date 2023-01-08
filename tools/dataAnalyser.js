@@ -180,8 +180,12 @@ async function task() {
       .join('\n'),
   );
   const date = new Date();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
   writeFileSync(
-    `analysis-${date.getFullYear()}${date.getMonth()}${date.getDate()}.csv`,
+    `result/analysis-${date.getFullYear()}${month < 10 ? '0' + month : month}${
+      day < 10 ? '0' + day : day
+    }.csv`,
     `\uFEFF${output}`,
   );
   await prisma.$disconnect();
