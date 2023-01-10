@@ -15,178 +15,149 @@ const prisma = new PrismaClient({
   },
 });
 
-function comparator(a, b) {
-  if (a.count === b.count) {
-    return a.name > b.name ? 1 : -1;
-  }
-  return b.count - a.count;
-}
-
-function stringifyCreators(creators) {
-  const temp = [];
-  for (const k in creators) {
-    temp.push({
-      c: k,
-      a: creators[k],
-    });
-  }
-  temp.sort((a, b) => {
-    if (b.a === a.a) {
-      return a.c > b.c ? 1 : -1;
-    }
-    return b.a - a.a;
-  });
-  return temp.map(x => `${x.c}(${x.a})`).join(' ');
-}
-
-function print(x, cb) {
-  cb(
-    `${x.name},${x.count}${
-      x.creators ? '/' + x.all + ',' + stringifyCreators(x.creators) : ''
-    }`,
-  );
-}
-
 async function task() {
-  const id2creator = {};
-  const creatorCount = {};
-  (
+  const articles = (
     await prisma.article.findMany({
       select: {
         id: true,
         author: true,
         translator: true,
+        uploadTime: true,
       },
     })
-  ).forEach(x => {
-    const creator = x.translator ? x.translator : x.author;
-    id2creator[x.id] = creator.split('/');
-    for (const c of id2creator[x.id]) {
-      if (creatorCount[c] === undefined) {
-        creatorCount[c] = 1;
-      } else {
-        creatorCount[c] += 1;
-      }
-    }
+  ).map(x => {
+    return {
+      id: x.id,
+      creator: x.translator || x.author,
+      uploadTime: Math.floor((x.uploadTime + 8 * 3600) / 86400),
+    };
   });
+  const day2count = {};
+  const creatorDict = [
+    '南极洲老土著',
+    'Nils',
+    '鬼道',
+    '南村群童',
+    '莫名的不知火',
+    'byslm',
+    'Takatoshi',
+    'ken',
+    'Tye_sine',
+    '自我厌恶者',
+  ];
+  const tagDict = [
+    '青云天空',
+    '爱丽速子',
+    '黄金船',
+    '无声铃鹿',
+    '里见光钻',
+    '曼城茶座',
+    '爱丽数码',
+    '一路通',
+    '大和赤骥',
+    '目白麦昆',
+    'R18',
+    'R15',
+  ];
+  const novelDict = {};
+  const artDict = {};
   const tags = await prisma.tag.findMany({
     include: {
       taggedList: true,
     },
   });
-  const longNovels = {};
   tags
     .filter(x => x.type === 3)
-    .forEach(x =>
-      x.taggedList.forEach(tagged => (longNovels[tagged.artId] = true)),
-    );
-  const characters = [],
-    series = [],
-    others = [];
+    .forEach(x => x.taggedList.forEach(y => (novelDict[y.artId] = true)));
   tags
-    .filter(x => x.type === 1)
+    .filter(x => tagDict.indexOf(x.name) !== -1)
     .forEach(x => {
-      let count = 0;
-      const creators = {};
-      x.taggedList
-        .filter(tagged => !longNovels[tagged.artId])
-        .forEach(tagged => {
-          count++;
-          id2creator[tagged.artId].forEach(creator => {
-            if (!creators[creator]) {
-              creators[creator] = 1;
-            } else {
-              creators[creator]++;
+      const tagIndex = tagDict.indexOf(x.name);
+      x.taggedList.forEach(y => {
+        if (!novelDict[y.artId] || tagIndex > 9) {
+          if (!artDict[y.artId]) {
+            artDict[y.artId] = [];
+            for (let i = 0; i < tagDict.length; ++i) {
+              artDict[y.artId].push(0);
             }
-          });
-        });
-      characters.push({
-        name: x.name,
-        count,
-        all: x.taggedList.length,
-        creators,
+          }
+          artDict[y.artId][tagIndex] = 1;
+        }
       });
     });
-  characters.sort(comparator);
-  tags
-    .filter(x => x.type === 2)
-    .forEach(x => series.push({ name: x.name, count: x.taggedList.length }));
-  series.sort(comparator);
-  tags
-    .filter(x => x.type === 0)
-    .forEach(x => others.push({ name: x.name, count: x.taggedList.length }));
-  others.sort(comparator);
-  const creators = {};
-  characters.forEach(x => {
-    if (x.creators) {
-      for (const c in x.creators) {
-        if (!creators[c]) {
-          creators[c] = {};
-        }
-        creators[c][x.name] = x.creators[c];
+  for (const art of articles) {
+    const key = art.uploadTime;
+    if (!day2count[key]) {
+      day2count[key] = {
+        all: 1,
+        delta: 1,
+        creators: [],
+        tags: [],
+      };
+      for (let i = 0; i < creatorDict.length; ++i) {
+        day2count[key].creators.push(0);
+      }
+      for (let i = 0; i < tagDict.length; ++i) {
+        day2count[key].tags.push(0);
+      }
+    } else {
+      day2count[key].delta += 1;
+    }
+    const creatorIndex = creatorDict.indexOf(art.creator);
+    if (creatorIndex >= 0) {
+      day2count[key].creators[creatorIndex] += 1;
+    }
+    if (artDict[art.id]) {
+      for (let i = 0; i < tagDict.length; ++i) {
+        day2count[key].tags[i] += artDict[art.id][i];
       }
     }
-  });
-  const creatorSta = [];
-  for (const c in creators) {
-    const tempList = [];
-    for (const ch in creators[c]) {
-      tempList.push({ name: ch, count: creators[c][ch] });
-    }
-    creatorSta.push({
-      name: c,
-      count: creatorCount[c],
-      val: tempList.sort((a, b) => {
-        if (a.count === b.count) {
-          return a.name > b.name ? 1 : -1;
-        }
-        return b.count - a.count;
-      }),
-    });
   }
-  creatorSta.sort((a, b) => {
-    if (a.count === b.count) {
-      return a.name > b.name ? 1 : -1;
+  const days = Object.keys(day2count).map(x => Number(x));
+  days.sort();
+  for (let i = 0; i < days.length; ++i) {
+    if (i === 0) {
+      day2count[days[i]].all = day2count[days[i]].delta;
+    } else {
+      day2count[days[i]].all =
+        day2count[days[i]].delta + day2count[days[i - 1]].all;
+      for (let j = 0; j < creatorDict.length; ++j) {
+        day2count[days[i]].creators[j] += day2count[days[i - 1]].creators[j];
+      }
+      for (let j = 0; j < tagDict.length; ++j) {
+        day2count[days[i]].tags[j] += day2count[days[i - 1]].tags[j];
+      }
     }
-    return b.count - a.count;
-  });
-
-  // const cb = console.log;
-  // characters.forEach(x => print(x, cb));
-  // cb();
-  // series.forEach(x => print(x, cb));
-  // cb();
-  // others.forEach(x => print(x, cb));
-
-  let output = '';
-  function cb(s) {
-    output += s + '\n';
   }
-  cb('Character,Short/All,Creators');
-  characters.forEach(x => print(x, cb));
-  cb('\nSeries,Count');
-  series.forEach(x => print(x, cb));
-  cb('\nTag,Count');
-  others.forEach(x => print(x, cb));
-  cb('\nCreator,Count,Tags');
-  cb(
-    creatorSta
-      .map(
-        x =>
-          `${x.name},${x.count},${x.val
-            .map(v => `${v.name}(${v.count})`)
-            .join(' ')}`,
-      )
-      .join('\n'),
-  );
-  const date = new Date();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
+  const all = [],
+    delta = [],
+    creators = [],
+    tagOutput = [];
+  for (let i = 0; i < creatorDict.length; ++i) {
+    creators.push([]);
+  }
+  for (let i = 0; i < tagDict.length; ++i) {
+    tagOutput.push([]);
+  }
+  for (const key of days) {
+    all.push(day2count[key].all);
+    delta.push(day2count[key].delta);
+    for (let i = 0; i < creatorDict.length; ++i) {
+      creators[i].push(day2count[key].creators[i]);
+    }
+    for (let i = 0; i < tagDict.length; ++i) {
+      tagOutput[i].push(day2count[key].tags[i]);
+    }
+  }
   writeFileSync(
-    `result/analysis-${date.getFullYear()}${month < 10 ? '0' + month : month}${
-      day < 10 ? '0' + day : day
-    }.csv`,
-    `\uFEFF${output}`,
+    resolve('./result/output.json'),
+    JSON.stringify({
+      days,
+      all,
+      delta,
+      creators,
+      tags: tagOutput,
+    }),
   );
   await prisma.$disconnect();
 }
