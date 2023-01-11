@@ -6,16 +6,16 @@ import time
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
-f = open('./output.json', 'r')
+f = open('./output-plot.json', 'r')
 data = json.loads(f.read())
 f.close()
 
 config = {
-    "figure.figsize": (12, 8),
-    "font.family": 'serif',
+    'axes.unicode_minus': False,
+    "figure.figsize": (16, 9),
+    "font.family": ['Songti SC', 'IPAexMincho', 'serif'],
     "font.size": 10,
     "mathtext.fontset": 'stix',
-    "font.serif": ['Songti SC']
 }
 rcParams.update(config)
 
@@ -29,20 +29,7 @@ while start + delta < end:
 
 ticks.append(end)
 
-tagLabels = [
-    '青云天空',
-    '爱丽速子',
-    '黄金船',
-    '无声铃鹿',
-    '里见光钻',
-    '曼城茶座',
-    '爱丽数码',
-    '一路通',
-    '大和赤骥',
-    '目白麦昆',
-    'R18',
-    'R15'
-]
+tagLabels = data['dict']['tags']
 
 lineColor = ['red', 'orange', 'goldenrod', 'green', 'darkcyan', 'blue', 'purple', 'darkred', 'darkorange', 'olive',
              'black', 'steelblue']

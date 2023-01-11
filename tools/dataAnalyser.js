@@ -150,13 +150,17 @@ async function task() {
     }
   }
   writeFileSync(
-    resolve('./result/output.json'),
+    resolve('./result/output-plot.json'),
     JSON.stringify({
       days,
       all,
       delta,
       creators,
       tags: tagOutput,
+      dict: {
+        creators: creatorDict,
+        tags: tagDict,
+      },
     }),
   );
   await prisma.$disconnect();

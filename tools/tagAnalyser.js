@@ -22,27 +22,29 @@ function comparator(a, b) {
   return b.count - a.count;
 }
 
-function stringifyCreators(creators) {
+function stringifyCreators(sta) {
+  const creators = sta.creators;
   const temp = [];
   for (const k in creators) {
     temp.push({
-      c: k,
-      a: creators[k],
+      creator: k,
+      count: creators[k],
     });
   }
   temp.sort((a, b) => {
-    if (b.a === a.a) {
-      return a.c > b.c ? 1 : -1;
+    if (b.count === a.count) {
+      return a.creator > b.creator ? 1 : -1;
     }
-    return b.a - a.a;
+    return b.count - a.count;
   });
-  return temp.map(x => `${x.c}(${x.a})`).join(' ');
+  sta.creators = temp;
+  return temp.map(x => `${x.creator}(${x.count})`).join(' ');
 }
 
 function print(x, cb) {
   cb(
     `${x.name},${x.count}${
-      x.creators ? '/' + x.all + ',' + stringifyCreators(x.creators) : ''
+      x.creators ? '/' + x.all + ',' + stringifyCreators(x) : ''
     }`,
   );
 }
@@ -209,6 +211,23 @@ async function task() {
       day < 10 ? '0' + day : day
     }.csv`,
     `\uFEFF${output}`,
+  );
+  const R18TagSta = others.filter(x => x.name === 'R18')[0],
+    R15TagSta = others.filter(x => x.name === 'R15')[0];
+  writeFileSync(
+    'result/output-pie.json',
+    JSON.stringify({
+      R18: {
+        all: R18TagSta.count,
+        creators: R18TagSta.creators.map(x => x.creator),
+        counts: R18TagSta.creators.map(x => x.count),
+      },
+      R15: {
+        all: R15TagSta.count,
+        creators: R15TagSta.creators.map(x => x.creator),
+        counts: R15TagSta.creators.map(x => x.count),
+      },
+    }),
   );
   await prisma.$disconnect();
 }

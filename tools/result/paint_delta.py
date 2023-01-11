@@ -7,16 +7,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import rcParams
 
-f = open('./output.json', 'r')
+f = open('./output-plot.json', 'r')
 data = json.loads(f.read())
 f.close()
 
 config = {
-    "figure.figsize": (12, 8),
-    "font.family": 'serif',
+    'axes.unicode_minus': False,
+    "figure.figsize": (16, 9),
+    "font.family": ['Songti SC', 'IPAexMincho', 'serif'],
     "font.size": 10,
     "mathtext.fontset": 'stix',
-    "font.serif": ['Songti SC']
 }
 rcParams.update(config)
 

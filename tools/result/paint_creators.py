@@ -6,16 +6,16 @@ import time
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
-f = open('./output.json', 'r')
+f = open('./output-plot.json', 'r')
 data = json.loads(f.read())
 f.close()
 
 config = {
-    "figure.figsize": (12, 8),
-    "font.family": 'serif',
+    'axes.unicode_minus': False,
+    "figure.figsize": (16, 9),
+    "font.family": ['Songti SC', 'IPAexMincho', 'serif'],
     "font.size": 10,
     "mathtext.fontset": 'stix',
-    "font.serif": ['Songti SC']
 }
 rcParams.update(config)
 
@@ -29,18 +29,7 @@ while start + delta < end:
 
 ticks.append(end)
 
-creatorLabels = [
-    '南极洲老土著',
-    'Nils',
-    '鬼道',
-    '南村群童',
-    '莫名的不知火',
-    'byslm',
-    'Takatoshi',
-    'ken',
-    'Tye_sine',
-    '自我厌恶者',
-]
+creatorLabels = data['dict']['creators']
 
 ticksY = [0, 100, 200, 300, 400, 500, 600]
 for i in range(0, len(creatorLabels)):
