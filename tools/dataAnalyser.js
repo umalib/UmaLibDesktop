@@ -32,35 +32,30 @@ async function task() {
       uploadTime: Math.floor((x.uploadTime + 8 * 3600) / 86400),
     };
   });
-  const day2count = {};
-  const creatorDict = [
-    '南极洲老土著',
-    'Nils',
-    '鬼道',
-    '南村群童',
-    '莫名的不知火',
-    'byslm',
-    'Takatoshi',
-    'ken',
-    'Tye_sine',
-    '自我厌恶者',
-  ];
-  const tagDict = [
-    '青云天空',
-    '爱丽速子',
-    '黄金船',
-    '无声铃鹿',
-    '里见光钻',
-    '曼城茶座',
-    '爱丽数码',
-    '一路通',
-    '大和赤骥',
-    '目白麦昆',
-    'R18',
-    'R15',
-  ];
+
+  let creatorDict = {};
+  articles.forEach(x => {
+    if (!creatorDict[x.creator]) {
+      creatorDict[x.creator] = 1;
+    } else {
+      creatorDict[x.creator] += 1;
+    }
+  });
+  creatorDict = Object.keys(creatorDict).map(x => {
+    return {
+      n: x,
+      c: creatorDict[x],
+    };
+  });
+  creatorDict.sort((a, b) => {
+    if (b.c === a.c) {
+      return a.n > b.n ? 1 : -1;
+    }
+    return b.c - a.c;
+  });
+  creatorDict = creatorDict.slice(0, 10).map(x => x.n);
+
   const novelDict = {};
-  const artDict = {};
   const tags = await prisma.tag.findMany({
     include: {
       taggedList: true,
@@ -69,6 +64,25 @@ async function task() {
   tags
     .filter(x => x.type === 3)
     .forEach(x => x.taggedList.forEach(y => (novelDict[y.artId] = true)));
+
+  let tagDict = tags
+    .filter(x => x.type === 1)
+    .map(x => {
+      return {
+        n: x.name,
+        c: x.taggedList.filter(y => !novelDict[y.artId]).length,
+      };
+    });
+  tagDict.sort((a, b) => {
+    if (b.c === a.c) {
+      return a.n > b.n ? 1 : -1;
+    }
+    return b.c - a.c;
+  });
+  tagDict = tagDict.slice(0, 10).map(x => x.n);
+  tagDict = [...tagDict, 'R18', 'R15'];
+
+  const artDict = {};
   tags
     .filter(x => tagDict.indexOf(x.name) !== -1)
     .forEach(x => {
@@ -85,6 +99,8 @@ async function task() {
         }
       });
     });
+
+  const day2count = {};
   for (const art of articles) {
     const key = art.uploadTime;
     if (!day2count[key]) {
