@@ -4,6 +4,7 @@ import math
 import time
 
 import matplotlib.pyplot as plt
+import np as np
 import numpy as np
 from matplotlib import rcParams
 
@@ -21,16 +22,18 @@ config = {
 rcParams.update(config)
 
 ticksX = [data['days'][0], data['days'][-1]]
-ticksY = [0, 10, 20, 30, 40, 50, 60, 70, 80]
+ticksY = list(np.arange(0, max(data['delta']), 10))
+
+exceptionVal = round(data['all'][-1] * 4 / len(data['all']))
 
 for i in range(0, len(data['delta'])):
-    if data['delta'][i] > 25:
+    if data['delta'][i] > exceptionVal:
         ticksX.append(data['days'][i])
         ticksY.append(data['delta'][i])
 
 plt.bar(data['days'], data['delta'])
 plt.xticks(ticksX, map(lambda x: time.strftime('%Y%m%d', time.localtime(x * 86400))[2:], ticksX))
-plt.yticks(ticksY)
+plt.yticks(list(set(ticksY)))
 plt.xlabel(u"时间")
 plt.ylabel(u"创作数")
 plt.grid(linestyle=":")

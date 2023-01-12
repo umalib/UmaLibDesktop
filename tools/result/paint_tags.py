@@ -4,6 +4,7 @@ import math
 import time
 
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import rcParams
 
 f = open('./output-plot.json', 'r')
@@ -34,14 +35,14 @@ tagLabels = data['dict']['tags']
 lineColor = ['red', 'orange', 'goldenrod', 'green', 'darkcyan', 'blue', 'purple', 'darkred', 'darkorange', 'olive',
              'black', 'steelblue']
 
-ticksY = [0, 50, 100, 150, 200, 250]
+ticksY = list(np.arange(0, data['tags'][0][-1], 25 if data['tags'][0][-1] < 200 else 50))
 for i in range(0, len(tagLabels)):
     ticksY.append(data['tags'][i][-1])
 
 for i in range(0, len(tagLabels)):
     plt.plot(data['days'], data['tags'][i], '-', c=lineColor[i], label=tagLabels[i])
 plt.xticks(ticks, map(lambda x: time.strftime('%Y%m%d', time.localtime(x * 86400)), ticks))
-plt.yticks(ticksY)
+plt.yticks(list(set(ticksY)))
 plt.xlabel(u"时间")
 plt.ylabel(u"作品数")
 plt.legend(loc="best")

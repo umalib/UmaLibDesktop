@@ -4,6 +4,7 @@ import math
 import time
 
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import rcParams
 
 f = open('./output-plot.json', 'r')
@@ -19,19 +20,22 @@ config = {
 }
 rcParams.update(config)
 
-ticks = []
+ticksX = []
 start = data['days'][0]
 end = data['days'][-1]
 delta = math.floor((end - start) / 10)
 while start + delta < end:
-    ticks.append(start)
+    ticksX.append(start)
     start += delta
 
-ticks.append(end)
+ticksX.append(end)
+
+ticksY = list(np.arange(0, data['all'][-1], 50 if data['all'][-1] < 1000 else 500))
+ticksY.append(data['all'][-1])
 
 plt.plot(data['days'], data['all'], '-')
-plt.xticks(ticks, map(lambda x: time.strftime('%Y%m%d', time.localtime(x * 86400)), ticks))
-plt.yticks([0, 1000, 2000, 3000, 4000, 4614], [0, 1000, 2000, 3000, 4000, 4614])
+plt.xticks(ticksX, map(lambda x: time.strftime('%Y%m%d', time.localtime(x * 86400)), ticksX))
+plt.yticks(list(set(ticksY)))
 plt.xlabel(u"时间")
 plt.ylabel(u"作品数")
 plt.grid(linestyle=":")
