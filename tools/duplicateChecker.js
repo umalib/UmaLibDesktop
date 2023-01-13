@@ -3,6 +3,7 @@ const { resolve } = require('path');
 const { path, duplicateKey } = require('./config.js');
 const MD5 = new (require('jshashes').MD5)();
 const logger = require('log4js').getLogger('checker');
+const { formatTimeStamp } = require('../src/renderer/utils/renderer-utils');
 logger.level = 'info';
 
 logger.info(`check duplicate contents on article.${duplicateKey} in ${path}`);
@@ -20,6 +21,10 @@ async function task() {
         name: true,
         content: true,
         source: true,
+        uploadTime: true,
+      },
+      orderBy: {
+        uploadTime: 'asc',
       },
     })
   ).forEach(art => {
@@ -32,13 +37,18 @@ async function task() {
       name: art.name,
       content: MD5.hex(art.content),
       source: art.source,
+      uploadTime: art.uploadTime,
     });
   });
   for (const key in duplicateDict) {
     if (duplicateDict[key].length > 1) {
       logger.info(key);
       duplicateDict[key].forEach(x =>
-        logger.info(`\t${x.id}\t${x.name}\t${x.content}\t${x.source}`),
+        logger.info(
+          `${x.id}\t${x.name}\t${x.content}\t${x.source}\t${formatTimeStamp(
+            x.uploadTime * 1000,
+          )}`,
+        ),
       );
     }
   }
