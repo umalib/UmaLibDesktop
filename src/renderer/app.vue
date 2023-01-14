@@ -89,6 +89,7 @@ export default {
       appVersion: {
         app: '',
         db: 'loading...',
+        dbUpdate: undefined,
       },
       builtInDb: true,
       colorClz: '',
@@ -193,8 +194,9 @@ export default {
       }
       this.downloadDialog.aimVersion = remoteVer['db_version'];
       if (
-        !this.appVersion.db ||
-        Number(this.appVersion.db) < this.downloadDialog.aimVersion
+        this.appVersion.dbUpdate &&
+        (!this.appVersion.db ||
+          Number(this.appVersion.db) < this.downloadDialog.aimVersion)
       ) {
         try {
           await this.$confirm(
@@ -266,6 +268,7 @@ export default {
           return;
         }
       }
+      this.downloadDialog.title = `数据库 ${this.downloadDialog.aimVersion} 下载中……`;
       this.downloadDialog.visible = true;
       this.downloadDialog.progress = 0;
       const _vue = this;

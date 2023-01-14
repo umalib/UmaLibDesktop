@@ -85,6 +85,32 @@ if (!getBackgroundColor()) {
   logger.info('read background-color: ' + getBackgroundColor());
 }
 
+function getDefaultFullScreen() {
+  return configStore.get('full-screen');
+}
+
+function setDefaultFullScreen(isFullScreen) {
+  configStore.set('full-screen', isFullScreen);
+  return isFullScreen;
+}
+
+if (!getDefaultFullScreen()) {
+  setDefaultFullScreen(true);
+}
+
+function getCheckDbUpdate() {
+  return configStore.get('db-update');
+}
+
+function setCheckDbUpdate(dbUpdate) {
+  configStore.set('db-update', dbUpdate);
+  return dbUpdate;
+}
+
+if (!getCheckDbUpdate()) {
+  setCheckDbUpdate(true);
+}
+
 function chooseTitles() {
   let rand = Math.random();
   rand -= 0.04;
@@ -207,7 +233,11 @@ const storeEvents = {
   },
 
   checkVersion() {
-    return { app: app.getVersion(), db: configStore.get('db-version') };
+    return {
+      app: app.getVersion(),
+      db: configStore.get('db-version'),
+      dbUpdate: getCheckDbUpdate(),
+    };
   },
   setDbVersion(version) {
     configStore.set('db-version', version);
@@ -225,19 +255,6 @@ const storeEvents = {
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } },
 ]);
-
-function getDefaultFullScreen() {
-  return configStore.get('full-screen');
-}
-
-function setDefaultFullScreen(isFullScreen) {
-  configStore.set('full-screen', isFullScreen);
-  return isFullScreen;
-}
-
-if (getDefaultFullScreen() === undefined) {
-  setDefaultFullScreen(true);
-}
 
 async function createWindow() {
   // Create the browser window.
@@ -411,6 +428,16 @@ async function createWindow() {
         toolTip: '从云端拉取数据库',
         click() {
           mainWindow.webContents.send('reloadDb', '');
+        },
+      },
+      {
+        label: '启动时检查数据库',
+        sublabel: '启动时是否检查数据库更新',
+        toolTip: '启动时是否检查数据库更新',
+        type: 'checkbox',
+        checked: getCheckDbUpdate(),
+        click(event) {
+          setCheckDbUpdate(event.checked);
         },
       },
       { type: 'separator' },
