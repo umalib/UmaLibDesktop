@@ -1,5 +1,12 @@
 const { PrismaClient } = require('@prisma/client');
-const { existsSync, renameSync, copyFileSync, rmSync } = require('fs');
+const {
+  existsSync,
+  renameSync,
+  rmSync,
+  mkdirSync,
+  rmdirSync,
+  readdirSync,
+} = require('fs');
 const { zip } = require('compressing');
 const { join } = require('path');
 
@@ -114,6 +121,17 @@ async function updateTags(artId, tags) {
   }
 }
 
+function compatibleRmSync(path) {
+  if (process.version > 'v14') {
+    rmSync(path, { force: true });
+  } else if (existsSync(path)) {
+    const rmPath = join(userDataPath, 'toRm');
+    mkdirSync(rmPath);
+    renameSync(path, join(rmPath, 'trash.dat'));
+    rmdirSync(rmPath, { recursive: true });
+  }
+}
+
 module.exports = {
   changeDb,
   checkDb() {
@@ -128,7 +146,7 @@ module.exports = {
     return tag ? tag.id : -1;
   },
   cleanBackupDb() {
-    rmSync(backupPath);
+    compatibleRmSync(backupPath);
   },
   async copyright() {
     return JSON.parse(
@@ -652,24 +670,38 @@ module.exports = {
   async rollbackDb() {
     if (existsSync(backupPath)) {
       await this.disconnect();
-      rmSync(embeddedDbPath);
       renameSync(backupPath, embeddedDbPath);
       await changeDb(embeddedDbPath);
     }
   },
   async saveOnlineDb(dbData) {
     await this.disconnect();
-    copyFileSync(embeddedDbPath, backupPath);
-    rmSync(embeddedDbPath);
-    await zip.uncompress(Buffer.from(dbData.buffer), userDataPath);
-    const newDbPath = join(userDataPath, `${dbData.version}.db`);
+    renameSync(embeddedDbPath, backupPath);
+    let newDbPath;
+    let dbVersion;
+    await zip.uncompress(
+      dbData.buffer ? Buffer.from(dbData.buffer) : dbData,
+      userDataPath,
+    );
+    if (dbData.buffer) {
+      newDbPath = join(userDataPath, `${dbData.version}.db`);
+    } else {
+      dbVersion = readdirSync(userDataPath).filter(
+        x => x.startsWith('20') && x.endsWith('.db'),
+      )[0];
+      newDbPath = join(userDataPath, dbVersion);
+    }
     logger.debug(
       `unzip ${newDbPath} success? ${existsSync(
         newDbPath,
       )}. move it to ${embeddedDbPath}`,
     );
     renameSync(newDbPath, embeddedDbPath);
-    await changeDb(embeddedDbPath);
+    const result = await changeDb(embeddedDbPath);
+    if (dbVersion) {
+      result.dbVersion = Number(dbVersion.substring(0, dbVersion.length - 3));
+    }
+    return result;
   },
   async setTags(param) {
     await prisma.tag.updateMany({

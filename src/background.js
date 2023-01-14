@@ -424,10 +424,38 @@ async function createWindow() {
       },
       {
         label: '重载数据库',
-        sublabel: '从云端拉取数据库',
-        toolTip: '从云端拉取数据库',
+        sublabel: '从云端拉取内置数据库',
+        toolTip: '从云端拉取内置数据库',
         click() {
           mainWindow.webContents.send('reloadDb', '');
+        },
+      },
+      {
+        label: '安装本地数据库',
+        sublabel: '从本地安装内置数据库',
+        toolTip: '从本地安装内置数据库',
+        async click() {
+          const path = await dialog['showOpenDialog']({
+            filters: [{ name: 'zip', extensions: ['zip'] }],
+            multiSelections: false,
+            openDirectory: false,
+          });
+          if (path.filePaths.length) {
+            try {
+              logger.info(`dbManage.changeDb("${path.filePaths[0]}")`);
+              const result = await dbManage.saveOnlineDb(path.filePaths[0]);
+              await dbManage.checkR18();
+              storeEvents.setDbVersion(result.dbVersion);
+              mainWindow.webContents.send('refreshPage', result);
+            } catch (_) {
+              logger.error('zip is corrupted!');
+              await dbManage.rollbackDb();
+              mainWindow.webContents.send('refreshPage', {
+                current: userDbPath,
+                isEmbedded: true,
+              });
+            }
+          }
         },
       },
       {
