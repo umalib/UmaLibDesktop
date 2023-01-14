@@ -245,7 +245,11 @@ export default {
       this.appVersion = await connector.get('checkVersion', {});
       this.$notify({
         title: '切换数据库',
-        message: `${this.builtInDb ? '内置' : this.currentDbPath}`,
+        message: `${
+          this.builtInDb
+            ? '内置 版本：' + this.appVersion.db
+            : this.currentDbPath
+        }`,
         type: 'success',
       });
       this.saveMeId = await connector.get('saveMe', {});

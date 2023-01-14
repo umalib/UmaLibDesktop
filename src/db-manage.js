@@ -122,7 +122,7 @@ async function updateTags(artId, tags) {
 }
 
 function compatibleRmSync(path) {
-  if (process.version > 'v14') {
+  if (rmSync) {
     rmSync(path, { force: true });
   } else if (existsSync(path)) {
     const rmPath = join(userDataPath, 'toRm');
