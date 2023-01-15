@@ -43,13 +43,21 @@ async function task() {
   for (const key in duplicateDict) {
     if (duplicateDict[key].length > 1) {
       logger.info(key);
-      duplicateDict[key].forEach(x =>
-        logger.info(
-          `${x.id}\t${x.name}\t${x.content}\t${x.source}\t${formatTimeStamp(
-            x.uploadTime * 1000,
-          )}`,
-        ),
-      );
+      duplicateDict[key].forEach(x => {
+        if (
+          x.source &&
+          x.source !== 'FUTABA' &&
+          x.source !== 'PIXIV' &&
+          x.source !== '匿名版' &&
+          x.source !== '推特'
+        ) {
+          logger.info(
+            `${x.id}\t${x.name}\t${x.content}\t${x.source}\t${formatTimeStamp(
+              x.uploadTime * 1000,
+            )}`,
+          );
+        }
+      });
     }
   }
   await prisma.$disconnect();
