@@ -47,7 +47,7 @@ async function task() {
       duplicateDict[key].forEach(x => {
         if (
           duplicateKey !== 'source' ||
-          (x.source && duplicateFilter.indexOf(x.source) === -1)
+          duplicateFilter.indexOf(x.source) === -1
         ) {
           logger.info(
             `${x.id}\t${x.name}\t${x.content}\t${x.source}\t${formatTimeStamp(

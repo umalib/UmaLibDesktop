@@ -413,6 +413,8 @@ export default {
   }
 
   .el-message-box__title,
+  .el-message-box__content,
+  .el-notification__title,
   .el-notification__content,
   .el-select-dropdown__item {
     color: nth($fontColor, 1);
