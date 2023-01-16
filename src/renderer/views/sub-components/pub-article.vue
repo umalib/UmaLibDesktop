@@ -21,7 +21,8 @@
               clearable
               maxlength="50"
               placeholder="作品的标题"
-              type="input"
+              show-word-limit
+              type="text"
             >
               <template slot="prepend">标题</template>
             </el-input>
@@ -78,7 +79,8 @@
               clearable
               maxlength="100"
               placeholder="有什么话想说？没有的话默认截取正文前100个字符哦"
-              type="input"
+              show-word-limit
+              type="text"
             >
               <template slot="prepend">备注</template>
             </el-input>
@@ -97,9 +99,10 @@
             <el-input
               v-model="newText.source"
               clearable
-              maxlength="128"
+              maxlength="512"
               placeholder="这篇作品是转载吗？请附上链接"
-              type="input"
+              show-word-limit
+              type="text"
             >
               <template slot="prepend">来源</template>
             </el-input>
@@ -143,7 +146,7 @@
         发布
       </el-button>
       <el-button
-        :disabled="newText.id"
+        :disabled="!!newText.id"
         type="danger"
         @click="$emit('art-reset')"
       >
