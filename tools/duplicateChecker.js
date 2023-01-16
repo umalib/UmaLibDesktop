@@ -4,6 +4,7 @@ const { path, duplicateKey } = require('./config.js');
 const MD5 = new (require('jshashes').MD5)();
 const logger = require('log4js').getLogger('checker');
 const { formatTimeStamp } = require('../src/renderer/utils/renderer-utils');
+const { duplicateFilter } = require('./config');
 logger.level = 'info';
 
 logger.info(`check duplicate contents on article.${duplicateKey} in ${path}`);
@@ -45,11 +46,8 @@ async function task() {
       logger.info(key);
       duplicateDict[key].forEach(x => {
         if (
-          x.source &&
-          x.source !== 'FUTABA' &&
-          x.source !== 'PIXIV' &&
-          x.source !== '匿名版' &&
-          x.source !== '推特'
+          duplicateKey !== 'source' ||
+          (x.source && duplicateFilter.indexOf(x.source) === -1)
         ) {
           logger.info(
             `${x.id}\t${x.name}\t${x.content}\t${x.source}\t${formatTimeStamp(
