@@ -89,6 +89,7 @@ export default {
         id: -1,
         name: '',
         note: '',
+        source: '',
         tagLabels: [],
         tags: [],
         translator: '',

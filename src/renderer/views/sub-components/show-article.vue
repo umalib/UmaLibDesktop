@@ -29,38 +29,22 @@
             </el-descriptions-item>
             <el-descriptions-item label="来源">
               <span
-                v-if="
-                  selectedArt.source && selectedArt.source.startsWith('http')
-                "
+                v-for="(src, index) in selectedArt.source.split(' ')"
+                :key="index"
               >
-                <span v-if="selectedArt.source.indexOf(']|[') !== -1">
-                  <span
-                    v-for="(src, index) in selectedArt.source.split(']|[')"
-                    :key="src"
-                  >
-                    <br v-if="index !== 0" />
-                    <el-link
-                      :href="src"
-                      style="font-size: inherit;"
-                      target="_blank"
-                      type="primary"
-                    >
-                      {{ src }}
-                    </el-link>
-                  </span>
-                </span>
+                <br v-if="index !== 0" />
                 <el-link
-                  v-else
-                  :href="selectedArt.source"
+                  v-if="src.startsWith('http')"
+                  :href="src"
                   style="font-size: inherit;"
                   target="_blank"
                   type="primary"
                 >
-                  {{ selectedArt.source }}
+                  {{ src }}
                 </el-link>
-              </span>
-              <span v-else>
-                {{ selectedArt.source ? selectedArt.source.toUpperCase() : '' }}
+                <span v-else>
+                  {{ src }}
+                </span>
               </span>
             </el-descriptions-item>
             <el-descriptions-item :span="2" label="标签">

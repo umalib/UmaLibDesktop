@@ -194,29 +194,14 @@
         sortable="custom"
       >
         <template v-slot="cell">
-          <span v-if="cell.row['source'].startsWith('http')">
-            <span v-if="cell.row['source'].indexOf(']|[') !== -1">
-              <el-tooltip
-                v-for="src in cell.row['source'].split(']|[')"
-                :key="src"
-                :content="src"
-              >
-                <el-link :href="src" target="_blank" type="primary">
-                  外部链接
-                </el-link>
-              </el-tooltip>
-            </span>
-            <el-tooltip v-else :content="cell.row['source']">
-              <el-link
-                :href="cell.row['source']"
-                target="_blank"
-                type="primary"
-              >
+          <span v-for="src in cell.row['source'].split(' ')" :key="src">
+            <el-tooltip v-if="src.startsWith('http')" :content="src">
+              <el-link :href="src" target="_blank" type="primary">
                 外部链接
               </el-link>
             </el-tooltip>
+            <span v-else>{{ src }}</span>
           </span>
-          <span v-else>{{ cell.row['source'].toUpperCase() }}</span>
         </template>
       </el-table-column>
       <el-table-column
