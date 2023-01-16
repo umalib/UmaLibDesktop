@@ -14,7 +14,7 @@ const prisma = new PrismaClient({
   },
 });
 
-function cleaner(content) {
+function cleanDuplicateLineBreak(content) {
   for (
     let tmp = content.replace(/<p>\s*<br>\s*<\/p>/g, '\n');
     tmp.indexOf('</p><p>') === -1 && tmp.substring(3).indexOf('<p>') !== -1;
@@ -37,6 +37,7 @@ async function task() {
       art.note.indexOf('字符画') === -1 &&
       art.note.indexOf('AA漫画') === -1
     ) {
+      content = content.replace(/&nbsp;/g, ' ');
       content = content.replace(
         /\s*background-color:\s*(transparent|rgb\(255,\s*248,\s*231\)|rgb\(245,\s*232,\s*203\)|rgb\(255,\s*240,\s*205\));\s*/g,
         '',
@@ -49,8 +50,12 @@ async function task() {
       content = content
         .replace(/^\s*(<p>\s*<br>\s*<\/p>\s*)*\s*/, '')
         .replace(/\s*(\s*<p>\s*<br>\s*<\/p>)*\s*$/, '');
+      content = content.replace(
+        /\s*<p>\s*<br\s*\/*>\s*<\/p>\s*/g,
+        '<p><br></p>',
+      );
       content = content.replace(/<\/p>\s*<p>/g, '</p><p>');
-      content = cleaner(content);
+      content = cleanDuplicateLineBreak(content);
       if (art.name.indexOf('两人三足') === -1 && alignCenterImg) {
         content = content.replace(
           /<p>\s*<img\s+/g,
