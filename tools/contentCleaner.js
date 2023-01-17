@@ -16,11 +16,11 @@ const prisma = new PrismaClient({
 
 function cleanDuplicateLineBreak(content) {
   for (
-    let tmp = content.replace(/<p>\s*<br>\s*<\/p>/g, '\n');
+    let tmp = content.replace(/<p>\s*<br\s*\/?\s*>\s*<\/p>/g, '\n');
     tmp.indexOf('</p><p>') === -1 && tmp.substring(3).indexOf('<p>') !== -1;
-    tmp = content.replace(/<p>\s*<br>\s*<\/p>/g, '\n')
+    tmp = content.replace(/<p>\s*<br\s*\/?\s*>\s*<\/p>/g, '\n')
   ) {
-    content = content.replace(/<\/p>\s*<p>\s*<br>\s*<\/p>/g, '</p>');
+    content = content.replace(/<\/p>\s*<p>\s*<br\s*\/?\s*>\s*<\/p>/g, '</p>');
   }
   return content;
 }
@@ -48,12 +48,9 @@ async function task() {
       );
       content = content.replace(/\s+style="\s*"\s*/g, '');
       content = content
-        .replace(/^\s*(<p>\s*<br>\s*<\/p>\s*)*\s*/, '')
-        .replace(/\s*(\s*<p>\s*<br>\s*<\/p>)*\s*$/, '');
-      content = content.replace(
-        /\s*<p>\s*<br\s*\/*>\s*<\/p>\s*/g,
-        '<p><br></p>',
-      );
+        .replace(/^\s*(<p>\s*<br\s*\/?\s*>\s*<\/p>\s*)*\s*/, '')
+        .replace(/\s*(\s*<p>\s*<br\s*\/?\s*>\s*<\/p>)*\s*$/, '')
+        .replace(/\s*<p>\s*<br\s*\/?\s*>\s*<\/p>\s*/g, '<p><br></p>');
       content = content.replace(/<\/p>\s*<p>/g, '</p><p>');
       content = cleanDuplicateLineBreak(content);
       if (art.name.indexOf('两人三足') === -1 && alignCenterImg) {
