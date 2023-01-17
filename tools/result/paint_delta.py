@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 import json
-import math
 import time
 
 import matplotlib.pyplot as plt
-import np as np
 import numpy as np
 from matplotlib import rcParams
 
@@ -21,7 +19,7 @@ config = {
 }
 rcParams.update(config)
 
-ticksX = [data['days'][0], data['days'][-1]]
+ticksX = [data['days'][0], 18809, 18901, 18993, 19083, 19174, 19266, data['days'][-1]]
 ticksY = list(np.arange(0, max(data['delta']), 10))
 
 exceptionVal = round(data['all'][-1] * 4 / len(data['all']))

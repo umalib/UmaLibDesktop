@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import json
-import math
 import time
 
 import matplotlib.pyplot as plt
@@ -20,15 +19,7 @@ config = {
 }
 rcParams.update(config)
 
-ticks = []
-start = data['days'][0]
-end = data['days'][-1]
-delta = math.floor((end - start) / 10)
-while start + delta < end:
-    ticks.append(start)
-    start += delta
-
-ticks.append(end)
+ticks = [data['days'][0], 18809, 18901, 18993, 19083, 19174, 19266, data['days'][-1]]
 
 tagLabels = data['dict']['tags']
 

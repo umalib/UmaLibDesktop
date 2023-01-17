@@ -25,5 +25,7 @@ for i in range(0, len(R15['creators'])):
     keys.append('%s:%d(%.2f' % (R15['creators'][i], R15['counts'][i], R15['counts'][i] * 100 / R15['all']) + '%)')
 
 plt.pie(np.array(R15['counts']), labels=keys)
+plt.axis('equal')
 plt.title(u'R15创作饼图')
+plt.legend(loc="upper left")
 plt.savefig(u'./R15创作饼图.pdf')
