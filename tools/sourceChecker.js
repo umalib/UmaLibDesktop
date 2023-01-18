@@ -17,16 +17,22 @@ const prisma = new PrismaClient({
 prisma.article.findMany().then(async r => {
   const dict = {};
   for (const art of r) {
-    if (art.source && !art.source.startsWith('http')) {
-      if (!dict[art.source]) {
-        dict[art.source] = 1;
+    for (const src of (art.source || '').split(' ')) {
+      if (!dict[src]) {
+        dict[src] = 1;
       } else {
-        dict[art.source] += 1;
+        dict[src] += 1;
       }
     }
   }
-  for (const key in dict) {
-    logger.info(key, dict[key]);
+  const outDict = Object.keys(dict).map(x => {
+    return { k: x, v: dict[x] };
+  });
+  outDict.sort((a, b) => (a.k > b.k ? 1 : -1));
+  for (const entry of outDict) {
+    if (entry.k && entry.v > 1) {
+      logger.info(entry.k, entry.v);
+    }
   }
   await prisma.$disconnect();
 });

@@ -15,6 +15,7 @@ const prisma = new PrismaClient({
 
 async function task() {
   const duplicateDict = {};
+  const hashSrcDict = {};
   (
     await prisma.article.findMany({
       select: {
@@ -29,33 +30,65 @@ async function task() {
       },
     })
   ).forEach(art => {
-    const hash = MD5.hex(art[duplicateKey]);
-    if (!duplicateDict[hash]) {
-      duplicateDict[hash] = [];
+    let hashSrcArr = [art[duplicateKey]];
+    if (duplicateKey === 'source') {
+      hashSrcArr = art[duplicateKey].split(' ');
     }
-    duplicateDict[hash].push({
-      id: art.id,
-      name: art.name,
-      content: MD5.hex(art.content),
-      source: art.source,
-      uploadTime: art.uploadTime,
-    });
-  });
-  for (const key in duplicateDict) {
-    if (duplicateDict[key].length > 1) {
-      logger.info(key);
-      duplicateDict[key].forEach(x => {
-        if (
-          duplicateKey !== 'source' ||
-          duplicateFilter.indexOf(x.source) === -1
-        ) {
-          logger.info(
-            `${x.id}\t${x.name}\t${x.content}\t${x.source}\t${formatTimeStamp(
-              x.uploadTime * 1000,
-            )}`,
-          );
-        }
+    for (const hashSrc of hashSrcArr) {
+      const hash = MD5.hex(hashSrc);
+      if (!duplicateDict[hash]) {
+        duplicateDict[hash] = [];
+        hashSrcDict[hash] = hashSrc;
+      }
+      duplicateDict[hash].push({
+        id: art.id,
+        name: art.name,
+        content: MD5.hex(art.content),
+        source: art.source,
+        uploadTime: art.uploadTime,
       });
+    }
+  });
+  const outDict = Object.keys(duplicateDict);
+  outDict.sort((a, b) => {
+    const sA = hashSrcDict[a],
+      sB = hashSrcDict[b];
+    const dA = duplicateDict[a].length,
+      dB = duplicateDict[b].length;
+    const fA = duplicateFilter.indexOf(sA),
+      fB = duplicateFilter.indexOf(sB);
+    if (fA > -1 || fB > -1) {
+      return fA - fB;
+    }
+    if (dA === dB) {
+      return sA > sB ? 1 : -1;
+    }
+    return dB - dA;
+  });
+  for (const key of outDict) {
+    if (
+      duplicateDict[key].length > 1 &&
+      (duplicateKey !== 'source' ||
+        duplicateFilter.indexOf(hashSrcDict[key]) === -1)
+    ) {
+      logger.info(
+        `${key}${duplicateKey === 'source' ? '\t' + hashSrcDict[key] : ''}${
+          duplicateDict[key].length > 1 ? '\t' + duplicateDict[key].length : ''
+        }`,
+      );
+      duplicateDict[key].forEach(x => {
+        logger.info(
+          `\t${x.id}\t${x.name}\t${x.content}${
+            duplicateKey === 'source' ? '' : '\t' + x.source
+          }\t${formatTimeStamp(x.uploadTime * 1000)}`,
+        );
+      });
+    }
+    if (
+      duplicateKey === 'source' &&
+      duplicateFilter.indexOf(hashSrcDict[key]) !== -1
+    ) {
+      logger.info(`${key}\t${hashSrcDict[key]}\t${duplicateDict[key].length}`);
     }
   }
   await prisma.$disconnect();
