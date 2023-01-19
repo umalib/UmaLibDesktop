@@ -1,6 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const { join, resolve } = require('path');
 const { path, srcPath, transferringCreators } = require('./config.js');
+const { transferringNovels } = require('./config');
 const logger = require('log4js').getLogger('transfer');
 logger.level = 'info';
 
@@ -14,11 +15,10 @@ async function task() {
       },
     },
   });
-  const tagList = (
-    await prisma.tag.findMany({
-      orderBy: [{ type: 'asc' }, { name: 'asc' }],
-    })
-  ).filter(x => x.type !== 3);
+  const tagList = await prisma.tag.findMany({
+    orderBy: [{ type: 'asc' }, { name: 'asc' }],
+  });
+  tagList.forEach(x => delete x.id);
   let creators = null;
   if (transferringCreators) {
     creators = await prisma.creator.findUnique({
@@ -33,13 +33,22 @@ async function task() {
       },
     },
   });
-  for (const tag of tagList) {
-    await prisma.tag.create({
-      data: {
-        name: tag.name,
-        type: tag.type,
-      },
-    });
+  if (transferringNovels) {
+    for (const tag of tagList) {
+      await prisma.tag.create({
+        data: tag,
+      });
+    }
+  } else {
+    const tempList = tagList.filter(x => x.type !== 3);
+    for (const tag of tempList) {
+      await prisma.tag.create({
+        data: {
+          name: tag.name,
+          type: tag.type,
+        },
+      });
+    }
   }
   logger.info(`transferred ${tagList.length} tags`);
   if (creators) {

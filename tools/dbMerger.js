@@ -21,10 +21,14 @@ async function task() {
     include: {
       taggedList: true,
     },
+    orderBy: {
+      uploadTime: 'asc',
+    },
   });
   await prisma.$disconnect();
   logger.info(`get ${artList.length} articles from source db`);
   await dbManage.changeDb(path);
+  let i = 0;
   for (const art of artList) {
     await dbManage.pubArticle({
       name: art.name,
@@ -36,6 +40,10 @@ async function task() {
       uploadTime: art.uploadTime * 1000,
       tags: art.taggedList.map(tagged => id2Tag[tagged.tagId]),
     });
+    i++;
+    if (i % 50 === 0) {
+      logger.info(`transferred ${i} articles`);
+    }
   }
   await dbManage.disconnect();
 }
