@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import rcParams
 
-f = open('./output-plot.json', 'r')
+f = open('./output-plot-count.json', 'r')
 data = json.loads(f.read())
 f.close()
 
@@ -19,7 +19,7 @@ config = {
 }
 rcParams.update(config)
 
-ticksX = [data['days'][0], 18809, 18901, 18993, 19083, 19174, 19266, data['days'][-1]]
+ticksX = [data['days'][0], 18809, 18901, 18993, 19083, 19174, 19266, 19358, data['days'][-1]]
 
 ticksY = list(np.arange(0, data['all'][-1], 50 if data['all'][-1] < 1000 else 500))
 ticksY.append(data['all'][-1])

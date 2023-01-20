@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import rcParams
 
-f = open('./output-plot.json', 'r')
+f = open('./output-plot-len.json', 'r')
 data = json.loads(f.read())
 f.close()
 
@@ -19,20 +19,23 @@ config = {
 }
 rcParams.update(config)
 
-ticksX = [data['days'][0], 18809, 18901, 18993, 19083, 19174, 19266, data['days'][-1]]
-ticksY = list(np.arange(0, max(data['delta']), 10))
-
-exceptionVal = round(data['all'][-1] * 4 / len(data['all']))
+ticksX = [data['days'][0], 18809, 18901, 18993, 19083, 19174, 19266, 19358, data['days'][-1]]
+maxY = max(data['delta']) / 1000
 
 for i in range(0, len(data['delta'])):
-    if data['delta'][i] > exceptionVal:
+    data['delta'][i] /= 1000
+    if data['delta'][i] == maxY:
         ticksX.append(data['days'][i])
-        ticksY.append(data['delta'][i])
+
+maxY = round(maxY)
+
+ticksY = list(np.arange(0, maxY, 25))
+ticksY.append(maxY)
 
 plt.bar(data['days'], data['delta'])
 plt.xticks(ticksX, map(lambda x: time.strftime('%Y%m%d', time.localtime(x * 86400))[2:], ticksX))
 plt.yticks(list(set(ticksY)))
 plt.xlabel(u"时间")
-plt.ylabel(u"创作数")
+plt.ylabel(u"字符数（千字）")
 plt.grid(linestyle=":")
-plt.savefig(u'./作品增长量.pdf')
+plt.savefig(u'./作品字数增长量.pdf')
