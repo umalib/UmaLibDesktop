@@ -170,7 +170,8 @@ async function task() {
     if (artDict[art.id]) {
       for (let i = 0; i < tagDict.length; ++i) {
         day2count[key].count.tags[i] += artDict[art.id][i];
-        day2count[key].len.tags[i] += lengthFilter[art.id] ? 0 : art.content;
+        day2count[key].len.tags[i] +=
+          artDict[art.id][i] && !lengthFilter[art.id] ? art.content : 0;
       }
     }
   }
