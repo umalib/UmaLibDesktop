@@ -141,7 +141,12 @@
             type="primary"
             @click="$emit('creator-change', cell.row['author'])"
           >
-            {{ cell.row['author'] }}
+            <div
+              v-for="(c, i) in cell.row['author'].split('/')"
+              :key="`${cell.row['id']}-c-${i}`"
+            >
+              <div>{{ c }}</div>
+            </div>
           </el-link>
         </template>
       </el-table-column>
@@ -165,7 +170,12 @@
             type="primary"
             @click="$emit('creator-change', cell.row['translator'])"
           >
-            {{ cell.row['translator'] }}
+            <div
+              v-for="(c, i) in cell.row['translator'].split('/')"
+              :key="`${cell.row['id']}-c-${i}`"
+            >
+              <div>{{ c }}</div>
+            </div>
           </el-link>
         </template>
       </el-table-column>
