@@ -282,7 +282,7 @@ async function createWindow() {
   ipcMain.removeAllListeners();
 
   ipcMain.on('artChannel', async (_, msg) => {
-    let result;
+    let result = undefined;
     const start = new Date().getTime();
     try {
       if (dbManage[msg.action]) {

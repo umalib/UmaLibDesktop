@@ -677,8 +677,8 @@ module.exports = {
   async saveOnlineDb(dbData) {
     await this.disconnect();
     renameSync(embeddedDbPath, backupPath);
-    let newDbPath;
-    let dbVersion;
+    let newDbPath = undefined;
+    let dbVersion = undefined;
     await zip.uncompress(
       dbData.buffer ? Buffer.from(dbData.buffer) : dbData,
       userDataPath,
