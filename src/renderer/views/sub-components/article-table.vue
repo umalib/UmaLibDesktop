@@ -135,19 +135,19 @@
         width="150"
       >
         <template v-slot="cell">
-          <el-link
-            v-if="cell.row['author']"
-            :underline="false"
-            type="primary"
-            @click="$emit('creator-change', cell.row['author'])"
+          <div
+            v-for="(c, i) in cell.row['author'].split('/')"
+            :key="`${cell.row['id']}-c-${i}`"
           >
-            <div
-              v-for="(c, i) in cell.row['author'].split('/')"
-              :key="`${cell.row['id']}-c-${i}`"
+            <el-link
+              v-if="c"
+              :underline="false"
+              type="primary"
+              @click="$emit('creator-change', c)"
             >
-              <div>{{ c }}</div>
-            </div>
-          </el-link>
+              {{ c }}
+            </el-link>
+          </div>
         </template>
       </el-table-column>
       <el-table-column
@@ -164,19 +164,19 @@
         width="150"
       >
         <template v-slot="cell">
-          <el-link
-            v-if="cell.row['translator']"
-            :underline="false"
-            type="primary"
-            @click="$emit('creator-change', cell.row['translator'])"
+          <div
+            v-for="(c, i) in cell.row['translator'].split('/')"
+            :key="`${cell.row['id']}-c-${i}`"
           >
-            <div
-              v-for="(c, i) in cell.row['translator'].split('/')"
-              :key="`${cell.row['id']}-c-${i}`"
+            <el-link
+              v-if="c"
+              :underline="false"
+              type="primary"
+              @click="$emit('creator-change', c)"
             >
-              <div>{{ c }}</div>
-            </div>
-          </el-link>
+              {{ c }}
+            </el-link>
+          </div>
         </template>
       </el-table-column>
       <el-table-column v-else label="译者" prop="translator" width="150" />

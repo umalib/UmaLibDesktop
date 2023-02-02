@@ -306,11 +306,27 @@ async function getAuthorsFromServer(_vue) {
     },
     {
       label: '译者',
-      options: data['translators'].map(creator2SelectOption),
+      options: data['translators']
+        .filter(x => x.indexOf('/') === -1)
+        .map(creator2SelectOption),
     },
     {
       label: '作者',
-      options: data['authors'].map(creator2SelectOption),
+      options: data['authors']
+        .filter(x => x.indexOf('/') === -1)
+        .map(creator2SelectOption),
+    },
+    {
+      label: '合译',
+      options: data['translators']
+        .filter(x => x.indexOf('/') !== -1)
+        .map(creator2SelectOption),
+    },
+    {
+      label: '合著',
+      options: data['authors']
+        .filter(x => x.indexOf('/') !== -1)
+        .map(creator2SelectOption),
     },
   ];
 }

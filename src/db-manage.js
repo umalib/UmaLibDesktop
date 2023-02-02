@@ -492,9 +492,18 @@ module.exports = {
       });
     }
     if (param.someone) {
-      findManyOptions.where.AND.push({
-        OR: [{ author: param.someone }, { translator: param.someone }],
-      });
+      if (param.someone.indexOf('/') === -1) {
+        findManyOptions.where.AND.push({
+          OR: [
+            { author: { contains: param.someone } },
+            { translator: { contains: param.someone } },
+          ],
+        });
+      } else {
+        findManyOptions.where.AND.push({
+          OR: [{ author: param.someone }, { translator: param.someone }],
+        });
+      }
     }
     return {
       count: await prisma.article.count(findManyOptions),
