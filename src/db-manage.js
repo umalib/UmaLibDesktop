@@ -59,7 +59,9 @@ async function getArts(findManyOptions, param) {
       uploadTime: art.uploadTime * 1000,
       note: art.note,
       content: '',
-      source: art.source,
+      source: art.source.split(' ').map(src => {
+        return { val: src };
+      }),
       tags: art.taggedList.map(tagged => {
         return tagged.tagId;
       }),
@@ -245,6 +247,9 @@ module.exports = {
     art.tags = art.taggedList.map(tagged => {
       return tagged.tagId;
     });
+    art.source = art.source.split(' ').map(src => {
+      return { val: src };
+    });
     delete art.taggedList;
     return art;
   },
@@ -335,6 +340,9 @@ module.exports = {
       });
       art.tags = art.taggedList.map(tagged => {
         return tagged.tagId;
+      });
+      art.source = art.source.split(' ').map(src => {
+        return { val: src };
       });
       delete art.taggedList;
       art.uploadTime *= 1000;
@@ -648,8 +656,32 @@ module.exports = {
   async pubArticle(data) {
     let id = data.id;
     delete data.id;
-    const tags = data.tags;
-    delete data.tags;
+    if (!data.author) {
+      data.author = '匿名';
+    }
+    data.uploadTime = data.uploadTime ? data.uploadTime : new Date().getTime();
+    data.uploadTime = Math.round(data.uploadTime / 1000);
+    data.source.forEach(src => {
+      if (src.val.startsWith('[')) {
+        src.val = src.val.substring(1);
+      }
+      if (src.val.endsWith(']')) {
+        src.val = src.val.substring(0, src.val.length - 1);
+      }
+      if (
+        src.val.startsWith('tsumanne.net') ||
+        src.val.startsWith('www.pixiv.net')
+      ) {
+        src.val = 'https://' + src.val;
+      }
+      if (src.val.startsWith('pixiv.net')) {
+        src.val = 'https://www.' + src.val;
+      }
+    });
+    data.source = data.source
+      .map(src => src.val)
+      .filter(src => src)
+      .join(' ');
     if (!data.note || !data.note.replace(/\s+/, '')) {
       data.note = data.content
         .replace(/<\/p>/g, ' ')
@@ -659,7 +691,8 @@ module.exports = {
         data.note = data.note.substring(0, 98) + '……';
       }
     }
-    data.uploadTime = Math.floor(data.uploadTime / 1000);
+    const tags = data.tags;
+    delete data.tags;
     if (id) {
       await prisma.article.update({
         data,

@@ -29,7 +29,7 @@
             </el-descriptions-item>
             <el-descriptions-item label="来源">
               <span
-                v-for="(src, index) in selectedArt.source.split(' ')"
+                v-for="(src, index) in selectedArt.source.map(s => s.val)"
                 :key="index"
               >
                 <br v-if="index !== 0" />

@@ -95,16 +95,23 @@
               value-format="timestamp"
             />
           </el-form-item>
-          <el-form-item>
+          <el-form-item
+            v-for="(src, index) in newText.source"
+            :key="`art-src-${index}`"
+          >
             <el-input
-              v-model="newText.source"
-              clearable
-              maxlength="512"
-              placeholder="这篇作品是转载吗？请附上链接"
-              show-word-limit
+              v-model="src.val"
+              placeholder="请输入来源链接"
               type="text"
             >
-              <template slot="prepend">来源</template>
+              <template slot="prepend">
+                来源{{ newText.source.length > 1 ? index + 1 : '' }}
+              </template>
+              <el-button
+                slot="append"
+                icon="el-icon-minus"
+                @click="removeSourceInTextObj(newText, index)"
+              />
             </el-input>
           </el-form-item>
           <el-form-item required>
@@ -145,6 +152,9 @@
       <el-button type="primary" @click="$emit('article-publish')">
         发布
       </el-button>
+      <el-button type="info" @click="addNewSourceInTextObj(newText)">
+        增加来源
+      </el-button>
       <el-button
         :disabled="!!newText.id"
         type="danger"
@@ -158,6 +168,11 @@
 </template>
 
 <script>
+import {
+  addNewSourceInTextObj,
+  removeSourceInTextObj,
+} from '@/renderer/utils/renderer-utils.js';
+
 export default {
   name: 'pub-article',
   props: [
@@ -206,6 +221,10 @@ export default {
     };
   },
   emits: ['art-reset', 'article-publish', 'pub-close'],
+  methods: {
+    addNewSourceInTextObj,
+    removeSourceInTextObj,
+  },
 };
 </script>
 

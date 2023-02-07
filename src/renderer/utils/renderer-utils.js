@@ -17,11 +17,21 @@ module.exports = {
       content: '',
       name: '',
       note: '',
-      source: '',
+      source: [{ val: '' }],
       tags: [],
       translator: '',
       uploadTime: new Date().getTime(),
     };
+  },
+  addNewSourceInTextObj(obj) {
+    obj.source.push({ val: '' });
+  },
+  removeSourceInTextObj(obj, index) {
+    if (obj.source.length === 1) {
+      obj.source = [{ val: '' }];
+    } else {
+      obj.source.splice(index, 1);
+    }
   },
   splitList(src, size) {
     const ret = [];

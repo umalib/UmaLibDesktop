@@ -388,7 +388,7 @@ export default {
         id: -1,
         name: '',
         note: '',
-        source: '',
+        source: [],
         tagLabels: [],
         tags: [],
         translator: '',
@@ -554,35 +554,12 @@ export default {
     },
     async publish() {
       this.publishDisable = true;
-      if (!this.newText.author) {
-        this.newText.author = '匿名';
-      }
-      if (this.newText.source.startsWith('[')) {
-        this.newText.source = this.newText.source.substring(1);
-      }
-      if (this.newText.source.endsWith(']')) {
-        this.newText.source = this.newText.source.substring(
-          0,
-          this.newText.source.length - 1,
-        );
-      }
-      if (
-        this.newText.source.startsWith('tsumanne.net') ||
-        this.newText.source.startsWith('www.pixiv.net')
-      ) {
-        this.newText.source = 'https://' + this.newText.source;
-      }
-      if (this.newText.source.startsWith('pixiv.net')) {
-        this.newText.source = 'https://www.' + this.newText.source;
-      }
       const pubResult = await connector.get('pubArticle', {
         id: this.newText.id,
         name: this.newText.name,
         author: this.newText.author,
         translator: this.newText.translator,
-        uploadTime: this.newText.uploadTime
-          ? this.newText.uploadTime
-          : new Date().getTime(),
+        uploadTime: this.newText.uploadTime,
         source: this.newText.source,
         note: this.newText.note,
         content: this.newText.content,
@@ -628,7 +605,7 @@ export default {
       });
     },
     async showArticle(id) {
-      if (id && this.id2Art[id]) {
+      if (id && this.id2Art[id] !== undefined) {
         this.selectedArt = this.articles[this.id2Art[id]];
         this.fillArticleTags(this.selectedArt);
         this.content = await connector.get('getArtContent', id);

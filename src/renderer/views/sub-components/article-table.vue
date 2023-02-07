@@ -203,7 +203,7 @@
         prop="source"
       >
         <template v-slot="cell">
-          <div v-for="src in cell.row['source'].split(' ')" :key="src">
+          <div v-for="src in cell.row['source'].map(s => s.val)" :key="src">
             <el-tooltip v-if="src.startsWith('http')" :content="src">
               <el-link :href="src" target="_blank" type="primary">
                 外部链接
