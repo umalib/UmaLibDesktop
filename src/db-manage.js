@@ -170,6 +170,7 @@ module.exports = {
     embeddedDbPath = _dbPath;
     backupPath = embeddedDbPath + '.backup';
     dbPath = embeddedDbPath;
+    logger.info('initialized');
   },
   async deleteArt(artId) {
     await prisma['tagged'].deleteMany({

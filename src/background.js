@@ -325,11 +325,6 @@ async function createWindow() {
     // Load the index.html when not in development
     await mainWindow.loadURL('app://./index.html');
   }
-  if (getDefaultFullScreen()) {
-    logger.info('set full screen');
-    mainWindow.maximize();
-  }
-  mainWindow.show();
 
   const template = [];
   if (process.platform === 'darwin') {
@@ -524,6 +519,12 @@ async function createWindow() {
   });
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
   setRendererBackgroundColor();
+
+  if (getDefaultFullScreen()) {
+    logger.info('set full screen');
+    mainWindow.maximize();
+  }
+  mainWindow.show();
 }
 
 // Quit when all windows are closed.

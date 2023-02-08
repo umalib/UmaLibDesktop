@@ -163,76 +163,84 @@ export default {
       } catch (_) {}
     });
 
-    this.appVersion = await connector.get('checkVersion', {});
-    try {
-      const remoteVer = (
-        await axios.get(
-          `https://umalib.github.io/UmaLibDesktop/update-info.json?${new Date().getTime()}`,
-        )
-      ).data;
-      const appVerArr = [
-        Number(this.appVersion.app.substring(0, 1)),
-        Number(this.appVersion.app.substring(2)),
-      ];
-      const remoteVerArr = [
-        Number(remoteVer.version.substring(0, 1)),
-        Number(remoteVer.version.substring(2)),
-      ];
-      let notifyFlag = true;
-      if (
-        appVerArr[0] < remoteVerArr[0] ||
-        (appVerArr[0] === remoteVerArr[0] && appVerArr[1] < remoteVerArr[1])
-      ) {
-        this.$notify({
-          title: '发现新版本',
-          message: `发现新版本 v${remoteVer.version}！请前往下载：<a href='${remoteVer.url}' target='_blank'>下载地址</a>`,
-          dangerouslyUseHTMLString: true,
-          type: 'warning',
-          duration: 0,
-        });
-        notifyFlag = false;
-      }
-      this.downloadDialog.aimVersion = remoteVer['db_version'];
-      if (
-        this.appVersion.dbUpdate &&
-        (!this.appVersion.db ||
-          Number(this.appVersion.db) < this.downloadDialog.aimVersion)
-      ) {
-        try {
-          await this.$confirm(
-            `发现新数据库版本 ${this.downloadDialog.aimVersion}！是否下载？`,
-            '发现新数据库！',
-            {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning',
-            },
-          );
-          await this.downloadDb();
-          // eslint-disable-next-line no-empty
-        } catch (_) {}
-        notifyFlag = false;
-      }
-      if (notifyFlag) {
-        this.$notify({
-          title: '已更新到最新版本',
-          message: '',
-          type: 'success',
-        });
-      }
-    } catch (_) {
-      this.$notify({
-        title: '版本检查失败！',
-        message: '请检查网络连接！',
-        type: 'warning',
-      });
-    }
+    this.titles = await connector.get('getTitles', {});
+    document.title = this.titles.name;
     const dbInfo = await connector.get('checkDb', {});
     this.builtInDb = dbInfo.isEmbedded;
     this.currentDbPath = dbInfo.current;
     this.saveMeId = await connector.get('saveMe', {});
-    this.titles = await connector.get('getTitles', {});
-    document.title = this.titles.name;
+
+    this.appVersion = await connector.get('checkVersion', {});
+    const current = new Date().getTime();
+    axios
+      .get(`https://umalib.github.io/UmaLibDesktop/update-info.json?${current}`)
+      .then(async response => {
+        console.log(
+          `loading remote info...${(new Date().getTime() - current) / 1000}s`,
+        );
+        const remoteVer = response.data;
+        const appVerArr = [
+          Number(this.appVersion.app.substring(0, 1)),
+          Number(this.appVersion.app.substring(2)),
+        ];
+        const remoteVerArr = [
+          Number(remoteVer.version.substring(0, 1)),
+          Number(remoteVer.version.substring(2)),
+        ];
+        let notifyFlag = true;
+        if (
+          appVerArr[0] < remoteVerArr[0] ||
+          (appVerArr[0] === remoteVerArr[0] && appVerArr[1] < remoteVerArr[1])
+        ) {
+          this.$notify({
+            title: '发现新版本',
+            message: `发现新版本 v${remoteVer.version}！请前往下载：<a href='${remoteVer.url}' target='_blank'>下载地址</a>`,
+            dangerouslyUseHTMLString: true,
+            type: 'warning',
+            duration: 0,
+          });
+          notifyFlag = false;
+        }
+        this.downloadDialog.aimVersion = remoteVer['db_version'];
+        if (
+          this.appVersion.dbUpdate &&
+          (!this.appVersion.db ||
+            Number(this.appVersion.db) < this.downloadDialog.aimVersion)
+        ) {
+          try {
+            await this.$confirm(
+              `发现新数据库版本 ${this.downloadDialog.aimVersion}！是否下载？`,
+              '发现新数据库！',
+              {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+              },
+            );
+            await this.downloadDb();
+            // eslint-disable-next-line no-empty
+          } catch (_) {}
+          notifyFlag = false;
+        }
+        if (notifyFlag) {
+          this.$notify({
+            title: '已更新到最新版本',
+            message: '',
+            type: 'success',
+          });
+        }
+      })
+      .catch(() => {
+        console.log(
+          `loading remote info failed! ${(new Date().getTime() - current) /
+            1000}s`,
+        );
+        this.$notify({
+          title: '版本检查失败！',
+          message: '请检查网络连接！',
+          type: 'warning',
+        });
+      });
   },
   methods: {
     isSafe() {
