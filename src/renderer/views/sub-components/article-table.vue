@@ -137,7 +137,7 @@
         <template v-slot="cell">
           <div
             v-for="(c, i) in cell.row['author'].split('/')"
-            :key="`${cell.row['id']}-c-${i}`"
+            :key="`${cell.row['id']}-a-${i}`"
           >
             <el-link
               v-if="c"
@@ -155,7 +155,16 @@
         label="作者"
         prop="author"
         width="150"
-      />
+      >
+        <template v-slot="cell">
+          <div
+            v-for="(c, i) in cell.row['author'].split('/')"
+            :key="`${cell.row['id']}-a-${i}`"
+          >
+            <div>{{ c }}</div>
+          </div>
+        </template>
+      </el-table-column>
 
       <el-table-column
         v-if="layout === 'main'"
@@ -166,7 +175,7 @@
         <template v-slot="cell">
           <div
             v-for="(c, i) in cell.row['translator'].split('/')"
-            :key="`${cell.row['id']}-c-${i}`"
+            :key="`${cell.row['id']}-t-${i}`"
           >
             <el-link
               v-if="c"
@@ -179,7 +188,16 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column v-else label="译者" prop="translator" width="150" />
+      <el-table-column v-else label="译者" prop="translator" width="150">
+        <template v-slot="cell">
+          <div
+            v-for="(c, i) in cell.row['translator'].split('/')"
+            :key="`${cell.row['id']}-t-${i}`"
+          >
+            <div>{{ c }}</div>
+          </div>
+        </template>
+      </el-table-column>
 
       <el-table-column
         v-if="
