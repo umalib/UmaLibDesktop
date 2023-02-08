@@ -59,13 +59,13 @@
       </el-col>
     </el-row>
     <el-dialog
-      class="show-info"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       :show-close="false"
       :title="downloadDialog.title"
       :visible="downloadDialog.visible"
       center
+      class="show-info"
       width="40%"
     >
       <p>{{ downloadDialog.size }}</p>

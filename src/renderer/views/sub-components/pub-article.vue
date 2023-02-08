@@ -24,7 +24,7 @@
               show-word-limit
               type="text"
             >
-              <template slot="prepend">标题</template>
+              <template v-slot:prepend>标题</template>
             </el-input>
           </el-form-item>
           <el-form-item>
@@ -82,7 +82,7 @@
               show-word-limit
               type="text"
             >
-              <template slot="prepend">备注</template>
+              <template v-slot:prepend>备注</template>
             </el-input>
           </el-form-item>
           <el-form-item>
@@ -104,14 +104,15 @@
               placeholder="请输入来源链接"
               type="text"
             >
-              <template slot="prepend">
+              <template v-slot:prepend>
                 来源{{ newText.source.length > 1 ? index + 1 : '' }}
               </template>
-              <el-button
-                slot="append"
-                icon="el-icon-minus"
-                @click="removeSourceInTextObj(newText, index)"
-              />
+              <template v-slot:append>
+                <el-button
+                  icon="el-icon-minus"
+                  @click="removeSourceInTextObj(newText, index)"
+                />
+              </template>
             </el-input>
           </el-form-item>
           <el-form-item required>

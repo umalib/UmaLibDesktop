@@ -98,58 +98,60 @@
           <el-button size="small">
             界面设置<i class="el-icon-arrow-up el-icon--right" />
           </el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item
-              :disabled="fontSize === 'small'"
-              command="font:small"
-            >
-              字号：小
-            </el-dropdown-item>
-            <el-dropdown-item
-              :disabled="fontSize === 'normal'"
-              command="font:normal"
-            >
-              字号：中
-            </el-dropdown-item>
-            <el-dropdown-item
-              :disabled="fontSize === 'large'"
-              command="font:large"
-            >
-              字号：大
-            </el-dropdown-item>
-            <el-dropdown-item
-              :disabled="segmentSpace === 'normal'"
-              command="space:normal"
-              divided
-            >
-              段间距：标准
-            </el-dropdown-item>
-            <el-dropdown-item
-              :disabled="segmentSpace === 'wider'"
-              command="space:wider"
-            >
-              段间距：大
-            </el-dropdown-item>
-            <el-dropdown-item
-              :disabled="language === 'no'"
-              command="converter:no"
-              divided
-            >
-              繁简转换：关闭
-            </el-dropdown-item>
-            <el-dropdown-item
-              :disabled="language === 'cn'"
-              command="converter:cn"
-            >
-              繁简转换：简体
-            </el-dropdown-item>
-            <el-dropdown-item
-              :disabled="language === 'hk'"
-              command="converter:hk"
-            >
-              繁简转换：繁体
-            </el-dropdown-item>
-          </el-dropdown-menu>
+          <template v-slot:dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                :disabled="fontSize === 'small'"
+                command="font:small"
+              >
+                字号：小
+              </el-dropdown-item>
+              <el-dropdown-item
+                :disabled="fontSize === 'normal'"
+                command="font:normal"
+              >
+                字号：中
+              </el-dropdown-item>
+              <el-dropdown-item
+                :disabled="fontSize === 'large'"
+                command="font:large"
+              >
+                字号：大
+              </el-dropdown-item>
+              <el-dropdown-item
+                :disabled="segmentSpace === 'normal'"
+                command="space:normal"
+                divided
+              >
+                段间距：标准
+              </el-dropdown-item>
+              <el-dropdown-item
+                :disabled="segmentSpace === 'wider'"
+                command="space:wider"
+              >
+                段间距：大
+              </el-dropdown-item>
+              <el-dropdown-item
+                :disabled="language === 'no'"
+                command="converter:no"
+                divided
+              >
+                繁简转换：关闭
+              </el-dropdown-item>
+              <el-dropdown-item
+                :disabled="language === 'cn'"
+                command="converter:cn"
+              >
+                繁简转换：简体
+              </el-dropdown-item>
+              <el-dropdown-item
+                :disabled="language === 'hk'"
+                command="converter:hk"
+              >
+                繁简转换：繁体
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
         </el-dropdown>
       </el-col>
     </span>

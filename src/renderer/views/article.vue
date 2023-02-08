@@ -99,14 +99,15 @@
             placeholder="请输入关键词"
             @change="resetPageNumAndSearchArticle"
           >
-            <el-button
-              slot="append"
-              icon="el-icon-circle-close"
-              @click="
-                param.keyword = '';
-                resetPageNumAndSearchArticle();
-              "
-            />
+            <template v-slot:append>
+              <el-button
+                icon="el-icon-circle-close"
+                @click="
+                  param.keyword = '';
+                  resetPageNumAndSearchArticle();
+                "
+              />
+            </template>
           </el-input>
         </el-col>
         <el-col :span="2">
@@ -222,21 +223,6 @@ function creator2SelectOption(x) {
   return { value: x, label: x };
 }
 
-async function fillArticles(_vue, param) {
-  _vue.articleLoading = true;
-  const data = await connector.get('listArt', param);
-  _vue.visible.content = false;
-  _vue.articles = [];
-  _vue.id2Art = {};
-  _vue.count = data.count;
-  data.list.forEach(x => {
-    x.tags.sort(_vue.tagComparator);
-    _vue.id2Art[x.id] = _vue.articles.length;
-    _vue.articles.push(x);
-  });
-  _vue.articleLoading = false;
-}
-
 async function getTagsFromServer(_vue) {
   const data = await connector.get('getTags', {});
   _vue.search.id2Tag = data.tags;
@@ -331,6 +317,23 @@ async function getAuthorsFromServer(_vue) {
   ];
 }
 
+async function fillArticles(_vue, param) {
+  _vue.articleLoading = true;
+  await getTagsFromServer(_vue);
+  getAuthorsFromServer(_vue).then();
+  const data = await connector.get('listArt', param);
+  _vue.visible.content = false;
+  _vue.articles = [];
+  _vue.id2Art = {};
+  _vue.count = data.count;
+  data.list.forEach(x => {
+    x.tags.sort(_vue.tagComparator);
+    _vue.id2Art[x.id] = _vue.articles.length;
+    _vue.articles.push(x);
+  });
+  _vue.articleLoading = false;
+}
+
 function updateFavorites(_vue, favList) {
   _vue.favorites = {};
   favList.forEach(x => (_vue.favorites[x] = true));
@@ -404,8 +407,6 @@ export default {
   props: ['builtInDb', 'cue', 'saveMe', 'titles'],
   async created() {
     updateFavorites(this, await connector.get('getFavorites'));
-    await getTagsFromServer(this);
-    getAuthorsFromServer(this).then();
     fillArticles(this, {
       noTagIds: this.fillNoTagIds(),
       sortBy: this.param.sortBy,
@@ -428,7 +429,6 @@ export default {
     },
     async changePrevents() {
       this.param.pageNum = 1;
-      await getTagsFromServer(this);
       this.searchArticle();
     },
     clearSearchParam() {
@@ -573,7 +573,6 @@ export default {
         });
         this.visible.publish = false;
         this.newText = getNewTextObj();
-        await getTagsFromServer(this);
         this.searchArticle();
       } else {
         this.$notify({
@@ -629,7 +628,11 @@ export default {
         id,
         name: art.name,
         note: art.note,
-        source: art.source,
+        source: new Array(art.source.length).fill(undefined).map((_, i) => {
+          return {
+            val: art.source[i].val,
+          };
+        }),
         tags: art.tagLabels.map(label => label.name),
         translator: art.translator,
         uploadTime: art.uploadTime,

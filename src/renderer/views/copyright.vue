@@ -137,11 +137,12 @@
             placeholder="枯树洞看着你"
             style="width: 100%"
           >
-            <el-button slot="append" @click="jump">
-              爱丽丝{{
-                failure === 0 ? '？' : new Array(failure + 1).join('！')
-              }}
-            </el-button>
+            <template v-slot:append>
+              <el-button @click="jump">
+                爱丽丝
+                {{ failure === 0 ? '？' : new Array(failure + 1).join('！') }}
+              </el-button>
+            </template>
           </el-input>
         </el-col>
       </el-row>

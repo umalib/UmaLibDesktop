@@ -50,40 +50,43 @@
                 </span>
               </template>
 
-              <el-button
-                slot="left-footer"
-                class="transfer-footer"
-                round
-                size="small"
-                @click="sortTagByName"
-              >
-                按名字排序
-              </el-button>
-              <el-button
-                slot="left-footer"
-                class="transfer-footer"
-                round
-                size="small"
-                @click="sortTagByType"
-                >按类别排序
-              </el-button>
+              <template v-slot:left-footer>
+                <el-button-group>
+                  <el-button
+                    class="transfer-footer"
+                    size="small"
+                    @click="sortTagByName"
+                  >
+                    按名字排序
+                  </el-button>
+                  <el-button
+                    class="transfer-footer"
+                    size="small"
+                    @click="sortTagByType"
+                  >
+                    按类别排序
+                  </el-button>
+                </el-button-group>
+              </template>
 
-              <el-button
-                slot="right-footer"
-                class="transfer-footer"
-                round
-                size="small"
-                @click="sortTagByName"
-                >按名字排序
-              </el-button>
-              <el-button
-                slot="right-footer"
-                class="transfer-footer"
-                round
-                size="small"
-                @click="sortTagByType"
-                >按类别排序
-              </el-button>
+              <template v-slot:right-footer>
+                <el-button-group>
+                  <el-button
+                    class="transfer-footer"
+                    size="small"
+                    @click="sortTagByName"
+                  >
+                    按名字排序
+                  </el-button>
+                  <el-button
+                    class="transfer-footer"
+                    size="small"
+                    @click="sortTagByType"
+                  >
+                    按类别排序
+                  </el-button>
+                </el-button-group>
+              </template>
             </el-transfer>
           </el-row>
           <el-row style="margin-top: 10px">
