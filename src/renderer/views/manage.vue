@@ -28,10 +28,10 @@
           <el-row style="margin-top: 10px">
             <el-col :offset="6" :span="12">
               <el-switch
-                v-model="creatorIsSortedByName"
+                v-model="creatorsAreSortedByName"
                 active-text="按类别排序"
                 inactive-text="按名称排序"
-                @change="sortCreator"
+                @change="sortCreators"
               />
             </el-col>
           </el-row>
@@ -73,10 +73,10 @@
           <el-row style="margin-top: 10px">
             <el-col :offset="6" :span="12">
               <el-switch
-                v-model="tagIsSortedByName"
+                v-model="tagsAreSortedByName"
                 active-text="按类别排序"
                 inactive-text="按名称排序"
-                @change="sortTag"
+                @change="sortTags"
               />
             </el-col>
           </el-row>
@@ -182,7 +182,7 @@ async function updateAuthors(_vue) {
   data['co-authors'].forEach(c => {
     _vue.authors.push(fillCreatorOption(c, 4));
   });
-  _vue.authors.sort(sortOptionByName);
+  _vue.sortCreators(_vue.creatorsAreSortedByName);
   _vue.authorLoading = false;
 }
 
@@ -205,7 +205,7 @@ async function updateTags(_vue) {
       });
     }
   }
-  _vue.tags.sort(sortOptionByName);
+  _vue.sortTags(_vue.tagsAreSortedByName);
   _vue.tagLoading = false;
 }
 
@@ -217,9 +217,9 @@ export default {
       authorLoading: true,
       authorResult: '',
       authors: [],
-      creatorIsSortedByName: false,
+      creatorsAreSortedByName: false,
       id2Tag: {},
-      tagIsSortedByName: false,
+      tagsAreSortedByName: false,
       tagLoading: true,
       tagResult: '',
       tagType2ElTagType: EmbeddedData.elTagTypes,
@@ -385,14 +385,14 @@ export default {
         cancelMsg: '合并已取消',
       });
     },
-    sortCreator(_sort) {
+    sortCreators(_sort) {
       if (_sort) {
         this.authors.sort(sortOptionByType);
       } else {
         this.authors.sort(sortOptionByName);
       }
     },
-    sortTag(_sort) {
+    sortTags(_sort) {
       if (_sort) {
         this.tags.sort(sortOptionByType);
       } else {
