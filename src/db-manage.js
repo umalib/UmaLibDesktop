@@ -208,18 +208,22 @@ module.exports = {
       },
       distinct: ['author', 'translator'],
     });
-    const ret = { authors: {}, translators: {}, double: {} };
+    const ret = {
+      authors: {},
+      translators: {},
+      double: {},
+    };
     articles.forEach(art => {
       if (art.author) {
-        ret.authors[art.author] = 1;
+        ret.authors[art.author] = true;
       }
       if (art.translator) {
-        ret.translators[art.translator] = 1;
+        ret.translators[art.translator] = true;
       }
     });
     for (const _author in ret.authors) {
       if (ret.translators[_author]) {
-        ret.double[_author] = 1;
+        ret.double[_author] = true;
       }
     }
     for (const _author in ret.double) {
@@ -229,8 +233,16 @@ module.exports = {
     ret.authors = Object.keys(ret.authors);
     ret.translators = Object.keys(ret.translators);
     ret.double = Object.keys(ret.double);
+
+    ret['co-authors'] = ret.authors.filter(c => c.indexOf('/') !== -1);
+    ret.authors = ret.authors.filter(c => c.indexOf('/') === -1);
+    ret['co-translators'] = ret.translators.filter(c => c.indexOf('/') !== -1);
+    ret.translators = ret.translators.filter(c => c.indexOf('/') === -1);
+
     ret.authors.sort();
+    ret['co-authors'].sort();
     ret.translators.sort();
+    ret['co-translators'].sort();
     ret.double.sort();
     return ret;
   },

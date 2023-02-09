@@ -14,7 +14,26 @@
               :titles="['创作者列表', '待合并创作者']"
               filter-placeholder="请输入创作者"
               filterable
-            />
+            >
+              <template v-slot="{ option }">
+                <span>
+                  {{ compressLabel(option.label) }}
+                  <el-tag type="info" size="mini">
+                    {{ creatorTypeDict[option.type] }}
+                  </el-tag>
+                </span>
+              </template>
+            </el-transfer>
+          </el-row>
+          <el-row style="margin-top: 10px">
+            <el-col :offset="6" :span="12">
+              <el-switch
+                v-model="creatorIsSortedByName"
+                active-text="按类别排序"
+                inactive-text="按名称排序"
+                @change="sortCreator"
+              />
+            </el-col>
           </el-row>
           <el-row style="margin-top: 10px">
             <el-col :offset="6" :span="10">
@@ -43,51 +62,23 @@
             >
               <template v-slot="{ option }">
                 <span>
-                  {{ option.label }}
-                  <el-tag :type="tagType2ElTagType[option.type]" size="mini">{{
-                    typeOptions[option.type].label
-                  }}</el-tag>
+                  {{ compressLabel(option.label) }}
+                  <el-tag :type="tagType2ElTagType[option.type]" size="mini">
+                    {{ typeOptions[option.type].label }}
+                  </el-tag>
                 </span>
               </template>
-
-              <template v-slot:left-footer>
-                <el-button-group>
-                  <el-button
-                    class="transfer-footer"
-                    size="small"
-                    @click="sortTagByName"
-                  >
-                    按名字排序
-                  </el-button>
-                  <el-button
-                    class="transfer-footer"
-                    size="small"
-                    @click="sortTagByType"
-                  >
-                    按类别排序
-                  </el-button>
-                </el-button-group>
-              </template>
-
-              <template v-slot:right-footer>
-                <el-button-group>
-                  <el-button
-                    class="transfer-footer"
-                    size="small"
-                    @click="sortTagByName"
-                  >
-                    按名字排序
-                  </el-button>
-                  <el-button
-                    class="transfer-footer"
-                    size="small"
-                    @click="sortTagByType"
-                  >
-                    按类别排序
-                  </el-button>
-                </el-button-group>
-              </template>
             </el-transfer>
+          </el-row>
+          <el-row style="margin-top: 10px">
+            <el-col :offset="6" :span="12">
+              <el-switch
+                v-model="tagIsSortedByName"
+                active-text="按类别排序"
+                inactive-text="按名称排序"
+                @change="sortTag"
+              />
+            </el-col>
           </el-row>
           <el-row style="margin-top: 10px">
             <el-col :offset="6" :span="10">
@@ -147,16 +138,16 @@
 import connector from '@/renderer/utils/connector';
 import EmbeddedData from '@/renderer/utils/data';
 
-function sortTagOptionByName(a, b) {
+function sortOptionByName(a, b) {
   if (a.label === b.label) {
     return a.key - b.key;
   }
   return a.label > b.label ? 1 : -1;
 }
 
-function sortTagOptionByType(a, b) {
+function sortOptionByType(a, b) {
   if (a.type === b.type) {
-    return sortTagOptionByName(a, b);
+    return sortOptionByName(a, b);
   }
   return a.type - b.type;
 }
@@ -167,18 +158,31 @@ async function updateAuthors(_vue) {
   _vue.authorResult = '';
   _vue.authors = [];
   _vue.toMergedAuthors = [];
-  const authorList = [];
-  authorList.push.apply(authorList, data['authors']);
-  authorList.push.apply(authorList, data['translators']);
-  authorList.push.apply(authorList, data['double']);
-  authorList.sort();
-  authorList.forEach(x =>
-    _vue.authors.push({
-      key: x,
-      label: `[${x}]`,
+
+  function fillCreatorOption(name, type) {
+    return {
+      key: name,
+      label: `[${name}]`,
       disabled: false,
-    }),
-  );
+      type,
+    };
+  }
+  data['double'].forEach(c => {
+    _vue.authors.push(fillCreatorOption(c, 0));
+  });
+  data['translators'].forEach(c => {
+    _vue.authors.push(fillCreatorOption(c, 1));
+  });
+  data['authors'].forEach(c => {
+    _vue.authors.push(fillCreatorOption(c, 2));
+  });
+  data['co_translators'].forEach(c => {
+    _vue.authors.push(fillCreatorOption(c, 3));
+  });
+  data['co_authors'].forEach(c => {
+    _vue.authors.push(fillCreatorOption(c, 4));
+  });
+  _vue.authors.sort(sortOptionByName);
   _vue.authorLoading = false;
 }
 
@@ -194,14 +198,14 @@ async function updateTags(_vue) {
     for (const index in typeMap[type]) {
       const idInt = typeMap[type][index];
       _vue.tags.push({
-        key: idInt,
-        label: _vue.id2Tag[idInt].name,
-        type,
         disabled: false,
+        key: idInt,
+        label: `[${_vue.id2Tag[idInt].name}]`,
+        type,
       });
     }
   }
-  _vue.tags.sort(sortTagOptionByName);
+  _vue.tags.sort(sortOptionByName);
   _vue.tagLoading = false;
 }
 
@@ -213,20 +217,23 @@ export default {
       authorLoading: true,
       authorResult: '',
       authors: [],
+      creatorIsSortedByName: false,
       id2Tag: {},
+      tagIsSortedByName: false,
       tagLoading: true,
       tagResult: '',
-      tags: [],
       tagType2ElTagType: EmbeddedData.elTagTypes,
+      tags: [],
       toMergedAuthors: [],
       toMergedTags: [],
       typeOptions: EmbeddedData.tagTypes.map((x, i) => {
         return {
-          value: i,
           label: x,
+          value: i,
         };
       }),
       typeResult: 0,
+      creatorTypeDict: ['两栖', '译者', '作者', '合译', '合著'],
     };
   },
   props: ['cue', 'titles'],
@@ -287,6 +294,16 @@ export default {
         cancelMsg: '类别变更已取消',
       });
     },
+    compressLabel(label) {
+      const splitterIndex = label.indexOf('/');
+      if (splitterIndex !== -1) {
+        return `${label.substring(0, splitterIndex)}] 等`;
+      }
+      if (label.length > 11) {
+        return `${label.substring(0, 6)}…${label.substring(label.length - 6)}`;
+      }
+      return label;
+    },
     deleteTags() {
       const _vue = this;
       this.actionWithConfirm({
@@ -309,6 +326,20 @@ export default {
         item.label.indexOf(query) > -1 ||
         this.typeOptions[item.type].label.indexOf(query) > -1
       );
+    },
+    getAuthorPlaceHolder() {
+      return `请输入合并后创作者，置空则合并为${
+        this.toMergedAuthors.length
+          ? ' ' + this.toMergedAuthors[0]
+          : '第一个创作者'
+      }`;
+    },
+    getTagPlaceHolder() {
+      return `请输入合并后标签，置空则合并为${
+        this.toMergedTags.length
+          ? ' ' + this.id2Tag[this.toMergedTags[0]].name
+          : '第一个标签'
+      }`;
     },
     mergeAuthors() {
       const _vue = this;
@@ -354,25 +385,19 @@ export default {
         cancelMsg: '合并已取消',
       });
     },
-    getAuthorPlaceHolder() {
-      return `请输入合并后创作者，置空则合并为${
-        this.toMergedAuthors.length
-          ? ' ' + this.toMergedAuthors[0]
-          : '第一个创作者'
-      }`;
+    sortCreator(_sort) {
+      if (_sort) {
+        this.authors.sort(sortOptionByType);
+      } else {
+        this.authors.sort(sortOptionByName);
+      }
     },
-    getTagPlaceHolder() {
-      return `请输入合并后标签，置空则合并为${
-        this.toMergedTags.length
-          ? ' ' + this.id2Tag[this.toMergedTags[0]].name
-          : '第一个标签'
-      }`;
-    },
-    sortTagByName() {
-      this.tags.sort(sortTagOptionByName);
-    },
-    sortTagByType() {
-      this.tags.sort(sortTagOptionByType);
+    sortTag(_sort) {
+      if (_sort) {
+        this.tags.sort(sortOptionByType);
+      } else {
+        this.tags.sort(sortOptionByName);
+      }
     },
   },
 };

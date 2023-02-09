@@ -99,7 +99,7 @@
             placeholder="请输入关键词"
             @change="resetPageNumAndSearchArticle"
           >
-            <template v-slot:append>
+            <template #append>
               <el-button
                 icon="el-icon-circle-close"
                 @click="
@@ -292,27 +292,19 @@ async function getAuthorsFromServer(_vue) {
     },
     {
       label: '译者',
-      options: data['translators']
-        .filter(x => x.indexOf('/') === -1)
-        .map(creator2SelectOption),
+      options: data['translators'].map(creator2SelectOption),
     },
     {
       label: '作者',
-      options: data['authors']
-        .filter(x => x.indexOf('/') === -1)
-        .map(creator2SelectOption),
+      options: data['authors'].map(creator2SelectOption),
     },
     {
       label: '合译',
-      options: data['translators']
-        .filter(x => x.indexOf('/') !== -1)
-        .map(creator2SelectOption),
+      options: data['co-translators'].map(creator2SelectOption),
     },
     {
       label: '合著',
-      options: data['authors']
-        .filter(x => x.indexOf('/') !== -1)
-        .map(creator2SelectOption),
+      options: data['co-authors'].map(creator2SelectOption),
     },
   ];
 }

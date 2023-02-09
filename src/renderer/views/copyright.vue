@@ -134,10 +134,10 @@
           <el-input
             v-else
             v-model="password"
-            placeholder="枯树洞看着你"
+            placeholder="枯树洞似乎正盯着你……"
             style="width: 100%"
           >
-            <template v-slot:append>
+            <template #append>
               <el-button @click="jump">
                 爱丽丝
                 {{ failure === 0 ? '？' : new Array(failure + 1).join('！') }}

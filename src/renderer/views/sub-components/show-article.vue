@@ -98,7 +98,7 @@
           <el-button size="small">
             界面设置<i class="el-icon-arrow-up el-icon--right" />
           </el-button>
-          <template v-slot:dropdown>
+          <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item
                 :disabled="fontSize === 'small'"
