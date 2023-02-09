@@ -176,10 +176,10 @@ async function updateAuthors(_vue) {
   data['authors'].forEach(c => {
     _vue.authors.push(fillCreatorOption(c, 2));
   });
-  data['co_translators'].forEach(c => {
+  data['co-translators'].forEach(c => {
     _vue.authors.push(fillCreatorOption(c, 3));
   });
-  data['co_authors'].forEach(c => {
+  data['co-authors'].forEach(c => {
     _vue.authors.push(fillCreatorOption(c, 4));
   });
   _vue.authors.sort(sortOptionByName);

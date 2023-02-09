@@ -94,7 +94,7 @@ function setDefaultFullScreen(isFullScreen) {
   return isFullScreen;
 }
 
-if (!getDefaultFullScreen()) {
+if (getDefaultFullScreen() === undefined) {
   setDefaultFullScreen(true);
 }
 
@@ -107,7 +107,7 @@ function setCheckDbUpdate(dbUpdate) {
   return dbUpdate;
 }
 
-if (!getCheckDbUpdate()) {
+if (getCheckDbUpdate() === undefined) {
   setCheckDbUpdate(true);
 }
 
