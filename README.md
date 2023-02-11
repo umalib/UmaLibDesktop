@@ -22,5 +22,6 @@ npm run electron:build
 npm run postinstall
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Copyright
+
+Developed based on [vue-electron-prisma-test](https://github.com/clementvp/vue-electron-prisma-test)
