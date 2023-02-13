@@ -26,11 +26,13 @@
       @sort-change="$emit('sort-change', $event)"
     >
       <el-table-column
+        v-if="param"
         :index="param.offset * (param.pageNum - 1) + 1"
         fixed
         type="index"
         width="54"
       />
+      <el-table-column v-else :index="1" fixed type="index" />
       <el-table-column
         fixed
         label="标题"
