@@ -318,6 +318,9 @@ async function fillArticles(_vue, param) {
   _vue.articleLoading = true;
   await getTagsFromServer(_vue);
   getAuthorsFromServer(_vue).then();
+  if (!param.noTagIds) {
+    param.noTagIds = _vue.fillNoTagIds();
+  }
   const data = await connector.get('listArt', param);
   _vue.visible.content = false;
   _vue.articles = [];
@@ -337,13 +340,18 @@ function updateFavorites(_vue, favList) {
 }
 
 export default {
-  name: 'ArticleView',
   components: {
     ArticleTable,
     PubArticle,
     RecommendedArticles,
     RandomArticles,
     ShowArticle,
+  },
+  async created() {
+    updateFavorites(this, await connector.get('getFavorites'));
+    fillArticles(this, {
+      sortBy: this.param.sortBy,
+    }).then();
   },
   data() {
     return {
@@ -391,14 +399,6 @@ export default {
         recommend: false,
       },
     };
-  },
-  props: ['builtInDb', 'cue', 'saveMe', 'titles'],
-  async created() {
-    updateFavorites(this, await connector.get('getFavorites'));
-    fillArticles(this, {
-      noTagIds: this.fillNoTagIds(),
-      sortBy: this.param.sortBy,
-    }).then();
   },
   methods: {
     async changeFavorites(id) {
@@ -697,6 +697,8 @@ export default {
       return bTagInfo.type - aTagInfo.type;
     },
   },
+  name: 'ArticleView',
+  props: ['builtInDb', 'cue', 'saveMe', 'titles'],
 };
 </script>
 
