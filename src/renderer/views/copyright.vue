@@ -131,19 +131,25 @@
             disabled
             placeholder="枯树洞已不会回应你……"
           />
-          <el-input
-            v-else
-            v-model="password"
-            placeholder="枯树洞似乎正盯着你……"
-            style="width: 100%"
-          >
-            <template #append>
-              <el-button @click="jump">
-                爱丽丝
-                {{ failure === 0 ? '？' : new Array(failure + 1).join('！') }}
-              </el-button>
-            </template>
-          </el-input>
+          <div v-else>
+            <el-input
+              v-model="password"
+              placeholder="枯树洞似乎正盯着你……"
+              style="width: 100%"
+            >
+              <template #prepend>
+                <el-tooltip content="下次打开自动进入枯树洞">
+                  <el-checkbox v-model="savePassword" />
+                </el-tooltip>
+              </template>
+              <template #append>
+                <el-button @click="jump">
+                  爱丽丝
+                  {{ failure === 0 ? '？' : new Array(failure + 1).join('！') }}
+                </el-button>
+              </template>
+            </el-input>
+          </div>
         </el-col>
       </el-row>
     </el-col>
@@ -164,6 +170,7 @@ export default {
       editors: EmbeddedData.editors,
       failure: 0,
       password: '',
+      savePassword: false,
       staffs: EmbeddedData.staffs,
     };
   },
@@ -171,7 +178,7 @@ export default {
   methods: {
     async jump() {
       if (this.password === (await connector.get('getPwd', {}))) {
-        connector.get('isSafe', {}).then();
+        connector.get('isSafe', this.savePassword).then();
         this.$notify({
           message: '',
           title: '格林……是你吗？',

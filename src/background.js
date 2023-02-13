@@ -137,10 +137,39 @@ function chooseTitles() {
 }
 
 const storeEvents = {
-  pathConf: MD5.hex(dbManage.getPath()),
+  addFavorite(id) {
+    const list = this.getFavorites();
+    list.push(id);
+    this.setFavorites(list);
+    return list;
+  },
+  checkVersion() {
+    return {
+      app: app.getVersion(),
+      db: configStore.get('db-version'),
+      dbUpdate: getCheckDbUpdate(),
+    };
+  },
+  async exportFavorites() {
+    const path = (
+      await dialog['showSaveDialog']({
+        title: '导出收藏夹配置到……',
+        defaultPath: `./${this.pathConf}.json`,
+      })
+    ).filePath;
+    writeFileSync(
+      path,
+      JSON.stringify(await dbManage.listAllFav(this.getFavorites())),
+    );
+    return path;
+  },
+  getFavorites() {
+    return this.getOrCreateConfig().favorites;
+  },
   getOrCreateConfig() {
     const defaultConf = {
       favorites: [],
+      password: '',
     };
     let ret = configStore.get(this.pathConf);
     if (!ret) {
@@ -153,25 +182,11 @@ const storeEvents = {
     }
     return ret;
   },
-
-  getFavorites() {
-    return this.getOrCreateConfig().favorites;
+  getPwd() {
+    return this.password;
   },
-  setFavorites(favorites) {
-    const ret = configStore.get(this.pathConf);
-    ret.favorites = favorites.filter((v, i, l) => l.indexOf(v) === i);
-    configStore.set(this.pathConf, ret);
-  },
-  addFavorite(id) {
-    const list = this.getFavorites();
-    list.push(id);
-    this.setFavorites(list);
-    return list;
-  },
-  removeFavorite(id) {
-    const list = this.getFavorites().filter(x => x !== id);
-    this.setFavorites(list);
-    return list;
+  getTitles() {
+    return this.titles;
   },
   async importFavorites() {
     const path = await dialog['showOpenDialog']({
@@ -192,22 +207,25 @@ const storeEvents = {
       }
     }
   },
-  async exportFavorites() {
-    const path = (
-      await dialog['showSaveDialog']({
-        title: '导出收藏夹配置到……',
-        defaultPath: `./${this.pathConf}.json`,
-      })
-    ).filePath;
-    writeFileSync(
-      path,
-      JSON.stringify(await dbManage.listAllFav(this.getFavorites())),
-    );
-    return path;
+  isSafe(isSet) {
+    this.saveMeFlag = -3;
+    if (isSet) {
+      const config = this.getOrCreateConfig();
+      config.password = MD5.hex(this.password);
+      configStore.set(this.pathConf, config);
+    }
   },
-
-  saveMeFlag: -2,
   password: '',
+  pathConf: MD5.hex(dbManage.getPath()),
+  removeFavorite(id) {
+    const list = this.getFavorites().filter(x => x !== id);
+    this.setFavorites(list);
+    return list;
+  },
+  resetConfig() {
+    this.pathConf = MD5.hex(dbManage.getPath());
+    this.saveMeFlag = -2;
+  },
   async saveMe() {
     if (this.saveMeFlag === -2) {
       this.password = await dbManage.getPassword();
@@ -215,40 +233,30 @@ const storeEvents = {
         this.password = MD5.hex(this.password);
         this.password = this.password.substring(this.password.length - 8);
       }
-      this.saveMeFlag = this.password ? await dbManage.checkR18() : -1;
+      if (
+        !this.password ||
+        MD5.hex(this.password) === this.getOrCreateConfig().password
+      ) {
+        this.saveMeFlag = -1;
+      } else {
+        this.saveMeFlag = await dbManage.checkR18();
+      }
       logger.debug(`R18 id=${this.saveMeFlag}, pwd=${this.password}`);
     }
     return this.saveMeFlag;
   },
-  isSafe() {
-    this.saveMeFlag = -3;
-  },
-  getPwd() {
-    return this.password;
-  },
-
-  resetConfig() {
-    this.pathConf = MD5.hex(dbManage.getPath());
-    this.saveMeFlag = -2;
-  },
-
-  checkVersion() {
-    return {
-      app: app.getVersion(),
-      db: configStore.get('db-version'),
-      dbUpdate: getCheckDbUpdate(),
-    };
-  },
+  saveMeFlag: -2,
   setDbVersion(version) {
     configStore.set('db-version', version);
     this.resetConfig();
     dbManage.cleanBackupDb();
   },
-
-  titles: chooseTitles(),
-  getTitles() {
-    return this.titles;
+  setFavorites(favorites) {
+    const ret = configStore.get(this.pathConf);
+    ret.favorites = favorites.filter((v, i, l) => l.indexOf(v) === i);
+    configStore.set(this.pathConf, ret);
   },
+  titles: chooseTitles(),
 };
 
 // Scheme must be registered before the app is ready
