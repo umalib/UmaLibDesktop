@@ -15,10 +15,12 @@
       <article-table
         :articles="randomList"
         :count="randomList.length"
+        :favorites="favorites"
         :id2-tag="id2Tag"
         :layout="'random'"
         :loading="false"
         @art-show="$emit('art-show', $event)"
+        @favorite-change="$emit('favorite-change', $event)"
       />
     </el-scrollbar>
     <span slot="footer" class="dialog-footer">
@@ -33,12 +35,12 @@
 import ArticleTable from '@/renderer/views/sub-components/article-table';
 
 export default {
-  name: 'random-articles',
-  props: ['id2Tag', 'randomList', 'visible'],
   components: {
     ArticleTable,
   },
   emits: ['art-show', 'random-close'],
+  name: 'random-articles',
+  props: ['favorites', 'id2Tag', 'randomList', 'visible'],
 };
 </script>
 

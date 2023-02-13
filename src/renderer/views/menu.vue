@@ -120,7 +120,7 @@
 
 <script>
 import connector from '@/renderer/utils/connector';
-import { splitList } from '@/renderer/utils/renderer-utils';
+import { initSelectedArtObj, splitList } from '@/renderer/utils/renderer-utils';
 import ArticleTable from '@/renderer/views/sub-components/article-table';
 import ShowArticle from '@/renderer/views/sub-components/show-article';
 
@@ -165,16 +165,7 @@ export default {
         id2Tag: {},
         novels: [],
       },
-      selectedArt: {
-        author: '',
-        id: -1,
-        name: '',
-        note: '',
-        source: '',
-        tagLabels: [],
-        tags: [],
-        translator: '',
-      },
+      selectedArt: initSelectedArtObj(),
     };
   },
   props: ['saveMe', 'titles'],

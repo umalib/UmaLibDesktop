@@ -175,15 +175,6 @@ import {
 } from '@/renderer/utils/renderer-utils.js';
 
 export default {
-  name: 'pub-article',
-  props: [
-    'authorOptions',
-    'newText',
-    'publishDisable',
-    'tagOptions',
-    'title',
-    'visible',
-  ],
   data() {
     return {
       editorOptions: {
@@ -226,6 +217,15 @@ export default {
     addNewSourceInTextObj,
     removeSourceInTextObj,
   },
+  name: 'pub-article',
+  props: [
+    'authorOptions',
+    'newText',
+    'publishDisable',
+    'tagOptions',
+    'title',
+    'visible',
+  ],
 };
 </script>
 

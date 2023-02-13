@@ -180,6 +180,7 @@
       />
 
       <random-articles
+        :favorites="favorites"
         :id2-tag="search.id2Tag"
         :random-list="randomList"
         :visible="visible.random"
@@ -188,6 +189,7 @@
           showArticle($event);
         "
         @random-close="visible.random = false"
+        @favorite-change="changeFavorites"
       />
 
       <recommended-articles
@@ -209,7 +211,10 @@
 <script>
 import connector from '@/renderer/utils/connector';
 import EmbeddedData from '@/renderer/utils/data';
-import { getNewTextObj } from '@/renderer/utils/renderer-utils';
+import {
+  getNewTextObj,
+  initSelectedArtObj,
+} from '@/renderer/utils/renderer-utils';
 import 'quill/dist/quill.core.css'; // import styles
 import 'quill/dist/quill.snow.css'; // for snow theme
 // import 'quill/dist/quill.bubble.css'; // for bubble theme
@@ -378,16 +383,7 @@ export default {
         tagCascaderOptions: [],
         tagOptions: [],
       },
-      selectedArt: {
-        author: '',
-        id: -1,
-        name: '',
-        note: '',
-        source: [],
-        tagLabels: [],
-        tags: [],
-        translator: '',
-      },
+      selectedArt: initSelectedArtObj(),
       visible: {
         publish: false,
         content: false,
@@ -406,16 +402,19 @@ export default {
   },
   methods: {
     async changeFavorites(id) {
+      const artName = this.articles[this.id2Art[id]]
+        ? this.articles[this.id2Art[id]].name
+        : await connector.get('getArtName', id);
       if (this.favorites[id]) {
         updateFavorites(this, await connector.get('removeFavorite', id));
         this.$message({
-          message: `取消收藏 ${this.articles[this.id2Art[id]].name}`,
+          message: `取消收藏 ${artName}`,
         });
       } else {
         updateFavorites(this, await connector.get('addFavorite', id));
         this.$message({
           type: 'success',
-          message: `收藏 ${this.articles[this.id2Art[id]].name} 成功！`,
+          message: `收藏 ${artName} 成功！`,
         });
       }
     },

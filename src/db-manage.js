@@ -150,6 +150,14 @@ module.exports = {
   cleanBackupDb() {
     compatibleRmSync(backupPath);
   },
+  config(_logger, _userPath, _dbPath) {
+    logger = _logger;
+    userDataPath = _userPath;
+    embeddedDbPath = _dbPath;
+    backupPath = embeddedDbPath + '.backup';
+    dbPath = embeddedDbPath;
+    logger.info('initialized');
+  },
   async copyright() {
     return JSON.parse(
       (
@@ -163,14 +171,6 @@ module.exports = {
         })
       ).names,
     );
-  },
-  config(_logger, _userPath, _dbPath) {
-    logger = _logger;
-    userDataPath = _userPath;
-    embeddedDbPath = _dbPath;
-    backupPath = embeddedDbPath + '.backup';
-    dbPath = embeddedDbPath;
-    logger.info('initialized');
   },
   async deleteArt(artId) {
     await prisma['tagged'].deleteMany({
@@ -199,6 +199,44 @@ module.exports = {
         },
       },
     });
+  },
+  async disconnect() {
+    await prisma.$disconnect();
+  },
+  async getArt(artId) {
+    const art = await prisma.article.findUnique({
+      where: { id: artId },
+      include: {
+        taggedList: true,
+      },
+    });
+    art.uploadTime *= 1000;
+    art.tags = art.taggedList.map(tagged => {
+      return tagged.tagId;
+    });
+    art.source = art.source.split(' ').map(src => {
+      return { val: src };
+    });
+    delete art.taggedList;
+    return art;
+  },
+  async getArtContent(artId) {
+    return (
+      await prisma.article.findUnique({
+        where: { id: artId },
+        select: {
+          content: true,
+        },
+      })
+    ).content;
+  },
+  async getArtName(artId) {
+    return (
+      await prisma.article.findUnique({
+        where: { id: artId },
+        select: { content: true },
+      })
+    ).name;
   },
   async getAuthors() {
     const articles = await prisma.article.findMany({
@@ -246,35 +284,83 @@ module.exports = {
     ret.double.sort();
     return ret;
   },
-  async disconnect() {
-    await prisma.$disconnect();
+  async getIdsByFav(favList) {
+    return (
+      await prisma.article.findMany({
+        where: {
+          OR: favList.map(fav => {
+            return {
+              name: fav.name,
+              author: fav.author,
+              translator: fav.translator,
+            };
+          }),
+        },
+      })
+    ).map(art => art.id);
   },
-  async getArt(artId) {
-    const art = await prisma.article.findUnique({
-      where: { id: artId },
+  async getLongNovelTags() {
+    const tags = await prisma.tag.findMany({
+      orderBy: [
+        {
+          name: 'asc',
+        },
+        { id: 'asc' },
+      ],
       include: {
         taggedList: true,
       },
     });
-    art.uploadTime *= 1000;
-    art.tags = art.taggedList.map(tagged => {
-      return tagged.tagId;
+    const ret = {
+      tags: {},
+      novels: [],
+    };
+    const artIds = [];
+    tags.forEach(tag => {
+      if (tag.type === 3 && tag.taggedList.length) {
+        tag.author = tag.taggedList[0]['artId'];
+        artIds.push(tag.author);
+        ret.novels.push(tag.id);
+      }
+      delete tag.taggedList;
+      ret.tags[tag.id] = tag;
     });
-    art.source = art.source.split(' ').map(src => {
-      return { val: src };
-    });
-    delete art.taggedList;
-    return art;
-  },
-  async getArtContent(artId) {
-    return (
-      await prisma.article.findUnique({
-        where: { id: artId },
+    const artMap = {};
+    (
+      await prisma.article.findMany({
+        where: {
+          id: {
+            in: artIds,
+          },
+        },
         select: {
-          content: true,
+          id: true,
+          author: true,
         },
       })
-    ).content;
+    ).forEach(art => {
+      artMap[art.id] = art.author;
+    });
+    tags.forEach(tag => {
+      if (tag.author) {
+        tag.author = artMap[tag.author];
+      }
+    });
+    return ret;
+  },
+  async getPassword() {
+    const pwd = await prisma.creator.findUnique({
+      where: {
+        id: 2,
+      },
+      select: {
+        names: true,
+      },
+    });
+    return pwd ? pwd.names : '';
+  },
+  getPath() {
+    return dbPath;
   },
   async getRandomArt(param) {
     function fillArt(art) {
@@ -391,69 +477,39 @@ module.exports = {
     });
     return ret;
   },
-  async getIdsByFav(favList) {
-    return (
-      await prisma.article.findMany({
-        where: {
-          OR: favList.map(fav => {
-            return {
-              name: fav.name,
-              author: fav.author,
-              translator: fav.translator,
-            };
-          }),
+  async listAllFav(favList) {
+    const articles = await prisma.article.findMany({
+      where: {
+        id: {
+          in: favList,
         },
-      })
-    ).map(art => art.id);
-  },
-  async getLongNovelTags() {
-    const tags = await prisma.tag.findMany({
-      orderBy: [
-        {
-          name: 'asc',
-        },
-        { id: 'asc' },
-      ],
+      },
       include: {
         taggedList: true,
       },
     });
-    const ret = {
-      tags: {},
-      novels: [],
-    };
-    const artIds = [];
-    tags.forEach(tag => {
-      if (tag.type === 3 && tag.taggedList.length) {
-        tag.author = tag.taggedList[0]['artId'];
-        artIds.push(tag.author);
-        ret.novels.push(tag.id);
-      }
-      delete tag.taggedList;
-      ret.tags[tag.id] = tag;
-    });
-    const artMap = {};
+    const tagMap = {};
+    articles.forEach(art =>
+      art.taggedList.forEach(tagged => (tagMap[tagged.tagId] = true)),
+    );
     (
-      await prisma.article.findMany({
+      await prisma.tag.findMany({
         where: {
           id: {
-            in: artIds,
+            in: Object.keys(tagMap).map(id => Number(id)),
           },
         },
-        select: {
-          id: true,
-          author: true,
-        },
       })
-    ).forEach(art => {
-      artMap[art.id] = art.author;
+    ).forEach(tag => (tagMap[tag.id] = tag.name));
+    articles.sort((a, b) => favList.indexOf(a.id) - favList.indexOf(b.id));
+    return articles.map(art => {
+      return {
+        name: art.name,
+        author: art.author,
+        translator: art.translator,
+        tags: art.taggedList.map(tagged => tagMap[tagged.tagId]),
+      };
     });
-    tags.forEach(tag => {
-      if (tag.author) {
-        tag.author = artMap[tag.author];
-      }
-    });
-    return ret;
   },
   async listArt(param) {
     const findManyOptions = {
@@ -530,40 +586,6 @@ module.exports = {
       count: await prisma.article.count(findManyOptions),
       list: await getArts(findManyOptions, param),
     };
-  },
-  async listAllFav(favList) {
-    const articles = await prisma.article.findMany({
-      where: {
-        id: {
-          in: favList,
-        },
-      },
-      include: {
-        taggedList: true,
-      },
-    });
-    const tagMap = {};
-    articles.forEach(art =>
-      art.taggedList.forEach(tagged => (tagMap[tagged.tagId] = true)),
-    );
-    (
-      await prisma.tag.findMany({
-        where: {
-          id: {
-            in: Object.keys(tagMap).map(id => Number(id)),
-          },
-        },
-      })
-    ).forEach(tag => (tagMap[tag.id] = tag.name));
-    articles.sort((a, b) => favList.indexOf(a.id) - favList.indexOf(b.id));
-    return articles.map(art => {
-      return {
-        name: art.name,
-        author: art.author,
-        translator: art.translator,
-        tags: art.taggedList.map(tagged => tagMap[tagged.tagId]),
-      };
-    });
   },
   async listFavorites(param) {
     if (param.noTagIds.length) {
@@ -651,20 +673,6 @@ module.exports = {
         },
       });
     }
-  },
-  async getPassword() {
-    const pwd = await prisma.creator.findUnique({
-      where: {
-        id: 2,
-      },
-      select: {
-        names: true,
-      },
-    });
-    return pwd ? pwd.names : '';
-  },
-  getPath() {
-    return dbPath;
   },
   async pubArticle(data) {
     let id = data.id;

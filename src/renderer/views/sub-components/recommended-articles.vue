@@ -422,8 +422,6 @@
 import EmbeddedData from '@/renderer/utils/data';
 
 export default {
-  name: 'RecommendedArticles',
-  props: ['saveMe', 'visible'],
   data() {
     return {
       activeName: 'creator-recommend',
@@ -431,12 +429,14 @@ export default {
       recommendations: EmbeddedData.recommendations,
     };
   },
+  emits: ['novel-show', 'recommend-close', 'someone-show', 'tag-show'],
   methods: {
     isShown(isR18) {
       return this.saveMe === -3 || !isR18;
     },
   },
-  emits: ['novel-show', 'recommend-close', 'someone-show', 'tag-show'],
+  name: 'RecommendedArticles',
+  props: ['saveMe', 'visible'],
 };
 </script>
 

@@ -84,33 +84,6 @@ import EmbeddedData from '@/renderer/utils/data';
 import axios from 'axios';
 
 export default {
-  data() {
-    return {
-      appVersion: {
-        app: '',
-        db: 'loading...',
-        dbUpdate: undefined,
-      },
-      builtInDb: true,
-      colorClz: '',
-      cue: 0,
-      currentDbPath: '',
-      downloadDialog: {
-        aimVersion: -1,
-        size: '',
-        loaded: 0,
-        progress: 0,
-        timeStamp: 0,
-        title: '数据库下载中……',
-        visible: false,
-      },
-      history: [],
-      saveMeId: -4,
-      signInfo: EmbeddedData.signInfo,
-      titles: {},
-    };
-  },
-
   async created() {
     const _vue = this;
     ipcRenderer.on('menuEvent', (_, link) => {
@@ -241,6 +214,33 @@ export default {
           type: 'warning',
         });
       });
+  },
+
+  data() {
+    return {
+      appVersion: {
+        app: '',
+        db: 'loading...',
+        dbUpdate: undefined,
+      },
+      builtInDb: true,
+      colorClz: '',
+      cue: 0,
+      currentDbPath: '',
+      downloadDialog: {
+        aimVersion: -1,
+        size: '',
+        loaded: 0,
+        progress: 0,
+        timeStamp: 0,
+        title: '数据库下载中……',
+        visible: false,
+      },
+      history: [],
+      saveMeId: -4,
+      signInfo: EmbeddedData.signInfo,
+      titles: {},
+    };
   },
   methods: {
     isSafe() {

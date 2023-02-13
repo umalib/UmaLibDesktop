@@ -210,7 +210,9 @@ async function updateTags(_vue) {
 }
 
 export default {
-  name: 'manage-view',
+  created() {
+    updateAuthors(this);
+  },
   data() {
     return {
       activeName: 'author-management',
@@ -235,10 +237,6 @@ export default {
       typeResult: 0,
       creatorTypeDict: ['两栖', '译者', '作者', '合译', '合著'],
     };
-  },
-  props: ['cue', 'titles'],
-  created() {
-    updateAuthors(this);
   },
   methods: {
     async actionWithConfirm(option) {
@@ -400,6 +398,8 @@ export default {
       }
     },
   },
+  name: 'manage-view',
+  props: ['cue', 'titles'],
 };
 </script>
 

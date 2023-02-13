@@ -5,6 +5,9 @@ const formatter = new Intl.DateTimeFormat('cn', {
 });
 
 module.exports = {
+  addNewSourceInTextObj(obj) {
+    obj.source.push({ val: '' });
+  },
   formatTimeStamp(timestamp) {
     if (!timestamp) {
       return '';
@@ -23,8 +26,17 @@ module.exports = {
       uploadTime: new Date().getTime(),
     };
   },
-  addNewSourceInTextObj(obj) {
-    obj.source.push({ val: '' });
+  initSelectedArtObj() {
+    return {
+      author: '',
+      id: -1,
+      name: '',
+      note: '',
+      source: [],
+      tagLabels: [],
+      tags: [],
+      translator: '',
+    };
   },
   removeSourceInTextObj(obj, index) {
     if (obj.source.length === 1) {

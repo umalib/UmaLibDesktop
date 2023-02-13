@@ -38,6 +38,7 @@
 
 <script>
 import connector from '@/renderer/utils/connector';
+import { initSelectedArtObj } from '@/renderer/utils/renderer-utils';
 import ArticleTable from '@/renderer/views/sub-components/article-table';
 import ShowArticle from '@/renderer/views/sub-components/show-article';
 
@@ -84,16 +85,7 @@ export default {
       search: {
         id2Tag: {},
       },
-      selectedArt: {
-        author: '',
-        id: -1,
-        name: '',
-        note: '',
-        source: '',
-        tagLabels: [],
-        tags: [],
-        translator: '',
-      },
+      selectedArt: initSelectedArtObj(),
     };
   },
   emits: ['history-add'],

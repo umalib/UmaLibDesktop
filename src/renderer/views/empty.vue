@@ -4,10 +4,10 @@
 
 <script>
 export default {
-  name: 'empty',
   created() {
     this.$router.push('/list');
   },
+  name: 'empty',
 };
 </script>
 

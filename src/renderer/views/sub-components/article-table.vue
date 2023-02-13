@@ -26,13 +26,11 @@
       @sort-change="$emit('sort-change', $event)"
     >
       <el-table-column
-        v-if="layout === 'main'"
         :index="param.offset * (param.pageNum - 1) + 1"
         fixed
         type="index"
         width="54"
       />
-      <el-table-column v-else :index="1" fixed type="index" />
       <el-table-column
         fixed
         label="标题"
@@ -278,6 +276,25 @@
               @click="$emit('art-delete', cell.row['id'])"
             />
           </el-button-group>
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-if="layout === 'random'"
+        fixed="right"
+        label=""
+        style="text-align: center"
+        width="64"
+      >
+        <template v-slot="cell">
+          <el-button
+            :icon="
+              favorites[cell.row['id']] ? 'el-icon-star-on' : 'el-icon-star-off'
+            "
+            :type="favorites[cell.row['id']] ? 'success' : 'info'"
+            round
+            size="mini"
+            @click="$emit('favorite-change', cell.row['id'])"
+          />
         </template>
       </el-table-column>
       <el-table-column

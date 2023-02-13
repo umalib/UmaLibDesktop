@@ -155,8 +155,9 @@ import connector from '@/renderer/utils/connector';
 import EmbeddedData from '@/renderer/utils/data';
 
 export default {
-  name: 'copyright',
-  props: ['saveMe', 'titles'],
+  async created() {
+    this.creators = await connector.get('copyright', {});
+  },
   data() {
     return {
       creators: [],
@@ -167,9 +168,6 @@ export default {
     };
   },
   emits: ['is-safe'],
-  async created() {
-    this.creators = await connector.get('copyright', {});
-  },
   methods: {
     async jump() {
       if (this.password === (await connector.get('getPwd', {}))) {
@@ -193,6 +191,8 @@ export default {
       }
     },
   },
+  name: 'copyright',
+  props: ['saveMe', 'titles'],
 };
 </script>
 

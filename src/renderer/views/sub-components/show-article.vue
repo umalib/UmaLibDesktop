@@ -170,8 +170,6 @@ const converters = {
 };
 
 export default {
-  name: 'ShowArticle',
-  props: ['content', 'visible', 'selectedArt'],
   data() {
     return {
       aaFont: '',
@@ -217,6 +215,8 @@ export default {
     },
     formatTimeStamp,
   },
+  name: 'ShowArticle',
+  props: ['content', 'visible', 'selectedArt'],
 };
 </script>
 

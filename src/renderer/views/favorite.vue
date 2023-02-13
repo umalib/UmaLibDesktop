@@ -48,6 +48,7 @@
 
 <script>
 import connector from '@/renderer/utils/connector';
+import { initSelectedArtObj } from '@/renderer/utils/renderer-utils';
 import ArticleTable from '@/renderer/views/sub-components/article-table';
 import ShowArticle from '@/renderer/views/sub-components/show-article';
 
@@ -74,8 +75,15 @@ async function fillArticles(_vue, param) {
 }
 
 export default {
-  name: 'FavoriteView',
   components: { ArticleTable, ShowArticle },
+  async created() {
+    const data = await connector.get('getTags', {});
+    this.search.id2Tag = data.tags;
+    this.favorites = await connector.get('getFavorites', {});
+    await fillArticles(this, {
+      ids: this.favorites,
+    });
+  },
   data() {
     return {
       articleLoading: true,
@@ -94,26 +102,8 @@ export default {
       search: {
         id2Tag: {},
       },
-      selectedArt: {
-        author: '',
-        id: -1,
-        name: '',
-        note: '',
-        source: '',
-        tagLabels: [],
-        tags: [],
-        translator: '',
-      },
+      selectedArt: initSelectedArtObj(),
     };
-  },
-  props: ['saveMe', 'titles'],
-  async created() {
-    const data = await connector.get('getTags', {});
-    this.search.id2Tag = data.tags;
-    this.favorites = await connector.get('getFavorites', {});
-    await fillArticles(this, {
-      ids: this.favorites,
-    });
   },
   methods: {
     async exportFavorites() {
@@ -219,6 +209,8 @@ export default {
       return bTagInfo.type - aTagInfo.type;
     },
   },
+  name: 'FavoriteView',
+  props: ['saveMe', 'titles'],
 };
 </script>
 
