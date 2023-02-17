@@ -432,7 +432,7 @@ export default {
   emits: ['novel-show', 'recommend-close', 'someone-show', 'tag-show'],
   methods: {
     isShown(isR18) {
-      return this.saveMe === -3 || !isR18;
+      return this.saveMe < 0 || !isR18;
     },
   },
   name: 'RecommendedArticles',
