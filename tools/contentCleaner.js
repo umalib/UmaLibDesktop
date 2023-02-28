@@ -39,10 +39,6 @@ async function task() {
     ) {
       content = content.replace(/&nbsp;/g, ' ');
       content = content.replace(
-        /\s*background-color:\s*(transparent|rgb\(255,\s*248,\s*231\)|rgb\(245,\s*232,\s*203\)|rgb\(255,\s*240,\s*205\));\s*/g,
-        '',
-      );
-      content = content.replace(
         /\s*color:\s*(black|rgb\(51,\s*51,\s*51\)|rgb\(16,\s*39,\s*63\));\s*/g,
         '',
       );
@@ -53,7 +49,7 @@ async function task() {
         .replace(/\s*<p>\s*<br\s*\/?\s*>\s*<\/p>\s*/g, '<p><br></p>');
       content = content.replace(/<\/p>\s*<p>/g, '</p><p>');
       content = cleanDuplicateLineBreak(content);
-      if (art.name.indexOf('两人三足') === -1 && alignCenterImg) {
+      if (alignCenterImg) {
         content = content.replace(
           /<p>\s*<img\s+/g,
           '<p class="ql-align-center"><img ',
@@ -64,31 +60,7 @@ async function task() {
     const translator = cleanBlank(art.translator);
     const name = cleanBlank(art.name);
     const note = cleanBlank(art.note);
-    let source = cleanBlank(art.source);
-    if (source.startsWith('[')) {
-      source = source.substring(1);
-    }
-    if (source.endsWith(']')) {
-      source = source.substring(0, source.length - 1);
-    }
-    if (
-      source.startsWith('tsumanne.net') ||
-      source.startsWith('www.pixiv.net')
-    ) {
-      source = 'https://' + source;
-    }
-    if (source.startsWith('pixiv.net')) {
-      source = 'https://www.' + source;
-    }
-    if (source.startsWith('PIXIV ID：')) {
-      source = 'https://www.pixiv.net/novel/show.php?id=' + source.substring(9);
-    }
-    if (source.startsWith('Pid=')) {
-      source = 'https://www.pixiv.net/novel/show.php?id=' + source.substring(4);
-    }
-    if (source.startsWith('PIXIV ID=')) {
-      source = 'https://www.pixiv.net/novel/show.php?id=' + source.substring(9);
-    }
+    const source = cleanBlank(art.source).replace(/\s\s+/g, ' ');
     const flags = [];
     if (art.name.length !== name.length) {
       flags.push('name');
@@ -144,7 +116,7 @@ async function task() {
     }
   }
   logger.info('cleaning tags done!');
-  await prisma.tagged.deleteMany({
+  await prisma['tagged'].deleteMany({
     where: {
       OR: [
         {

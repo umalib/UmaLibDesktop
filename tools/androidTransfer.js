@@ -20,13 +20,13 @@ function countBase64(content) {
 }
 
 async function task() {
-  const tagList = (
+  let tagList = (
     await prisma.tag.findMany({
       where: {
         OR: [
           {
             name: {
-              in: ['R18', 'AA', '两人三足，目标是星光闪耀的舞台！', '十八禁'],
+              in: ['R18', 'AA', '安科', '十八禁'],
             },
           },
           {
@@ -36,14 +36,27 @@ async function task() {
       },
     })
   ).map(tag => tag.id);
-  const toRmList = (
+  const artList = (
     await prisma['tagged'].findMany({ where: { tagId: { in: tagList } } })
-  ).map(tagged => tagged.artId);
+  )
+    .map(tagged => tagged.artId)
+    .filter((x, i, l) => i === l.indexOf(x));
   await prisma['tagged'].deleteMany({
-    where: { OR: [{ artId: { in: toRmList } }, { tagId: { in: tagList } }] },
+    where: { OR: [{ artId: { in: artList } }, { tagId: { in: tagList } }] },
   });
-  await prisma.article.deleteMany({ where: { id: { in: toRmList } } });
-  logger.info(`remove ${toRmList.length} articles: ${toRmList.join(', ')}`);
+
+  await prisma.article.deleteMany({ where: { id: { in: artList } } });
+  logger.info(`remove ${artList.length} articles: ${artList.join(', ')}`);
+
+  tagList = (
+    await prisma.tag.findMany({
+      where: {
+        taggedList: {
+          none: {},
+        },
+      },
+    })
+  ).map(tag => tag.id);
   await prisma.tag.deleteMany({ where: { id: { in: tagList } } });
   logger.info(`remove ${tagList.length} tags: ${tagList.join(', ')}`);
   await prisma.tag.deleteMany({
@@ -60,8 +73,8 @@ async function task() {
     },
   });
   let count = 0;
-  const artList = await prisma.article.findMany();
-  for (const art of artList) {
+  const articles = await prisma.article.findMany();
+  for (const art of articles) {
     const tmpCount = countBase64(art.content);
     if (tmpCount > 0) {
       count += tmpCount;
@@ -76,7 +89,7 @@ async function task() {
       });
     }
   }
-  logger.info(`art count: ${artList.length}; base64 count: ${count}`);
+  logger.info(`art count: ${articles.length}; base64 count: ${count}`);
   logger.info('clean done');
   await prisma.$queryRaw`vacuum;`;
   logger.info('vacuum done');
