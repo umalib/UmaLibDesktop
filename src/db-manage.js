@@ -572,8 +572,12 @@ module.exports = {
       if (param.someone.indexOf('/') === -1) {
         findManyOptions.where.AND.push({
           OR: [
-            { author: { contains: param.someone } },
-            { translator: { contains: param.someone } },
+            { author: param.someone },
+            { author: { contains: `/${param.someone}` } },
+            { author: { contains: `${param.someone}/` } },
+            { translator: param.someone },
+            { translator: { contains: `/${param.someone}` } },
+            { translator: { contains: `${param.someone}/` } },
           ],
         });
       } else {
