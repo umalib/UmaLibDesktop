@@ -49,6 +49,7 @@ log4js.configure({
 });
 const logger = log4js.getLogger('background');
 const dbLogger = log4js.getLogger('db-manage');
+const appLogger = log4js.getLogger('app');
 const userDbPath = join(app.getPath('userData'), './main.db');
 if (isDevelopment) {
   logger.level = 'debug';
@@ -68,48 +69,6 @@ dbManage.config(dbLogger, app.getPath('userData'), userDbPath);
 
 const configStore = new (require('electron-store'))();
 logger.debug(`use config path: ${configStore.path}`);
-
-function getBackgroundColor() {
-  return configStore.get('background-color');
-}
-
-function setBackgroundColor(color) {
-  configStore.set('background-color', color);
-  return color;
-}
-
-if (!getBackgroundColor()) {
-  logger.info('write default background-color into config');
-  setBackgroundColor(themes[0].color);
-} else {
-  logger.info('read background-color: ' + getBackgroundColor());
-}
-
-function getDefaultFullScreen() {
-  return configStore.get('full-screen');
-}
-
-function setDefaultFullScreen(isFullScreen) {
-  configStore.set('full-screen', isFullScreen);
-  return isFullScreen;
-}
-
-if (getDefaultFullScreen() === undefined) {
-  setDefaultFullScreen(true);
-}
-
-function getCheckDbUpdate() {
-  return configStore.get('db-update');
-}
-
-function setCheckDbUpdate(dbUpdate) {
-  configStore.set('db-update', dbUpdate);
-  return dbUpdate;
-}
-
-if (getCheckDbUpdate() === undefined) {
-  setCheckDbUpdate(true);
-}
 
 function chooseTitles() {
   let rand = Math.random();
@@ -137,35 +96,7 @@ function chooseTitles() {
 }
 
 const storeEvents = {
-  addFavorite(id) {
-    const list = this.getFavorites();
-    list.push(id);
-    this.setFavorites(list);
-    return list;
-  },
-  checkVersion() {
-    return {
-      app: app.getVersion(),
-      db: configStore.get('db-version'),
-      dbUpdate: getCheckDbUpdate(),
-    };
-  },
-  async exportFavorites() {
-    const path = (
-      await dialog['showSaveDialog']({
-        title: '导出收藏夹配置到……',
-        defaultPath: `./${this.pathConf}.json`,
-      })
-    ).filePath;
-    writeFileSync(
-      path,
-      JSON.stringify(await dbManage.listAllFav(this.getFavorites())),
-    );
-    return path;
-  },
-  getFavorites() {
-    return this.getOrCreateConfig().favorites;
-  },
+  pathConf: MD5.hex(dbManage.getPath()),
   getOrCreateConfig() {
     const defaultConf = {
       favorites: [],
@@ -182,30 +113,57 @@ const storeEvents = {
     }
     return ret;
   },
+  resetConfig() {
+    this.pathConf = MD5.hex(dbManage.getPath());
+    this.saveMeFlag = -2;
+  },
+
+  checkVersion() {
+    return {
+      app: app.getVersion(),
+      db: configStore.get('db-version'),
+      dbUpdate: this.getCheckDbUpdate(),
+    };
+  },
+  setDbVersion(version) {
+    configStore.set('db-version', version);
+    this.resetConfig();
+    dbManage.cleanBackupDb();
+  },
+
+  getCheckDbUpdate() {
+    return configStore.get('db-update');
+  },
+  setCheckDbUpdate(dbUpdate) {
+    configStore.set('db-update', dbUpdate);
+    return dbUpdate;
+  },
+
+  getDefaultFullScreen() {
+    return configStore.get('full-screen');
+  },
+  setDefaultFullScreen(isFullScreen) {
+    configStore.set('full-screen', isFullScreen);
+    return isFullScreen;
+  },
+
+  backgroundColor: undefined,
+  getBackgroundColor() {
+    if (!this.backgroundColor) {
+      this.backgroundColor = configStore.get('background-color');
+    }
+    return this.backgroundColor;
+  },
+  setBackgroundColor(color) {
+    this.backgroundColor = color;
+    configStore.set('background-color', this.backgroundColor);
+    return color;
+  },
+
+  saveMeFlag: -2,
+  password: '',
   getPwd() {
     return this.password;
-  },
-  getTitles() {
-    return this.titles;
-  },
-  async importFavorites() {
-    const path = await dialog['showOpenDialog']({
-      multiSelections: false,
-      openDirectory: false,
-    });
-    if (path.filePaths.length) {
-      try {
-        const favList = this.getFavorites().concat(
-          await dbManage.getIdsByFav(
-            JSON.parse(readFileSync(path.filePaths[0], 'utf-8')),
-          ),
-        );
-        this.setFavorites(favList);
-        return this.getFavorites();
-      } catch (ignored) {
-        return true;
-      }
-    }
   },
   isSafe(isSet) {
     this.saveMeFlag = -3;
@@ -214,17 +172,6 @@ const storeEvents = {
       config.password = MD5.hex(this.password);
       configStore.set(this.pathConf, config);
     }
-  },
-  password: '',
-  pathConf: MD5.hex(dbManage.getPath()),
-  removeFavorite(id) {
-    const list = this.getFavorites().filter(x => x !== id);
-    this.setFavorites(list);
-    return list;
-  },
-  resetConfig() {
-    this.pathConf = MD5.hex(dbManage.getPath());
-    this.saveMeFlag = -2;
   },
   async saveMe() {
     if (this.saveMeFlag === -2) {
@@ -245,19 +192,83 @@ const storeEvents = {
     }
     return this.saveMeFlag;
   },
-  saveMeFlag: -2,
-  setDbVersion(version) {
-    configStore.set('db-version', version);
-    this.resetConfig();
-    dbManage.cleanBackupDb();
+
+  addFavorite(id) {
+    const list = this.getFavorites();
+    list.push(id);
+    this.setFavorites(list);
+    return list;
+  },
+  removeFavorite(id) {
+    const list = this.getFavorites().filter(x => x !== id);
+    this.setFavorites(list);
+    return list;
+  },
+  getFavorites() {
+    return this.getOrCreateConfig().favorites;
   },
   setFavorites(favorites) {
     const ret = configStore.get(this.pathConf);
     ret.favorites = favorites.filter((v, i, l) => l.indexOf(v) === i);
     configStore.set(this.pathConf, ret);
   },
+  async importFavorites() {
+    const path = await dialog['showOpenDialog']({
+      multiSelections: false,
+      openDirectory: false,
+    });
+    if (path.filePaths.length) {
+      try {
+        const favList = this.getFavorites().concat(
+          await dbManage.getIdsByFav(
+            JSON.parse(readFileSync(path.filePaths[0], 'utf-8')),
+          ),
+        );
+        this.setFavorites(favList);
+        return this.getFavorites();
+      } catch (ignored) {
+        return true;
+      }
+    }
+  },
+  async exportFavorites() {
+    const path = (
+      await dialog['showSaveDialog']({
+        title: '导出收藏夹配置到……',
+        defaultPath: `./${this.pathConf}.json`,
+      })
+    ).filePath;
+    writeFileSync(
+      path,
+      JSON.stringify(await dbManage.listAllFav(this.getFavorites())),
+    );
+    return path;
+  },
+
   titles: chooseTitles(),
+  getTitles() {
+    return this.titles;
+  },
+
+  log(args) {
+    appLogger[args.level](args.info);
+  },
 };
+
+if (storeEvents.getCheckDbUpdate() === undefined) {
+  logger.info('write default check-db-update into config');
+  storeEvents.setCheckDbUpdate(true);
+}
+
+if (storeEvents.getDefaultFullScreen() === undefined) {
+  logger.info('write default full-screen into config');
+  storeEvents.setDefaultFullScreen(true);
+}
+
+if (!storeEvents.getBackgroundColor()) {
+  logger.info('write default background-color into config');
+  storeEvents.setBackgroundColor(themes[0].color);
+}
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -282,8 +293,8 @@ async function createWindow() {
   });
 
   function setRendererBackgroundColor(color) {
-    color && setBackgroundColor(color);
-    mainWindow.webContents.send('colorEvent', getBackgroundColor());
+    color && storeEvents.setBackgroundColor(color);
+    mainWindow.webContents.send('colorEvent', storeEvents.getBackgroundColor());
   }
 
   logger.info('clean old listeners');
@@ -466,9 +477,9 @@ async function createWindow() {
         sublabel: '启动时是否检查数据库更新',
         toolTip: '启动时是否检查数据库更新',
         type: 'checkbox',
-        checked: getCheckDbUpdate(),
+        checked: storeEvents.getCheckDbUpdate(),
         click(event) {
-          setCheckDbUpdate(event.checked);
+          storeEvents.setCheckDbUpdate(event.checked);
         },
       },
       { type: 'separator' },
@@ -502,6 +513,8 @@ async function createWindow() {
         submenu: themes.map(c => {
           return {
             label: c.label,
+            type: 'radio',
+            checked: c.color === storeEvents.getBackgroundColor(),
             click() {
               setRendererBackgroundColor(c.color);
             },
@@ -518,9 +531,9 @@ async function createWindow() {
         sublabel: '是/否',
         toolTip: '是/否',
         type: 'checkbox',
-        checked: getDefaultFullScreen(),
+        checked: storeEvents.getDefaultFullScreen(),
         click(event) {
-          setDefaultFullScreen(event.checked);
+          storeEvents.setDefaultFullScreen(event.checked);
         },
       },
     ],
@@ -528,7 +541,7 @@ async function createWindow() {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
   setRendererBackgroundColor();
 
-  if (getDefaultFullScreen()) {
+  if (storeEvents.getDefaultFullScreen()) {
     logger.info('set full screen');
     mainWindow.maximize();
   }
