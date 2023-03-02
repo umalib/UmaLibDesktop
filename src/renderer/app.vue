@@ -120,7 +120,7 @@ export default {
       _vue.refreshPage(path);
     });
 
-    ipcRenderer.on('reloadDb', async () => {
+    ipcRenderer.on('getOnlineDb', async () => {
       try {
         await _vue.$confirm(
           `即将从云端重新拉取数据库！该操作耗时较长，中断可能导致数据损坏！内置数据库将被覆盖且原数据库无法找回！是否继续？`,
@@ -134,6 +134,32 @@ export default {
         await _vue.downloadDb();
         // eslint-disable-next-line no-empty
       } catch (_) {}
+    });
+
+    let isFindViewNotShown = true;
+    ipcRenderer.on('findInPage', async () => {
+      if (isFindViewNotShown) {
+        isFindViewNotShown = false;
+        try {
+          this.keyword = (
+            await _vue.$prompt('', '请输入查找关键词', {
+              center: true,
+              confirmButtonText: '查找',
+              cancelButtonText: '取消',
+              inputValue: this.keyword,
+              distinguishCancelAndClose: true,
+            })
+          ).value;
+          ipcRenderer.send('findInPage', this.keyword);
+        } catch (action) {
+          if ('cancel' === action) {
+            this.keyword = '';
+            ipcRenderer.send('findInPage', '');
+          }
+        } finally {
+          isFindViewNotShown = true;
+        }
+      }
     });
 
     this.titles = await connector.get('getTitles', {});
@@ -244,6 +270,7 @@ export default {
         visible: false,
       },
       history: [],
+      keyword: '',
       saveMeId: -4,
       signInfo: EmbeddedData.signInfo,
       titles: {},

@@ -213,15 +213,16 @@ const storeEvents = {
     configStore.set(this.pathConf, ret);
   },
   async importFavorites() {
-    const path = await dialog['showOpenDialog']({
+    const paths = dialog['showOpenDialogSync']({
+      filters: [{ name: 'json', extensions: ['json'] }],
       multiSelections: false,
       openDirectory: false,
     });
-    if (path.filePaths.length) {
+    if (paths && paths.length) {
       try {
         const favList = this.getFavorites().concat(
           await dbManage.getIdsByFav(
-            JSON.parse(readFileSync(path.filePaths[0], 'utf-8')),
+            JSON.parse(readFileSync(paths[0], 'utf-8')),
           ),
         );
         this.setFavorites(favList);
@@ -232,16 +233,16 @@ const storeEvents = {
     }
   },
   async exportFavorites() {
-    const path = (
-      await dialog['showSaveDialog']({
-        title: '导出收藏夹配置到……',
-        defaultPath: `./${this.pathConf}.json`,
-      })
-    ).filePath;
-    writeFileSync(
-      path,
-      JSON.stringify(await dbManage.listAllFav(this.getFavorites())),
-    );
+    const path = dialog['showSaveDialogSync']({
+      title: '导出收藏夹配置到……',
+      defaultPath: `./${this.pathConf}.json`,
+    });
+    if (path) {
+      writeFileSync(
+        path,
+        JSON.stringify(await dbManage.listAllFav(this.getFavorites())),
+      );
+    }
     return path;
   },
 
@@ -331,6 +332,14 @@ async function createWindow() {
 
   ipcMain.on('colorEvent', () => setRendererBackgroundColor());
 
+  ipcMain.on('findInPage', (_, msg) => {
+    if (msg) {
+      mainWindow.webContents.findInPage(msg, { findNext: true });
+    } else {
+      mainWindow.webContents.stopFindInPage('clearSelection');
+    }
+  });
+
   logger.info('register new listeners');
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -358,7 +367,7 @@ async function createWindow() {
         label: storeEvents.titles.list,
         sublabel: '文章列表',
         toolTip: '文章列表',
-        accelerator: process.platform === 'darwin' ? 'Cmd+1' : 'Ctrl+1',
+        accelerator: 'CmdOrCtrl+1',
         click() {
           mainWindow.webContents.send('menuEvent', '/list');
         },
@@ -367,7 +376,7 @@ async function createWindow() {
         label: storeEvents.titles.menu,
         sublabel: '长篇/合集目录',
         toolTip: '长篇/合集目录',
-        accelerator: process.platform === 'darwin' ? 'Cmd+2' : 'Ctrl+2',
+        accelerator: 'CmdOrCtrl+2',
         click() {
           mainWindow.webContents.send('menuEvent', '/menu/m');
         },
@@ -376,7 +385,7 @@ async function createWindow() {
         label: storeEvents.titles.favorite,
         sublabel: '收藏夹',
         toolTip: '收藏夹',
-        accelerator: process.platform === 'darwin' ? 'Cmd+3' : 'Ctrl+3',
+        accelerator: 'CmdOrCtrl+3',
         click() {
           mainWindow.webContents.send('menuEvent', '/favorites');
         },
@@ -385,7 +394,7 @@ async function createWindow() {
         label: storeEvents.titles.history,
         sublabel: '阅读历史',
         toolTip: '阅读历史',
-        accelerator: process.platform === 'darwin' ? 'Cmd+4' : 'Ctrl+4',
+        accelerator: 'CmdOrCtrl+4',
         click() {
           mainWindow.webContents.send('menuEvent', '/history');
         },
@@ -394,7 +403,7 @@ async function createWindow() {
         label: storeEvents.titles.manage,
         sublabel: '管理',
         toolTip: '管理',
-        accelerator: process.platform === 'darwin' ? 'Cmd+5' : 'Ctrl+5',
+        accelerator: 'CmdOrCtrl+5',
         click() {
           mainWindow.webContents.send('menuEvent', '/manage');
         },
@@ -403,7 +412,7 @@ async function createWindow() {
         label: storeEvents.titles.copyright,
         sublabel: '鸣谢',
         toolTip: '鸣谢',
-        accelerator: process.platform === 'darwin' ? 'Cmd+6' : 'Ctrl+6',
+        accelerator: 'CmdOrCtrl+6',
         click() {
           mainWindow.webContents.send('menuEvent', '/copyright');
         },
@@ -412,13 +421,14 @@ async function createWindow() {
       {
         label: '选择数据库',
         async click() {
-          const path = await dialog['showOpenDialog']({
+          const paths = dialog['showOpenDialogSync']({
+            filters: [{ name: 'db', extensions: ['db'] }],
             multiSelections: false,
             openDirectory: false,
           });
-          if (path.filePaths.length) {
-            logger.info(`dbManage.changeDb("${path.filePaths[0]}")`);
-            const result = await dbManage.changeDb(path.filePaths[0]);
+          if (paths && paths.length) {
+            logger.info(`dbManage.changeDb("${paths[0]}")`);
+            const result = await dbManage.changeDb(paths[0]);
             storeEvents.resetConfig();
             mainWindow.webContents.send('refreshPage', result);
           }
@@ -441,7 +451,7 @@ async function createWindow() {
         sublabel: '从云端拉取内置数据库',
         toolTip: '从云端拉取内置数据库',
         click() {
-          mainWindow.webContents.send('reloadDb', '');
+          mainWindow.webContents.send('getOnlineDb', '');
         },
       },
       {
@@ -449,15 +459,15 @@ async function createWindow() {
         sublabel: '从本地安装内置数据库',
         toolTip: '从本地安装内置数据库',
         async click() {
-          const path = await dialog['showOpenDialog']({
+          const paths = dialog['showOpenDialogSync']({
             filters: [{ name: 'zip', extensions: ['zip'] }],
             multiSelections: false,
             openDirectory: false,
           });
-          if (path.filePaths.length) {
+          if (paths && paths.length) {
             try {
-              logger.info(`dbManage.changeDb("${path.filePaths[0]}")`);
-              const result = await dbManage.saveOnlineDb(path.filePaths[0]);
+              logger.info(`dbManage.changeDb("${paths[0]}")`);
+              const result = await dbManage.saveOnlineDb(paths[0]);
               await dbManage.checkR18();
               storeEvents.setDbVersion(result.dbVersion);
               mainWindow.webContents.send('refreshPage', result);
@@ -503,6 +513,13 @@ async function createWindow() {
       { label: '粘贴', role: 'paste' },
       { label: '符合格式粘贴', role: 'pasteAndMatchStyle' },
       { label: '全选', role: 'selectAll' },
+      {
+        label: '查找',
+        accelerator: 'CmdOrCtrl+F',
+        click() {
+          mainWindow.webContents.send('findInPage', '');
+        },
+      },
     ],
   });
   template.push({
