@@ -74,7 +74,7 @@
           ]"
           :offset="2"
           :span="20"
-          v-html="convertLan(content)"
+          v-html="convertContent(content)"
         />
       </el-row>
       <el-backtop
@@ -189,6 +189,33 @@ export default {
       }
       return this.converter(_content);
     },
+    convertContent(_content) {
+      let output = _content;
+      let result = [];
+      const dict = {};
+      do {
+        result = output.match(/<p>\[[^\]]+][^<]*<\/p>$/);
+        if (result) {
+          output = output.substring(0, result.index);
+          const a = result[0]
+            .replace(/<[^>]*>/g, '')
+            .substring(1)
+            .split(']');
+          dict[a[0]] = a[1];
+        }
+      } while (result);
+      if (Object.keys(dict).length) {
+        output = output.replace(/(<p>\s*<br\s*\/?\s*>\s*<\/p>)+$/g, '');
+        for (const key of Object.keys(dict)) {
+          output = output.replaceAll(
+            `[${key}]`,
+            ` <span title="${dict[key]}"><u>[${key}]</u></el-tooltip> `,
+          );
+        }
+      }
+      return this.convertLan(output);
+    },
+    formatTimeStamp,
     handleCommand(command) {
       const commandArr = command.split(':');
       switch (commandArr[0]) {
@@ -213,10 +240,9 @@ export default {
           this.segmentSpace = commandArr[1];
       }
     },
-    formatTimeStamp,
   },
   name: 'ShowArticle',
-  props: ['content', 'visible', 'selectedArt'],
+  props: ['content', 'visible', 'selectedArt', 'vue'],
 };
 </script>
 

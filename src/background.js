@@ -12,9 +12,6 @@ const {
   shell,
 } = require('electron');
 const { createProtocol } = require('vue-cli-plugin-electron-builder/lib');
-const dbManage = require('@/db-manage');
-const { titles, themes } = require('@/main-config');
-
 const {
   existsSync,
   readdirSync,
@@ -26,6 +23,9 @@ const MD5 = new (require('jshashes').MD5)();
 const log4js = require('log4js');
 const { homedir } = require('os');
 const { resolve, join } = require('path');
+
+const dbManage = require('@/db-manage');
+const { titles, themes } = require('@/main-config');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
