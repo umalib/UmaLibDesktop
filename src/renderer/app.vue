@@ -148,12 +148,14 @@ export default {
     axios
       .get(`https://umalib.github.io/UmaLibDesktop/update-info.json?${current}`)
       .then(async response => {
-        await connector.get('log', {
-          level: 'info',
-          info: `loading remote update-info: ${(new Date().getTime() -
-            current) /
-            1000}s`,
-        });
+        connector
+          .get('log', {
+            level: 'info',
+            info: `loading remote update-info: ${(new Date().getTime() -
+              current) /
+              1000}s`,
+          })
+          .then();
         const remoteVer = response.data;
         const appVerArr = [
           Number(this.appVersion.app.substring(0, 1)),
@@ -207,10 +209,12 @@ export default {
         }
       })
       .catch(() => {
-        console.log(
-          `loading remote info failed! ${(new Date().getTime() - current) /
+        connector.get('log', {
+          level: 'warn',
+          info: `loading remote info failed! ${(new Date().getTime() -
+            current) /
             1000}s`,
-        );
+        });
         this.$notify({
           title: '版本检查失败！',
           message: '请检查网络连接！',
@@ -274,12 +278,14 @@ export default {
               `https://umalib.github.io/UmaLibDesktop/update-info.json?${new Date().getTime()}`,
             )
           ).data;
-          await connector.get('log', {
-            level: 'info',
-            info: `loading remote update-info: ${(new Date().getTime() -
-              current) /
-              1000}s`,
-          });
+          connector
+            .get('log', {
+              level: 'info',
+              info: `loading remote update-info: ${(new Date().getTime() -
+                current) /
+                1000}s`,
+            })
+            .then();
           this.downloadDialog.aimVersion = remoteVer['db_version'];
         } catch (_) {
           this.$notify({
@@ -338,11 +344,14 @@ export default {
             },
           },
         );
-        await connector.get('log', {
-          level: 'info',
-          info: `loading remote data-base: ${(new Date().getTime() - current) /
-            1000}s`,
-        });
+        connector
+          .get('log', {
+            level: 'info',
+            info: `loading remote data-base: ${(new Date().getTime() -
+              current) /
+              1000}s`,
+          })
+          .then();
         this.downloadDialog.info = '下载完成！即将切换到下载数据库……';
         this.downloadDialog.progress = 100;
         await connector.get('saveOnlineDb', {
