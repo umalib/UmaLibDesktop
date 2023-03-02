@@ -1036,12 +1036,15 @@ recommendations.series.sort(tagArtComparator);
 const alias = {};
 alias['东海帝王'] = ['东海帝皇'];
 alias['东瀛佐敦'] = ['岛川乔登'];
+alias['光辉致意'] = ['Light Hello'];
 alias['名将怒涛'] = ['名将户仁'];
 alias['名竞应援'] = ['齐叫好'];
 alias['圣王光环'] = ['帝王光辉', '帝皇光辉'];
 alias['大拓太阳神'] = ['大德太阳'];
 alias['安身立命'] = ['幸存者'];
+alias['小小蚕茧'] = ['小巧圆茧', 'Little Cocon'];
 alias['待兼诗歌剧'] = ['待兼唐怀瑟'];
+alias['快乐米可'] = ['快乐温顺', 'Happy Mik'];
 alias['成田白仁'] = ['成田拜仁'];
 alias['成田路'] = ['成田速王'];
 alias['摩耶重炮'] = ['重炮'];
@@ -1051,8 +1054,10 @@ alias['樱花进王'] = ['樱花蓦进王'];
 alias['目白赖恩'] = ['目白莱恩', '目白雷恩'];
 alias['第一红宝石'] = ['第一红宝'];
 alias['艾尼斯风神'] = ['艾尼风神'];
+alias['苦味糖衣'] = ['微苦糖渍', 'Bitter Glasse'];
 alias['菱亚马逊'] = ['亚马逊'];
 alias['超级小海湾'] = ['超级小溪', '超级溪流'];
+alias['里见女尊'] = ['里见蕾娜斯'];
 alias['鲁铎象征'] = ['鲁道夫象征'];
 
 module.exports = {
