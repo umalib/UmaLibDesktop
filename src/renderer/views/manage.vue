@@ -17,7 +17,7 @@
             >
               <template v-slot="{ option }">
                 <span>
-                  {{ compressLabel(option.label) }}
+                  {{ compressLabel(option.label, true) }}
                   <el-tag type="info" size="mini">
                     {{ creatorTypeDict[option.type] }}
                   </el-tag>
@@ -292,9 +292,9 @@ export default {
         cancelMsg: '类别变更已取消',
       });
     },
-    compressLabel(label) {
+    compressLabel(label, isCreator) {
       const splitterIndex = label.indexOf('/');
-      if (splitterIndex !== -1) {
+      if (splitterIndex !== -1 && isCreator) {
         return `${label.substring(0, splitterIndex)}] 等`;
       }
       if (label.length > 11) {
