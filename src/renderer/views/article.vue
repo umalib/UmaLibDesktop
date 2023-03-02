@@ -210,7 +210,7 @@
 
 <script>
 import connector from '@/renderer/utils/connector';
-import { alias, tagTypes } from '@/renderer/utils/data';
+import { getAlias, tagTypes } from '@/renderer/utils/data';
 import {
   getNewTextObj,
   initSelectedArtObj,
@@ -237,10 +237,6 @@ async function getTagsFromServer(_vue) {
   _vue.search.sensitiveTags = [];
   if (data['typeMap'][4]) {
     _vue.search.sensitiveTags = data['typeMap'][4];
-  }
-
-  function getAlias(label) {
-    return `${alias[label] ? label + '/' + alias[label].join('/') : label}`;
   }
 
   for (let k in data['typeMap']) {
