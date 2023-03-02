@@ -1,10 +1,10 @@
 const { PrismaClient } = require('@prisma/client');
 const { resolve } = require('path');
-const { path, duplicateKey } = require('./config.js');
 const MD5 = new (require('jshashes').MD5)();
 const logger = require('log4js').getLogger('checker');
+const { path, duplicateFilter, duplicateKey } = require('./config');
 const { formatTimeStamp } = require('../src/renderer/utils/renderer-utils');
-const { duplicateFilter } = require('./config');
+
 logger.level = 'info';
 
 logger.info(`check duplicate contents on article.${duplicateKey} in ${path}`);
@@ -49,6 +49,7 @@ async function task() {
       });
     }
   });
+  duplicateFilter.sort();
   const outDict = Object.keys(duplicateDict);
   outDict.sort((a, b) => {
     const sA = hashSrcDict[a],
