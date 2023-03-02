@@ -148,9 +148,12 @@ export default {
     axios
       .get(`https://umalib.github.io/UmaLibDesktop/update-info.json?${current}`)
       .then(async response => {
-        console.log(
-          `loading remote info...${(new Date().getTime() - current) / 1000}s`,
-        );
+        await connector.get('log', {
+          level: 'info',
+          info: `loading remote update-info: ${(new Date().getTime() -
+            current) /
+            1000}s`,
+        });
         const remoteVer = response.data;
         const appVerArr = [
           Number(this.appVersion.app.substring(0, 1)),
@@ -265,11 +268,18 @@ export default {
     async downloadDb() {
       if (this.downloadDialog.aimVersion === 0) {
         try {
+          const current = new Date().getTime();
           const remoteVer = (
             await axios.get(
               `https://umalib.github.io/UmaLibDesktop/update-info.json?${new Date().getTime()}`,
             )
           ).data;
+          await connector.get('log', {
+            level: 'info',
+            info: `loading remote update-info: ${(new Date().getTime() -
+              current) /
+              1000}s`,
+          });
           this.downloadDialog.aimVersion = remoteVer['db_version'];
         } catch (_) {
           this.$notify({
@@ -286,6 +296,7 @@ export default {
       const _vue = this;
       const B2M = 1024 * 1024;
       try {
+        const current = new Date().getTime();
         const ret = await axios.get(
           `https://umalib.github.io/UmaLibDesktop/${
             this.downloadDialog.aimVersion
@@ -327,6 +338,11 @@ export default {
             },
           },
         );
+        await connector.get('log', {
+          level: 'info',
+          info: `loading remote data-base: ${(new Date().getTime() - current) /
+            1000}s`,
+        });
         this.downloadDialog.info = '下载完成！即将切换到下载数据库……';
         this.downloadDialog.progress = 100;
         await connector.get('saveOnlineDb', {
