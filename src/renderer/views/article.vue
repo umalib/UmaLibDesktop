@@ -210,19 +210,19 @@
 
 <script>
 import connector from '@/renderer/utils/connector';
-import EmbeddedData from '@/renderer/utils/data';
+import { alias, tagTypes } from '@/renderer/utils/data';
 import {
   getNewTextObj,
   initSelectedArtObj,
 } from '@/renderer/utils/renderer-utils';
-import 'quill/dist/quill.core.css'; // import styles
-import 'quill/dist/quill.snow.css'; // for snow theme
-// import 'quill/dist/quill.bubble.css'; // for bubble theme
 import ArticleTable from '@/renderer/views/sub-components/article-table';
 import RandomArticles from '@/renderer/views/sub-components/random-articles';
 import RecommendedArticles from '@/renderer/views/sub-components/recommended-articles';
 import ShowArticle from '@/renderer/views/sub-components/show-article';
 import PubArticle from '@/renderer/views/sub-components/pub-article';
+import 'quill/dist/quill.core.css'; // import styles
+import 'quill/dist/quill.snow.css'; // for snow theme
+// import 'quill/dist/quill.bubble.css'; // for bubble theme
 
 function creator2SelectOption(x) {
   return { value: x, label: x };
@@ -238,6 +238,11 @@ async function getTagsFromServer(_vue) {
   if (data['typeMap'][4]) {
     _vue.search.sensitiveTags = data['typeMap'][4];
   }
+
+  function getAlias(label) {
+    return `${alias[label] ? label + '/' + alias[label].join('/') : label}`;
+  }
+
   for (let k in data['typeMap']) {
     if (_vue.search.preventSensitive && Number(k) === 4) {
       continue;
@@ -251,33 +256,33 @@ async function getTagsFromServer(_vue) {
       }),
     );
     _vue.search.tagOptions.push({
-      label: EmbeddedData.tagTypes[k],
+      label: tagTypes[k],
       options,
     });
     _vue.search.tagCascaderOptions.push({
       value: k,
-      label: EmbeddedData.tagTypes[k],
+      label: tagTypes[k],
       children: options.map(x => {
         return {
           value: x.value,
-          label: `+${x.label}`,
+          label: `+${getAlias(x.label)}`,
         };
       }),
     });
     _vue.search.noTagCascaderOptions.push({
       value: k,
-      label: EmbeddedData.tagTypes[k],
+      label: tagTypes[k],
       children: options.map(x => {
         return {
           value: x.value,
-          label: `-${x.label}`,
+          label: `-${getAlias(x.label)}`,
         };
       }),
     });
   }
   if (
     _vue.search.tagOptions.length > 1 &&
-    _vue.search.tagOptions[0].label === EmbeddedData.tagTypes[0]
+    _vue.search.tagOptions[0].label === tagTypes[0]
   ) {
     let others = _vue.search.tagOptions.splice(0, 1);
     _vue.search.tagOptions.push(others[0]);
