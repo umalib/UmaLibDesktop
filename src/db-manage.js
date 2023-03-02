@@ -268,20 +268,15 @@ module.exports = {
       delete ret.authors[_author];
       delete ret.translators[_author];
     }
-    ret.authors = Object.keys(ret.authors);
-    ret.translators = Object.keys(ret.translators);
-    ret.double = Object.keys(ret.double);
+    ret.authors = Object.keys(ret.authors).sort();
+    ret.translators = Object.keys(ret.translators).sort();
+    ret.double = Object.keys(ret.double).sort();
 
     ret['co-authors'] = ret.authors.filter(c => c.indexOf('/') !== -1);
     ret.authors = ret.authors.filter(c => c.indexOf('/') === -1);
     ret['co-translators'] = ret.translators.filter(c => c.indexOf('/') !== -1);
     ret.translators = ret.translators.filter(c => c.indexOf('/') === -1);
 
-    ret.authors.sort();
-    ret['co-authors'].sort();
-    ret.translators.sort();
-    ret['co-translators'].sort();
-    ret.double.sort();
     return ret;
   },
   async getIdsByFav(favList) {
