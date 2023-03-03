@@ -209,7 +209,7 @@ export default {
         for (const key of Object.keys(dict)) {
           output = output.replaceAll(
             `[${key}]`,
-            ` <span title="${dict[key]}"><u>[${key}]</u></el-tooltip> `,
+            ` [<abbr title="${dict[key]}">${key}</abbr>] `,
           );
         }
       }
