@@ -212,6 +212,7 @@ export default {
             ` [<abbr title="${dict[key]}">${key}</abbr>] `,
           );
         }
+        output = output.replace(/ +/g, ' ');
       }
       return this.convertLan(output);
     },
