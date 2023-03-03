@@ -145,9 +145,10 @@ export default {
             await _vue.$prompt('', '请输入查找关键词', {
               center: true,
               confirmButtonText: '查找',
-              cancelButtonText: '取消',
-              inputValue: this.keyword,
               distinguishCancelAndClose: true,
+              inputValue: this.keyword,
+              roundButton: true,
+              type: 'info',
             })
           ).value;
           ipcRenderer.send('findInPage', this.keyword);

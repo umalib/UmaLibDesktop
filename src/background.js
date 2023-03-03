@@ -254,6 +254,8 @@ const storeEvents = {
   log(args) {
     appLogger[args.level](args.info);
   },
+
+  keyword: '',
 };
 
 if (storeEvents.getCheckDbUpdate() === undefined) {
@@ -332,9 +334,11 @@ async function createWindow() {
 
   ipcMain.on('colorEvent', () => setRendererBackgroundColor());
 
-  ipcMain.on('findInPage', (_, msg) => {
-    if (msg) {
-      mainWindow.webContents.findInPage(msg, { findNext: true });
+  ipcMain.on('findInPage', (_, keyword) => {
+    if (keyword) {
+      mainWindow.webContents.findInPage(keyword, {
+        findNext: keyword !== storeEvents.keyword,
+      });
     } else {
       mainWindow.webContents.stopFindInPage('clearSelection');
     }
