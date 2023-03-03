@@ -26,7 +26,10 @@ function cleanDuplicateLineBreak(content) {
 }
 
 function cleanBlank(src) {
-  return src.replace(/^\s*/, '').replace(/\s*$/, '');
+  return src
+    .replace(/^\s*/, '')
+    .replace(/\s*$/, '')
+    .replace(/[\u200b-\u200f\uFEFF\u202a-\u202e]/g, '');
 }
 
 async function task() {
@@ -49,18 +52,19 @@ async function task() {
         .replace(/\s*<p>\s*<br\s*\/?\s*>\s*<\/p>\s*/g, '<p><br></p>');
       content = content.replace(/<\/p>\s*<p>/g, '</p><p>');
       content = cleanDuplicateLineBreak(content);
+      content = content.replace(/\.(thumb|medium).jpg"/g, '"');
+      content = content.replace(/[\u200b-\u200f\uFEFF\u202a-\u202e]/g, '');
       if (alignCenterImg) {
-        content = content.replace(
-          /<p>\s*<img\s+/g,
-          '<p class="ql-align-center"><img ',
-        );
+        let alignCenterImg = '<p class="ql-align-center"><';
+        alignCenterImg += 'img ';
+        content = content.replace(/<p>\s*<img\s+/g, alignCenterImg);
       }
     }
     const author = cleanBlank(art.author);
     const translator = cleanBlank(art.translator);
     const name = cleanBlank(art.name);
     const note = cleanBlank(art.note);
-    const source = cleanBlank(art.source).replace(/\s\s+/g, ' ');
+    const source = cleanBlank(art.source).replace(/\s{2,}/g, ' ');
     const flags = [];
     if (art.name.length !== name.length) {
       flags.push('name');
