@@ -197,11 +197,11 @@ export default {
         result = output.match(/<p>\[[^\]]+][^<]*<\/p>$/);
         if (result) {
           output = output.substring(0, result.index);
-          const a = result[0]
-            .replace(/<[^>]*>/g, '')
-            .substring(1)
-            .split(']');
-          dict[a[0]] = a[1];
+          const a = result[0].replace(/<[^>]*>/g, '').split(']');
+          const value = a.slice(-1)[0];
+          for (const key of a) {
+            dict[key.substring(1)] = value;
+          }
         }
       } while (result);
       if (Object.keys(dict).length) {
