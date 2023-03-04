@@ -704,6 +704,7 @@ module.exports = {
       .join(' ');
     if (!data.note || !data.note.replace(/\s+/, '')) {
       data.note = data.content
+        .replace(/<p>\s*——+\s*<\/p>/g, '')
         .replace(/<\/p>/g, ' ')
         .replace(/<[^>]*>/g, '')
         .replace(/\s+/g, ' ');
