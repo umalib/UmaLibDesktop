@@ -23,8 +23,9 @@ ticksX = [data['days'][0], 18809, 18901, 18993, 19083, 19174, 19266, 19358, data
 for i in range(0, len(data['all'])):
     data['all'][i] /= 1000
 
-ticksY = list(np.arange(0, data['all'][-1], 2000))
-ticksY.append(data['all'][-1])
+ticksY = []
+for x in ticksX:
+    ticksY.append(data['all'][data['days'].index(x)])
 
 plt.plot(data['days'], data['all'], '-')
 plt.xticks(ticksX, map(lambda x: time.strftime('%Y%m%d', time.localtime(x * 86400)), ticksX))
