@@ -209,7 +209,8 @@ export default {
         for (const key of Object.keys(dict)) {
           output = output.replaceAll(
             `[${key}]`,
-            ` <span onclick='if(this.className){this.className = ""} else {this.className = "key"}'>[<a href='javascript:void(0)'>${key}</a>]</span><span class="annotation">${dict[key]}</span> `,
+            ' <span onclick=\'if(this.className){this.className=""}else{this.className="key"}\'>' +
+              `[<a href='javascript:void(0)'>${key}</a>]</span><span class="annotation">${dict[key]}</span> `,
           );
         }
         output = output.replace(/ +/g, ' ');
