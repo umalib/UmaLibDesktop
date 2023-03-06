@@ -731,6 +731,7 @@ export default {
   }
 
   span.ql-size-small,
+  span.annotation,
   blockquote {
     font-size: 12px;
   }

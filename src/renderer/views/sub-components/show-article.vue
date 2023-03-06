@@ -209,7 +209,7 @@ export default {
         for (const key of Object.keys(dict)) {
           output = output.replaceAll(
             `[${key}]`,
-            ` [<abbr title="${dict[key]}">${key}</abbr>] `,
+            ` <span onclick='if(this.className){this.className = ""} else {this.className = "key"}'>[<a href='javascript:void(0)'>${key}</a>]</span><span class="annotation">${dict[key]}</span> `,
           );
         }
         output = output.replace(/ +/g, ' ');
@@ -281,8 +281,16 @@ div.uma-article div.el-dialog__body {
     }
 
     span.ql-size-small,
+    span.annotation,
     blockquote {
       font-size: 16px;
+    }
+  }
+
+  .small-font .ql-editor {
+    span.annotation,
+    blockquote {
+      font-size: 0.75em;
     }
   }
 
@@ -301,6 +309,18 @@ div.uma-article div.el-dialog__body {
       font-weight: 400;
       line-height: 1.125;
     }
+  }
+
+  span + span.annotation {
+    display: none;
+  }
+
+  span.key + span.annotation {
+    display: block;
+    border-left: 4px solid #ccc;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    padding-left: 16px;
   }
 }
 </style>
