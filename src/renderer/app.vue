@@ -699,13 +699,13 @@ body.cyan-background {
 body.teio-background {
   @include themedColor(
     #d0daff,
-    royalblue,
+    navy,
     [lightcyan,
     azure,
-    #c0ffff,
-    #d0ffff],
-    [navy,
-    aliceblue]
+    #d0ffff,
+    #d8ffff],
+    [#000040,
+    royalblue]
   );
 }
 
