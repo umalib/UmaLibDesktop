@@ -125,10 +125,10 @@ module.exports = {
       color: 'exhentai',
       label: '荒漠灰',
     },
-    // {
-    //   label: '飞鹰粉',
-    //   color: 'pink',
-    // },
+    {
+      label: '飞鹰粉',
+      color: 'pink',
+    },
     {
       color: 'porn',
       label: '气槽黄',

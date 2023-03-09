@@ -763,13 +763,13 @@ body.exhentai-background {
 
 body.pink-background {
   @include themedColor(
-    #700070,
-    lavender,
-    [darkmagenta,
-    purple,
-    darkorchid,
-    #9400d3],
-    [lightpink,
+    #380038,
+    pink,
+    [#3f003b,
+    #370034,
+    #4f004b,
+    #470044],
+    [#fff4ff,
     deeppink]
   );
 }
