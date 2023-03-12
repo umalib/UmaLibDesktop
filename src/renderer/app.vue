@@ -468,6 +468,10 @@ export default {
     background-color: nth($cellColor, 2);
   }
 
+  .el-dropdown-menu__item--divided:before {
+    background-color: nth($cellColor, 2);
+  }
+
   .el-input-group__prepend {
     color: nth($fontColor, 2);
     background-color: $headerColor;
