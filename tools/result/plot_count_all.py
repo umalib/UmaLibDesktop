@@ -19,9 +19,9 @@ config = {
 }
 rcParams.update(config)
 
-ticksX = [data['days'][0], 18809, 18901, 18993, 19083, 19174, 19266, 19358, data['days'][-1]]
-
+ticksX = [data['days'][0], 18809, 18901, 18993, 19083, 19174, 19266, 19358, 19448, data['days'][-1]]
 ticksY = []
+
 for x in ticksX:
     ticksY.append(data['all'][data['days'].index(x)])
 
