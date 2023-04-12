@@ -462,7 +462,13 @@ export default {
       recommendations: EmbeddedData.recommendations,
     };
   },
-  emits: ['novel-show', 'recommend-close', 'someone-show', 'tag-show'],
+  emits: [
+    'art-show',
+    'novel-show',
+    'recommend-close',
+    'someone-show',
+    'tag-show',
+  ],
   methods: {
     isShown(isR18) {
       return this.saveMe < 0 || !isR18;
