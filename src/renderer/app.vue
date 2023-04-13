@@ -636,17 +636,15 @@ export default {
     color: nth($fontColor, 1);
   }
 
-  .el-collapse {
-    border-top: 0;
-    border-bottom: 0;
+  .el-collapse-item__header {
+    color: nth($fontColor, 1);
+    background: nth($cellColor, 1);
   }
 
-  .el-collapse-item__header,
   .el-collapse-item__content,
   .el-collapse-item__wrap {
     color: nth($fontColor, 1);
     background-color: nth($cellColor, 2);
-    border-bottom: 0;
   }
 
   .el-tabs__item.is-active {

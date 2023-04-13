@@ -13,205 +13,204 @@
           <el-tab-pane label="作者/译者推荐" name="creator-recommend">
             <el-scrollbar style="height: 100%">
               <el-collapse v-model="collapse.creator" :accordion="true">
-                <div v-for="(creator, i) in recommendations.creators" :key="i">
-                  <el-collapse-item
-                    v-if="isShown(creator.r)"
-                    :name="`creator-${i}`"
-                    :title="`${creatorType[creator.type]} ${creator.name}`"
+                <el-collapse-item
+                  v-for="(creator, i) in recommendations.creators.filter(
+                    x => saveMe < 0 || !x.r,
+                  )"
+                  :key="i"
+                  :name="`creator-${i}`"
+                  :title="`${creatorType[creator.type]} ${creator.name}`"
+                >
+                  <p>
+                    <el-link
+                      type="primary"
+                      @click="$emit('someone-show', creator.name)"
+                    >
+                      {{ creator.name }}
+                    </el-link>
+                  </p>
+                  <el-card
+                    v-for="rec in creator.recommendations"
+                    :key="rec.name"
+                    shadow="hover"
                   >
-                    <p>
+                    <span v-for="(content, j) in rec.reason" :key="j">
+                      {{ content }}
+                      <br />
+                    </span>
+                    <strong class="recommender">
+                      ——
                       <el-link
                         type="primary"
-                        @click="$emit('someone-show', creator.name)"
+                        @click="$emit('someone-show', rec.name)"
                       >
-                        {{ creator.name }}
+                        {{ rec.name }}
                       </el-link>
-                    </p>
-                    <el-card
-                      v-for="rec in creator.recommendations"
-                      :key="rec.name"
-                      shadow="hover"
-                    >
-                      <span v-for="(content, j) in rec.reason" :key="j">
-                        {{ content }}
-                        <br />
-                      </span>
-                      <strong class="recommender">
-                        ——
-                        <el-link
-                          type="primary"
-                          @click="$emit('someone-show', rec.name)"
-                        >
-                          {{ rec.name }}
-                        </el-link>
-                      </strong>
-                    </el-card>
-                  </el-collapse-item>
-                </div>
+                    </strong>
+                  </el-card>
+                </el-collapse-item>
               </el-collapse>
             </el-scrollbar>
           </el-tab-pane>
           <el-tab-pane label="长篇/合集推荐" name="novel-recommend">
             <el-scrollbar style="height: 100%">
               <el-collapse v-model="collapse.novel" :accordion="true">
-                <div v-for="(novel, i) in recommendations.novels" :key="i">
-                  <el-collapse-item
-                    v-if="isShown(novel.r)"
-                    :name="`novel-${i}`"
-                    :title="
-                      `${novel.isNovel ? '长篇小说' : '短篇合集'} ${
-                        novel.title
-                      }`
-                    "
+                <el-collapse-item
+                  v-for="(novel, i) in recommendations.novels.filter(
+                    x => saveMe < 0 || !x.r,
+                  )"
+                  :key="i"
+                  :name="`novel-${i}`"
+                  :title="
+                    `${novel.isNovel ? '长篇小说' : '短篇合集'} ${novel.title}`
+                  "
+                >
+                  <p>
+                    <el-link
+                      type="primary"
+                      @click="$emit('novel-show', novel.id)"
+                    >
+                      {{ novel.title }}
+                    </el-link>
+                  </p>
+                  <el-card
+                    v-for="rec in novel.recommendations"
+                    :key="rec.name"
+                    shadow="hover"
                   >
-                    <p>
+                    <span v-for="(content, j) in rec.reason" :key="j">
+                      {{ content }}
+                      <br />
+                    </span>
+                    <strong class="recommender">
+                      ——
                       <el-link
                         type="primary"
-                        @click="$emit('novel-show', novel.id)"
+                        @click="$emit('someone-show', rec.name)"
                       >
-                        {{ novel.title }}
+                        {{ rec.name }}
                       </el-link>
-                    </p>
-                    <el-card
-                      v-for="rec in novel.recommendations"
-                      :key="rec.name"
-                      shadow="hover"
-                    >
-                      <span v-for="(content, j) in rec.reason" :key="j">
-                        {{ content }}
-                        <br />
-                      </span>
-                      <strong class="recommender">
-                        ——
-                        <el-link
-                          type="primary"
-                          @click="$emit('someone-show', rec.name)"
-                        >
-                          {{ rec.name }}
-                        </el-link>
-                      </strong>
-                    </el-card>
-                  </el-collapse-item>
-                </div>
+                    </strong>
+                  </el-card>
+                </el-collapse-item>
               </el-collapse>
             </el-scrollbar>
           </el-tab-pane>
           <el-tab-pane label="系列推荐" name="series-recommend">
             <el-scrollbar style="height: 100%">
               <el-collapse v-model="collapse.series" :accordion="true">
-                <div v-for="(tag, i) in recommendations.series" :key="i">
-                  <el-collapse-item
-                    v-if="isShown(tag.r)"
-                    :name="`series-${i}`"
-                    :title="
-                      `系列 ${tag.title}${
-                        tag.others
-                          ? ' ' + tag.others.map(x => x.title).join(' ')
-                          : ''
-                      }`
-                    "
-                  >
-                    <p>
+                <el-collapse-item
+                  v-for="(tag, i) in recommendations.series.filter(
+                    x => saveMe < 0 || !x.r,
+                  )"
+                  :key="i"
+                  :name="`series-${i}`"
+                  :title="
+                    `系列 ${tag.title}${
+                      tag.others
+                        ? ' ' + tag.others.map(x => x.title).join(' ')
+                        : ''
+                    }`
+                  "
+                >
+                  <p>
+                    <el-link
+                      type="primary"
+                      @click="$emit('tag-show', tag.id, tag.join)"
+                    >
+                      {{ tag.title }}
+                    </el-link>
+                    <span v-for="oTag in tag.others" :key="oTag.id">
+                      <br />
                       <el-link
                         type="primary"
-                        @click="$emit('tag-show', tag.id, tag.join)"
+                        @click="$emit('tag-show', oTag.id)"
                       >
-                        {{ tag.title }}
+                        {{ oTag.title }}
                       </el-link>
-                      <span v-for="oTag in tag.others" :key="oTag.id">
-                        <br />
-                        <el-link
-                          type="primary"
-                          @click="$emit('tag-show', oTag.id)"
-                        >
-                          {{ oTag.title }}
-                        </el-link>
-                      </span>
-                    </p>
-                    <el-card
-                      v-for="rec in tag.recommendations"
-                      :key="rec.name"
-                      shadow="hover"
-                    >
-                      <span v-for="(content, j) in rec.reason" :key="j">
-                        {{ content }}
-                        <br />
-                      </span>
-                      <strong class="recommender">
-                        ——
-                        <el-link
-                          type="primary"
-                          @click="$emit('someone-show', rec.name)"
-                        >
-                          {{ rec.name }}
-                        </el-link>
-                      </strong>
-                    </el-card>
-                  </el-collapse-item>
-                </div></el-collapse
-              >
+                    </span>
+                  </p>
+                  <el-card
+                    v-for="rec in tag.recommendations"
+                    :key="rec.name"
+                    shadow="hover"
+                  >
+                    <span v-for="(content, j) in rec.reason" :key="j">
+                      {{ content }}
+                      <br />
+                    </span>
+                    <strong class="recommender">
+                      ——
+                      <el-link
+                        type="primary"
+                        @click="$emit('someone-show', rec.name)"
+                      >
+                        {{ rec.name }}
+                      </el-link>
+                    </strong>
+                  </el-card>
+                </el-collapse-item>
+              </el-collapse>
             </el-scrollbar>
           </el-tab-pane>
           <el-tab-pane label="单篇作品推荐" name="art-recommend">
             <el-scrollbar style="height: 100%">
               <el-collapse v-model="collapse.article" :accordion="true">
-                <div
-                  v-for="(article, i) in recommendations.articles"
+                <el-collapse-item
+                  v-for="(article, i) in recommendations.articles.filter(
+                    x => saveMe < 0 || !x.r,
+                  )"
                   :key="article.id"
+                  :name="`article-${i}`"
+                  :title="
+                    `作品 《${article.title}》${
+                      article.others
+                        ? ' ' +
+                          article.others
+                            .map(x => '《' + x.title + '》')
+                            .join('')
+                        : ''
+                    }`
+                  "
                 >
-                  <el-collapse-item
-                    v-if="isShown(article.r)"
-                    :name="`article-${i}`"
-                    :title="
-                      `作品 《${article.title}》${
-                        article.others
-                          ? ' ' +
-                            article.others
-                              .map(x => '《' + x.title + '》')
-                              .join('')
-                          : ''
-                      }`
-                    "
+                  <p>
+                    <el-link
+                      type="primary"
+                      @click="$emit('art-show', article.id)"
+                    >
+                      《{{ article.title }}》
+                    </el-link>
+                    <span v-for="oArt in article.others" :key="oArt.id">
+                      <br />
+                      <el-link
+                        @click="$emit('art-show', oArt.id)"
+                        type="primary"
+                      >
+                        《{{ oArt.title }}》
+                      </el-link>
+                    </span>
+                  </p>
+                  <el-card
+                    v-for="rec in article.recommendations"
+                    :key="rec.name"
+                    shadow="hover"
                   >
-                    <p>
+                    <span v-for="(content, j) in rec.reason" :key="j">
+                      {{ content }}
+                      <br />
+                    </span>
+                    <strong class="recommender">
+                      ——
                       <el-link
                         type="primary"
-                        @click="$emit('art-show', article.id)"
+                        @click="$emit('someone-show', rec.name)"
                       >
-                        《{{ article.title }}》
+                        {{ rec.name }}
                       </el-link>
-                      <span v-for="oArt in article.others" :key="oArt.id">
-                        <br />
-                        <el-link
-                          @click="$emit('art-show', oArt.id)"
-                          type="primary"
-                        >
-                          《{{ oArt.title }}》
-                        </el-link>
-                      </span>
-                    </p>
-                    <el-card
-                      v-for="rec in article.recommendations"
-                      :key="rec.name"
-                      shadow="hover"
-                    >
-                      <span v-for="(content, j) in rec.reason" :key="j">
-                        {{ content }}
-                        <br />
-                      </span>
-                      <strong class="recommender">
-                        ——
-                        <el-link
-                          type="primary"
-                          @click="$emit('someone-show', rec.name)"
-                        >
-                          {{ rec.name }}
-                        </el-link>
-                      </strong>
-                    </el-card>
-                  </el-collapse-item>
-                </div></el-collapse
-              >
+                    </strong>
+                  </el-card>
+                </el-collapse-item>
+              </el-collapse>
             </el-scrollbar>
           </el-tab-pane>
           <el-tab-pane label="用语解释" name="dictionary">
@@ -469,11 +468,6 @@ export default {
     'someone-show',
     'tag-show',
   ],
-  methods: {
-    isShown(isR18) {
-      return this.saveMe < 0 || !isR18;
-    },
-  },
   name: 'RecommendedArticles',
   props: ['saveMe', 'visible'],
 };
@@ -490,27 +484,6 @@ export default {
 
   .el-tabs__content {
     height: calc(100% - 45px);
-  }
-
-  div.el-scrollbar__view {
-    > div:nth-child(1) {
-      margin-top: 16px;
-    }
-
-    > div:last-child {
-      margin-bottom: 8px;
-    }
-  }
-
-  strong {
-    font-size: 16px;
-    line-height: 1;
-
-    span.el-link--inner {
-      font-size: 16px;
-      height: 18px;
-      line-height: 0.9;
-    }
   }
 
   .el-card {
