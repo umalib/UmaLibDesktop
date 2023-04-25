@@ -30,13 +30,17 @@ async function task() {
   await dbManage.changeDb(path);
   let i = 0;
   for (const art of artList) {
+    let source = art.source;
+    if (typeof source === 'string') {
+      source = [{ val: source }];
+    }
     await dbManage.pubArticle({
       name: art.name,
       author: art.author,
       translator: art.translator,
       note: art.note,
       content: art.content,
-      source: art.source,
+      source,
       uploadTime: art.uploadTime * 1000,
       tags: art.taggedList.map(tagged => id2Tag[tagged.tagId]),
     });
