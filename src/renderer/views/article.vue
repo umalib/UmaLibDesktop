@@ -600,15 +600,17 @@ export default {
         this.selectedArt = this.articles[this.id2Art[id]];
         this.fillArticleTags(this.selectedArt);
         this.content = await connector.get('getArtContent', id);
-        this.visible.content = true;
       } else {
         this.selectedArt = await connector.get('getArt', id);
         this.selectedArt.tags.sort(this.tagComparator);
         this.fillArticleTags(this.selectedArt);
         this.content = this.selectedArt.content;
         delete this.selectedArt.content;
-        this.visible.content = true;
       }
+      if (this.selectedArt.tags.filter(v => v === this.saveMe).length) {
+        return;
+      }
+      this.visible.content = true;
     },
     async showEditDialog(id) {
       const art = this.articles[this.id2Art[id]];

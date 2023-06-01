@@ -282,7 +282,6 @@ export default {
       this.saveMeId = -3;
     },
     async refreshPage(path) {
-      await this.$router.push('/empty');
       this.builtInDb = path.isEmbedded;
       this.currentDbPath = path.current;
       this.appVersion = await connector.get('checkVersion', {});
@@ -296,6 +295,7 @@ export default {
         type: 'success',
       });
       this.saveMeId = await connector.get('saveMe', {});
+      await this.$router.push('/empty');
     },
     async downloadDb() {
       if (this.downloadDialog.aimVersion === 0) {
