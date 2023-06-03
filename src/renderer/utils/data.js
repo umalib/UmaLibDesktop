@@ -799,6 +799,19 @@ const recommendations = {
         },
       ],
     },
+    {
+      id: 402,
+      title: '退役马娘的第二马生',
+      isNovel: true,
+      recommendations: [
+        {
+          name: '南极洲老土著',
+          reason: [
+            ' 每一名马娘在经历现役生活之后，都会开启下一段马生，作者以现实中原型赛马的退役马生中发生的点点滴滴为基础，大胆构思退役马娘的第二马生，以严谨丰富且不失幽默的文笔将读者带进ta所描绘的退役马娘们的精彩第二马生。',
+          ],
+        },
+      ],
+    },
   ],
   series: [
     {
@@ -1080,11 +1093,11 @@ module.exports = {
   },
   recommendations,
   signInfo: {
-    content: '内容：NGA赛马娘翻译交流群 | 开发：风之低吟 | 版本：2.2.0',
+    content: '内容：NGA赛马娘翻译交流群 | 开发：风之低吟 | 版本：2.2.1',
     pubKey:
       '04f7c5d1bf43e06c4a119deb999c33a488fc38d1a7f6387cdc0001ed190d6b304846b3d2931fb15f819c6e57ac7ce119f8c68e376a5631d5ccfc1f712a51187123',
     sign:
-      '304402204c0ecbe62734871cf3145654ed68fab6ed4670a07f25c1b4e311862e2bedfdcc02206f56d9a48c229dc17e50e6e9de8ba0097960838b35c1780f2b041cb78ef01b8c',
+      '304502204ece15ce98aaaf47d9ce08e45784bcdc1839bab4597d060b42ccb736dd938d8c022100ac4a76d1f2f7ed1603af415b91c5de76783b9d9d1d70c35ac15ba1d66d13e135',
   },
   staffs: staffList,
   tagTypes: ['其他', '角色', '系列', '长篇/合集', '争议/不适'],
