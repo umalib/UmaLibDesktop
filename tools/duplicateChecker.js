@@ -2,8 +2,10 @@ const { PrismaClient } = require('@prisma/client');
 const { resolve } = require('path');
 const MD5 = new (require('jshashes').MD5)();
 const logger = require('log4js').getLogger('checker');
-const { path, duplicateFilter, duplicateKey } = require('./config');
+const { path, duplicateKey } = require('./config');
 const { formatTimeStamp } = require('../src/renderer/utils/renderer-utils');
+
+let { duplicateFilter } = require('./config');
 
 logger.level = 'info';
 
@@ -32,7 +34,9 @@ async function task() {
   ).forEach(art => {
     let hashSrcArr = [art[duplicateKey]];
     if (duplicateKey === 'source') {
-      hashSrcArr = art[duplicateKey].split(' ');
+      hashSrcArr = art[duplicateKey]
+        .split(' ')
+        .map(v => `${v}${v.startsWith('http') && !v.endsWith('/') ? '/' : ''}`);
     }
     for (const hashSrc of hashSrcArr) {
       const hash = MD5.hex(hashSrc);
@@ -49,7 +53,9 @@ async function task() {
       });
     }
   });
-  duplicateFilter.sort();
+  duplicateFilter = duplicateFilter
+    .map(v => `${v}${v.startsWith('http') && !v.endsWith('/') ? '/' : ''}`)
+    .sort();
   const outDict = Object.keys(duplicateDict);
   outDict.sort((a, b) => {
     const sA = hashSrcDict[a],
@@ -72,13 +78,13 @@ async function task() {
       (duplicateKey !== 'source' ||
         duplicateFilter.indexOf(hashSrcDict[key]) === -1)
     ) {
-      logger.info(
+      logger.warn(
         `${key}${duplicateKey === 'source' ? '\t' + hashSrcDict[key] : ''}${
           duplicateDict[key].length > 1 ? '\t' + duplicateDict[key].length : ''
         }`,
       );
       duplicateDict[key].forEach(x => {
-        logger.info(
+        logger.warn(
           `\t${x.id}\t${x.name}\t${x.content}${
             duplicateKey === 'source' ? '' : '\t' + x.source
           }\t${formatTimeStamp(x.uploadTime * 1000)}`,
