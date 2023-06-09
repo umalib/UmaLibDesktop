@@ -115,7 +115,7 @@ async function task() {
     .forEach(x => series.push({ name: x.name, count: x.taggedList.length }));
   series.sort(comparator);
   tags
-    .filter(x => x.type === 0)
+    .filter(x => !x.type)
     .forEach(x => {
       let creators = undefined;
       if (x.name === 'R18' || x.name === 'R15') {

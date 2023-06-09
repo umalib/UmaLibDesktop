@@ -42,7 +42,7 @@ async function changeDb(path) {
 }
 
 async function getArts(findManyOptions, param) {
-  if (param.sortBy && Object.keys(param.sortBy).length !== 0) {
+  if (param.sortBy && Object.keys(param.sortBy).length) {
     findManyOptions.orderBy.push(param.sortBy);
     findManyOptions.orderBy.push({
       id: Object.values(param.sortBy)[0],
@@ -695,7 +695,7 @@ module.exports = {
       param.ids = param.ids.filter(x => noArtList.indexOf(x) === -1);
     }
     const count = param.ids.length;
-    if (!param.sortBy || Object.keys(param.sortBy).length === 0) {
+    if (!param.sortBy || !Object.keys(param.sortBy).length) {
       if (param.page) {
         param.ids.splice(param.page * param.offset);
         if (param.page > 1) {

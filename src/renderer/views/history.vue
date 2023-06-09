@@ -50,7 +50,7 @@ async function fillArticles(_vue, param) {
   _vue.articles = [];
   _vue.id2Art = {};
   _vue.count = data.count;
-  if (Object.keys(_vue.param.sortBy).length === 0) {
+  if (!Object.keys(_vue.param.sortBy).length) {
     data.list.sort(
       (a, b) => _vue.favorites.indexOf(a.id) - _vue.favorites.indexOf(b.id),
     );
@@ -105,7 +105,7 @@ export default {
       if (!art.tagLabels) {
         art.tagLabels = [];
       }
-      if (art.tagLabels.length === 0) {
+      if (!art.tagLabels.length) {
         art.tags.forEach(tagId =>
           art.tagLabels.push(this.search.id2Tag[tagId]),
         );

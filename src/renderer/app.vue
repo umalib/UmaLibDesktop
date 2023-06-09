@@ -298,7 +298,7 @@ export default {
       await this.$router.push('/empty');
     },
     async downloadDb() {
-      if (this.downloadDialog.aimVersion === 0) {
+      if (!this.downloadDialog.aimVersion) {
         try {
           const current = new Date().getTime();
           const remoteVer = (
@@ -339,7 +339,7 @@ export default {
             responseType: 'blob',
             params: {},
             onDownloadProgress(e) {
-              if (e.total !== 0) {
+              if (e.total) {
                 const percentage = Math.round((e.loaded * 100) / e.total);
                 _vue.downloadDialog.progress =
                   percentage - 99 > 0 ? 99 : percentage;

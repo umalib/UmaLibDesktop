@@ -32,7 +32,7 @@
                 v-for="(src, index) in selectedArt.source.map(s => s.val)"
                 :key="index"
               >
-                <br v-if="index !== 0" />
+                <br v-if="index" />
                 <el-link
                   v-if="src.startsWith('http')"
                   :href="src"

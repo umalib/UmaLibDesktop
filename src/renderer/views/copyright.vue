@@ -34,16 +34,16 @@
         <small>按字母/笔画顺序，排名不分先后</small>
         <p>
           <span v-for="(staff, i) in staffs" :key="i">
-            <el-divider v-if="i % 8 !== 0" direction="vertical" />
-            <br v-if="i !== 0 && i % 8 === 0" />
+            <el-divider v-if="i % 8" direction="vertical" />
+            <br v-else-if="i" />
             <span>{{ staff }}</span>
           </span>
         </p>
         <h4>散篇收录</h4>
         <p>
           <span v-for="(editor, i) in editors" :key="i">
-            <el-divider v-if="i % 8 !== 0" direction="vertical" />
-            <br v-if="i !== 0 && i % 8 === 0" />
+            <el-divider v-if="i % 8" direction="vertical" />
+            <br v-else-if="i" />
             <span>{{ editor }}</span>
           </span>
         </p>
@@ -64,8 +64,8 @@
         <el-tooltip content="找不到您的名字？请联系@风之低吟">
           <p>
             <span v-for="(creator, i) in creators" :key="i">
-              <el-divider v-if="i % 8 !== 0" direction="vertical" />
-              <br v-if="i !== 0 && i % 8 === 0" />
+              <el-divider v-if="i % 8" direction="vertical" />
+              <br v-else-if="i" />
               <span>{{ creator }}</span>
             </span>
           </p>
@@ -145,7 +145,7 @@
               <template #append>
                 <el-button @click="jump">
                   爱丽丝
-                  {{ failure === 0 ? '？' : new Array(failure + 1).join('！') }}
+                  {{ failure ? new Array(failure + 1).join('！') : '？' }}
                 </el-button>
               </template>
             </el-input>
@@ -162,7 +162,9 @@ import EmbeddedData from '@/renderer/utils/data';
 
 export default {
   async created() {
-    this.creators = await connector.get('copyright', {});
+    this.creators = (await connector.get('copyright', {})).filter(
+      x => this.editors.indexOf(x) === -1 && this.staffs.indexOf(x) === -1,
+    );
   },
   data() {
     return {

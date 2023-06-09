@@ -467,7 +467,7 @@ export default {
       if (!art.tagLabels) {
         art.tagLabels = [];
       }
-      if (art.tagLabels.length === 0) {
+      if (!art.tagLabels.length) {
         art.tags.forEach(tagId =>
           art.tagLabels.push(this.search.id2Tag[tagId]),
         );

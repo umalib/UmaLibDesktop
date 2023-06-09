@@ -77,7 +77,7 @@
               )"
               :key="i"
             >
-              <br v-if="i !== 0" />
+              <br v-if="i" />
               {{ content }}
             </span>
           </p>
@@ -194,7 +194,7 @@ export default {
       if (!art.tagLabels) {
         art.tagLabels = [];
       }
-      if (art.tagLabels.length === 0) {
+      if (!art.tagLabels.length) {
         art.tags.forEach(tagId =>
           art.tagLabels.push(this.search.id2Tag[tagId]),
         );

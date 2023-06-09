@@ -179,10 +179,7 @@ async function task() {
   const days = Object.keys(day2count).map(x => Number(x));
   days.sort();
   for (let i = 0; i < days.length; ++i) {
-    if (i === 0) {
-      day2count[days[i]].count.all = day2count[days[i]].count.delta;
-      day2count[days[i]].len.all = day2count[days[i]].len.delta;
-    } else {
+    if (i) {
       day2count[days[i]].count.all =
         day2count[days[i]].count.delta + day2count[days[i - 1]].count.all;
       for (let j = 0; j < creatorDictCount.length; ++j) {
@@ -202,6 +199,9 @@ async function task() {
       for (let j = 0; j < tagDict.length; ++j) {
         day2count[days[i]].len.tags[j] += day2count[days[i - 1]].len.tags[j];
       }
+    } else {
+      day2count[days[i]].count.all = day2count[days[i]].count.delta;
+      day2count[days[i]].len.all = day2count[days[i]].len.delta;
     }
   }
 

@@ -19,9 +19,9 @@ const titles = {
   },
   cemetery: {
     list: '墓群', // 文章列表
-    menu: '墓主族谱', // 长篇合集目录
+    menu: '墓主家系', // 长篇合集目录
     favorite: '墓志抄录', // 收藏夹
-    history: '来访记录', // 历史记录
+    history: '访客登记', // 历史记录
     manage: '墓庐', // 元数据管理
     copyright: '建园纪念碑', // 鸣谢
     name: '森特雷旧事陵园', // 大书库
