@@ -89,6 +89,21 @@ async function task() {
       });
     }
   }
+  const recs = await prisma['rec'].findMany({
+    select: {
+      id: true,
+      r: true,
+    },
+  });
+  for (const rec of recs) {
+    if (rec.r) {
+      await prisma['rec'].delete({
+        where: {
+          id: rec.id,
+        },
+      });
+    }
+  }
   logger.info(`art count: ${articles.length}; base64 count: ${count}`);
   logger.info('clean done');
   await prisma.$queryRaw`vacuum;`;
