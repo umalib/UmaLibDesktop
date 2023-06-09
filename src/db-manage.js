@@ -709,7 +709,13 @@ module.exports = {
         .replace(/<[^>]*>/g, '')
         .replace(/\s+/g, ' ');
       if (data.note.length > 100) {
-        data.note = data.note.substring(0, 98) + '……';
+        data.note =
+          data.note
+            .substring(0, 98)
+            .replace(
+              /[,\\."':;!?{}+\-*/()<>，。“”‘’：；！？、【】「」—（）… ]+$/,
+              '',
+            ) + '……';
       }
     }
     const tags = data.tags;
