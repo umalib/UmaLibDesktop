@@ -19,12 +19,14 @@ async function task() {
     orderBy: [{ type: 'asc' }, { name: 'asc' }],
   });
   tagList.forEach(x => delete x.id);
-  let creators = null;
+  let creators = undefined;
   if (transferringCreators) {
     creators = await prisma.creator.findUnique({
       where: { id: 1 },
     });
   }
+  const dict = await prisma.dict.findMany();
+  const rec = await prisma['rec'].findMany();
   await prisma.$disconnect();
   prisma = new PrismaClient({
     datasources: {
@@ -70,6 +72,13 @@ async function task() {
     }
     logger.info('transferring creators done');
   }
+  for (const entry of dict) {
+    await prisma.dict.create({ data: entry });
+  }
+  for (const entry of rec) {
+    await prisma['rec'].create({ data: entry });
+  }
+  logger.info('transferring recommendation data done');
   await prisma.$queryRaw`vacuum;`;
   await prisma.$disconnect();
 }

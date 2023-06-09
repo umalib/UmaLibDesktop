@@ -40,3 +40,24 @@ model creator {
   id    Int     @id @default(autoincrement())
   names String?
 }
+
+model rec {
+  id     Int     @id @default(autoincrement())
+  refId  Int
+  title  String
+  others String? @default("")
+  type   Int?    @default(0)
+  r      Int?    @default(0)
+  name   String
+  reason String
+}
+
+model dict {
+  id        Int     @id @default(autoincrement())
+  class     String?
+  desc      String
+  key       String?
+  refId     Int?
+  related   String?
+  relatedId Int?
+}

@@ -17,6 +17,15 @@ let backupPath = null;
 let dbPath = null;
 let userDataPath = null;
 
+const recTypeArr = [
+  'creators',
+  'creators',
+  'novels',
+  'novels',
+  'series',
+  'articles',
+];
+
 async function changeDb(path) {
   if (prisma) {
     await prisma.$disconnect();
@@ -279,6 +288,21 @@ module.exports = {
 
     return ret;
   },
+  async getDict() {
+    const dictEntries = await prisma.dict.findMany();
+    return dictEntries
+      .map(entry => {
+        entry.desc = entry.desc.split('\n');
+        return entry;
+      })
+      .reduce((group, entry) => {
+        const _class = entry.class;
+        delete entry.class;
+        group[_class] = group[_class] || [];
+        group[_class].push(entry);
+        return group;
+      }, {});
+  },
   async getIdsByFav(favList) {
     return (
       await prisma.article.findMany({
@@ -444,6 +468,77 @@ module.exports = {
     } else {
       return {};
     }
+  },
+  async getRecData() {
+    const recData = await prisma['rec'].findMany();
+    let ret = recData.reduce((group, entry) => {
+      const type = recTypeArr[entry.type];
+      group[type] = group[type] || [];
+      group[type].push(entry);
+      return group;
+    }, {});
+    Object.keys(ret).forEach(k => {
+      ret[k] = ret[k].reduce((group, entry) => {
+        const refId = entry['refId'];
+        group[refId] = group[refId] || [];
+        group[refId].push(entry);
+        return group;
+      }, {});
+      Object.values(ret[k]).forEach(recs => {
+        recs.sort((a, b) => {
+          if (a.reason.length === b.reason.length) {
+            return 2 * (a.name > b.name) - 1;
+          }
+          return a.reason.length - b.reason.length;
+        });
+        recs.forEach(e => (e.reason = e.reason.split('\n')));
+      });
+      ret[k] = Object.values(ret[k]).map(rec => {
+        rec[0].others = JSON.parse(rec[0].others || '{}');
+        return rec;
+      });
+    });
+    ret.creators.sort((a, b) => {
+      if (a[0].r === b[0].r) {
+        if (a.length === b.length) {
+          if (a[0].type === b[0].type) {
+            return 2 * (a[0].title > b[0].title) - 1;
+          }
+          return a[0].type - b[0].type;
+        }
+        return b.length - a.length;
+      }
+      return a[0].r - b[0].r;
+    });
+    ret.novels.sort((a, b) => {
+      if (a[0].r === b[0].r) {
+        if (a.length === b.length) {
+          if (a[0].type === b[0].type) {
+            return 2 * (a[0].title > b[0].title) - 1;
+          }
+          return b[0].type - a[0].type;
+        }
+        return b.length - a.length;
+      }
+      return a[0].r - b[0].r;
+    });
+    function tagArtComparator(a, b) {
+      if (a[0].r === b[0].r) {
+        if (a.length === b.length) {
+          const lenA = Object.keys(a[0].others).length,
+            lenB = Object.keys(b[0].others).length;
+          if (lenA === lenB) {
+            return a[0].id - b[0].id;
+          }
+          return lenB - lenA;
+        }
+        return b.length - a.length;
+      }
+      return a[0].r - b[0].r;
+    }
+    ret.series.sort(tagArtComparator);
+    ret.articles.sort(tagArtComparator);
+    return ret;
   },
   async getTags() {
     const tags = await prisma.tag.findMany({
