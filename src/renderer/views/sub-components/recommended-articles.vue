@@ -181,12 +181,11 @@
                   :key="`art-${i}`"
                   :name="`article-${i}`"
                   :title="
-                    `作品 《${recs[0].title}》${
+                    `作品 ${getTitle(recs[0].title)}${
                       Object.keys(recs[0].others).length
-                        ? ' ' +
-                          Object.values(recs[0].others)
-                            .map(x => (x.startsWith('《') ? x : `《${x}》`))
-                            .join('')
+                        ? ` ${Object.values(recs[0].others)
+                            .map(getTitle)
+                            .join('')}`
                         : ''
                     }`
                   "
@@ -196,7 +195,7 @@
                       type="primary"
                       @click="$emit('art-show', recs[0]['refId'])"
                     >
-                      《{{ recs[0].title }}》
+                      {{ getTitle(recs[0].title) }}
                     </el-link>
                     <span
                       v-for="(artTitle, artId) in recs[0].others"
@@ -207,11 +206,7 @@
                         @click="$emit('art-show', Number(artId))"
                         type="primary"
                       >
-                        {{
-                          artTitle.startsWith('《')
-                            ? artTitle
-                            : `《${artTitle}》`
-                        }}
+                        {{ getTitle(artTitle) }}
                       </el-link>
                     </span>
                   </p>
@@ -344,6 +339,11 @@ export default {
     'someone-show',
     'tag-show',
   ],
+  methods: {
+    getTitle(x) {
+      return x.startsWith('《') ? x : `《${x}》`;
+    },
+  },
   name: 'RecommendedArticles',
   props: ['saveMe', 'visible'],
 };
