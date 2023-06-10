@@ -78,6 +78,10 @@ async function getArts(findManyOptions, param) {
   });
 }
 
+/**
+ * @param {number} artId
+ * @param {string[]} tags
+ */
 async function updateTags(artId, tags) {
   const tagDict = {};
   for (const i in tags) {
@@ -148,6 +152,9 @@ module.exports = {
   checkDb() {
     return { current: dbPath, isEmbedded: dbPath === embeddedDbPath };
   },
+  /**
+   * @returns {Promise<number>}
+   */
   async checkR18() {
     const tag = await prisma.tag.findFirst({
       where: {
@@ -167,13 +174,13 @@ module.exports = {
     dbPath = embeddedDbPath;
     logger.info('initialized');
   },
+  /**
+   * @returns {Promise<string[]>}
+   */
   async copyright() {
     return JSON.parse(
       (
-        await prisma.creator.findUnique({
-          where: {
-            id: 1,
-          },
+        await prisma.creator.findFirst({
           select: {
             names: true,
           },
@@ -229,6 +236,10 @@ module.exports = {
     delete art.taggedList;
     return art;
   },
+  /**
+   * @param {number} artId
+   * @returns {Promise<string>}
+   */
   async getArtContent(artId) {
     return (
       await prisma.article.findUnique({
@@ -239,6 +250,10 @@ module.exports = {
       })
     ).content;
   },
+  /**
+   * @param {number} artId
+   * @returns {Promise<string>}
+   */
   async getArtName(artId) {
     return (
       await prisma.article.findUnique({
@@ -256,41 +271,46 @@ module.exports = {
       distinct: ['author', 'translator'],
     });
     const ret = {
-      authors: {},
-      translators: {},
-      double: {},
+      'co-authors': [],
+      'co-translators': [],
+      authors: [],
+      translators: [],
+      double: [],
     };
+    const authorDict = {},
+      transDict = {},
+      doubleDict = {};
     articles.forEach(art => {
       if (art.author) {
-        ret.authors[art.author] = true;
+        authorDict[art.author] = true;
       }
       if (art.translator) {
-        ret.translators[art.translator] = true;
+        transDict[art.translator] = true;
       }
     });
-    for (const _author in ret.authors) {
-      if (ret.translators[_author]) {
-        ret.double[_author] = true;
+    for (const _author in authorDict) {
+      if (transDict[_author]) {
+        doubleDict[_author] = true;
       }
     }
-    for (const _author in ret.double) {
-      delete ret.authors[_author];
-      delete ret.translators[_author];
+    for (const _author in doubleDict) {
+      delete authorDict[_author];
+      delete transDict[_author];
     }
-    ret.authors = Object.keys(ret.authors).sort();
-    ret.translators = Object.keys(ret.translators).sort();
-    ret.double = Object.keys(ret.double).sort();
+    Object.keys(authorDict).forEach(a =>
+      (a.indexOf('/') === -1 ? ret.authors : ret['co-authors']).push(a),
+    );
+    Object.keys(transDict).forEach(t =>
+      (t.indexOf('/') === -1 ? ret.translators : ret['co-translators']).push(t),
+    );
+    ret.double = Object.keys(doubleDict);
 
-    ret['co-authors'] = ret.authors.filter(c => c.indexOf('/') !== -1);
-    ret.authors = ret.authors.filter(c => c.indexOf('/') === -1);
-    ret['co-translators'] = ret.translators.filter(c => c.indexOf('/') !== -1);
-    ret.translators = ret.translators.filter(c => c.indexOf('/') === -1);
+    Object.values(ret).forEach(arr => arr.sort());
 
     return ret;
   },
   async getDict() {
-    const dictEntries = await prisma.dict.findMany();
-    return dictEntries
+    return (await prisma.dict.findMany())
       .map(entry => {
         entry.desc = entry.desc.split('\n');
         return entry;
@@ -303,6 +323,10 @@ module.exports = {
         return group;
       }, {});
   },
+  /**
+   * @param {{name: string, author:string, translator: string}[]} favList
+   * @returns {Promise<number[]>}
+   */
   async getIdsByFav(favList) {
     return (
       await prisma.article.findMany({
@@ -367,6 +391,9 @@ module.exports = {
     });
     return ret;
   },
+  /**
+   * @returns {Promise<string>}
+   */
   async getPassword() {
     const pwd = await prisma.creator.findUnique({
       where: {
@@ -378,6 +405,9 @@ module.exports = {
     });
     return pwd ? pwd.names : '';
   },
+  /**
+   * @returns {string}
+   */
   getPath() {
     return dbPath;
   },
@@ -487,7 +517,7 @@ module.exports = {
       Object.values(ret[k]).forEach(recs => {
         recs.sort((a, b) => {
           if (a.reason.length === b.reason.length) {
-            return 2 * (a.name > b.name) - 1;
+            return a.name > b.name ? 1 : -1;
           }
           return a.reason.length - b.reason.length;
         });
@@ -498,43 +528,49 @@ module.exports = {
         return rec;
       });
     });
-    ret.creators.sort((a, b) => {
-      if (a[0].r === b[0].r) {
-        if (a.length === b.length) {
-          if (a[0].type === b[0].type) {
-            return 2 * (a[0].title > b[0].title) - 1;
+    ret.creators.sort((aRecs, bRecs) => {
+      const a = aRecs[0],
+        b = bRecs[0];
+      if (a.r === b.r) {
+        if (aRecs.length === bRecs.length) {
+          if (a.type === b.type) {
+            return a.title > b.title ? 1 : -1;
           }
-          return a[0].type - b[0].type;
+          return a.type - b.type;
         }
-        return b.length - a.length;
+        return bRecs.length - aRecs.length;
       }
-      return a[0].r - b[0].r;
+      return a.r - b.r;
     });
-    ret.novels.sort((a, b) => {
-      if (a[0].r === b[0].r) {
-        if (a.length === b.length) {
-          if (a[0].type === b[0].type) {
-            return 2 * (a[0].title > b[0].title) - 1;
+    ret.novels.sort((aRecs, bRecs) => {
+      const a = aRecs[0],
+        b = bRecs[0];
+      if (a.r === b.r) {
+        if (aRecs.length === bRecs.length) {
+          if (a.type === b.type) {
+            return a.title > b.title ? 1 : -1;
           }
-          return b[0].type - a[0].type;
+          return b.type - a.type;
         }
-        return b.length - a.length;
+        return bRecs.length - aRecs.length;
       }
-      return a[0].r - b[0].r;
+      return a.r - b.r;
     });
-    function tagArtComparator(a, b) {
-      if (a[0].r === b[0].r) {
-        if (a.length === b.length) {
-          const lenA = Object.keys(a[0].others).length,
-            lenB = Object.keys(b[0].others).length;
+    function tagArtComparator(aRecs, bRecs) {
+      const a = aRecs[0],
+        b = bRecs[0];
+      if (a.r === b.r) {
+        if (aRecs.length === bRecs.length) {
+          const lenA = Object.keys(a.others).length,
+            lenB = Object.keys(b.others).length;
           if (lenA === lenB) {
-            return a[0].id - b[0].id;
+            return a.id - b.id;
           }
           return lenB - lenA;
         }
-        return b.length - a.length;
+        return bRecs.length - aRecs.length;
       }
-      return a[0].r - b[0].r;
+      return a.r - b.r;
     }
     ret.series.sort(tagArtComparator);
     ret.articles.sort(tagArtComparator);
