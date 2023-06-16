@@ -36,7 +36,7 @@ async function task() {
       },
     })
   ).map(tag => tag.id);
-  const artList = (
+  let artList = (
     await prisma['tagged'].findMany({ where: { tagId: { in: tagList } } })
   )
     .map(tagged => tagged.artId)
@@ -73,8 +73,8 @@ async function task() {
     },
   });
   let count = 0;
-  const articles = await prisma.article.findMany();
-  for (const art of articles) {
+  artList = await prisma.article.findMany();
+  for (const art of artList) {
     const tmpCount = countBase64(art.content);
     if (tmpCount > 0) {
       count += tmpCount;
@@ -89,22 +89,53 @@ async function task() {
       });
     }
   }
-  const recs = await prisma['rec'].findMany({
-    select: {
-      id: true,
-      r: true,
-    },
-  });
-  for (const rec of recs) {
-    if (rec.r) {
-      await prisma['rec'].delete({
-        where: {
-          id: rec.id,
+
+  artList = (await prisma.article.findMany({ select: { id: true } })).map(
+    x => x.id,
+  );
+  tagList = (await prisma.tag.findMany({ select: { id: true } })).map(
+    x => x.id,
+  );
+  const dict = await prisma.dict.findMany();
+  const toRemoveDictList = [];
+  for (const entry of dict) {
+    if (entry.refId && tagList.indexOf(entry.refId) === -1) {
+      toRemoveDictList.push(entry.id);
+    } else if (entry.relatedId && artList.indexOf(entry.relatedId) === -1) {
+      await prisma.dict.update({
+        where: { id: entry.id },
+        data: {
+          related: '',
+          relatedId: 0,
         },
       });
     }
   }
-  logger.info(`art count: ${articles.length}; base64 count: ${count}`);
+  await prisma.dict.deleteMany({
+    where: {
+      id: {
+        in: toRemoveDictList,
+      },
+    },
+  });
+
+  const recs = await prisma['rec'].findMany();
+  const toRemovedRecList = recs
+    .filter(
+      rec =>
+        rec.r ||
+        (rec.type >= 2 && rec.type <= 4 && tagList.indexOf(rec.refId) === -1) ||
+        (rec.type === 5 && artList.indexOf(rec.refId) === -1),
+    )
+    .map(rec => rec.id);
+  await prisma['rec'].deleteMany({
+    where: {
+      id: {
+        in: toRemovedRecList,
+      },
+    },
+  });
+  logger.info(`art count: ${artList.length}; base64 count: ${count}`);
   logger.info('clean done');
   await prisma.$queryRaw`vacuum;`;
   logger.info('vacuum done');
