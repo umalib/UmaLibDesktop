@@ -43,8 +43,13 @@ async function task() {
   articles.forEach(x => {
     const creator = x.translator ? x.translator : x.author;
     const creatorArr = creator.split('/');
-    const content = x.content.replace(/<[^>]*>/g, '').replace(/\s+/g, '')
-      .length;
+    const content = x.content
+      .replace(/<[^>]*>/g, '')
+      .replace(/\s+/g, '')
+      .replace(
+        /[。？！，、；：“”‘’「」（）[\]〔〕【】『』—…·~～《》〈〉_/.?!,;:"'<>()@#$%^&*+=\\`]/g,
+        '',
+      ).length;
     creatorArr.forEach(c => {
       if (!creators[c]) {
         creators[c] = {
@@ -84,7 +89,9 @@ async function task() {
       return b.content - a.content;
     });
   }
-  creatorArr.forEach(x => logger.info(`${x.name}\t${x.count}\t${x.content}`));
+  creatorArr.forEach(x =>
+    logger.info(`${x.name}\t${x.count}\t${x.content.toLocaleString()}`),
+  );
   await prisma.$disconnect();
 }
 

@@ -7,14 +7,6 @@ logger.level = 'info';
 
 logger.info(`analyze article data in db ${path}`);
 
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: `file:${join(resolve(path))}`,
-    },
-  },
-});
-
 function comparator(a, b) {
   if (a.count === b.count) {
     return a.name > b.name ? 1 : -1;
@@ -48,6 +40,14 @@ function print(x, cb) {
     }`,
   );
 }
+
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: `file:${join(resolve(path))}`,
+    },
+  },
+});
 
 async function task() {
   const id2creator = {};

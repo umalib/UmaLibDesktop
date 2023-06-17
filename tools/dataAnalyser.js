@@ -30,7 +30,13 @@ async function task() {
     return {
       id: x.id,
       creator: x.translator || x.author,
-      content: x.content.replace(/<[^>]*>/g, '').replace(/\s+/g, '').length,
+      content: x.content
+        .replace(/<[^>]*>/g, '')
+        .replace(/\s+/g, '')
+        .replace(
+          /[。？！，、；：“”‘’「」（）[\]〔〕【】『』—…·~～《》〈〉_/.?!,;:"'<>()@#$%^&*+=\\`]/g,
+          '',
+        ).length,
       uploadTime: Math.floor((x.uploadTime + 8 * 3600) / 86400),
     };
   });
