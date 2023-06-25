@@ -85,6 +85,14 @@ async function task() {
   const characters = [],
     series = [],
     others = [];
+  const r18arts = {},
+    r15arts = {};
+  tags
+    .filter(x => x.name === 'R18')[0]
+    .taggedList.forEach(x => (r18arts[x.artId] = true));
+  tags
+    .filter(x => x.name === 'R15')[0]
+    .taggedList.forEach(x => (r15arts[x.artId] = true));
   tags
     .filter(x => x.type === 1)
     .forEach(x => {
@@ -101,6 +109,22 @@ async function task() {
               creators[creator]++;
             }
           });
+          let tag = 'R18';
+          if (r18arts[tagged.artId]) {
+            if (!creators[tag]) {
+              creators[tag] = 1;
+            } else {
+              creators[tag]++;
+            }
+          }
+          tag = 'R15';
+          if (r15arts[tagged.artId]) {
+            if (!creators[tag]) {
+              creators[tag] = 1;
+            } else {
+              creators[tag]++;
+            }
+          }
         });
       characters.push({
         name: x.name,
@@ -157,7 +181,7 @@ async function task() {
     }
     creatorSta.push({
       name: c,
-      count: creatorCount[c],
+      count: creatorCount[c] || tempList.reduce((p, c) => p + c.count, 0),
       val: tempList.sort((a, b) => {
         if (a.count === b.count) {
           return a.name > b.name ? 1 : -1;
@@ -203,6 +227,48 @@ async function task() {
       )
       .join('\n'),
   );
+  cb('\nCharacter,R18,Count,Ratio');
+  characters
+    .map(x => {
+      let r18 = x.creators.filter(x => x.creator === 'R18');
+      if (r18.length) {
+        r18 = r18[0].count;
+      } else {
+        r18 = 0;
+      }
+      return {
+        name: x.name,
+        count: x.count,
+        r18,
+        ratio: ((r18 || 0) * 100) / x.count,
+      };
+    })
+    .filter(x => x.r18)
+    .sort((a, b) => b.ratio - a.ratio)
+    .forEach(x => {
+      cb(`${x.name},${x.r18},${x.count},${x.ratio.toFixed(2)}%`);
+    });
+  cb('\nCharacter,R15,Count,Ratio');
+  characters
+    .map(x => {
+      let r15 = x.creators.filter(x => x.creator === 'R15');
+      if (r15.length) {
+        r15 = r15[0].count;
+      } else {
+        r15 = 0;
+      }
+      return {
+        name: x.name,
+        count: x.count,
+        r15,
+        ratio: ((r15 || 0) * 100) / x.count,
+      };
+    })
+    .filter(x => x.r15)
+    .sort((a, b) => b.ratio - a.ratio)
+    .forEach(x => {
+      cb(`${x.name},${x.r15},${x.count},${x.ratio.toFixed(2)}%`);
+    });
   const date = new Date();
   const month = date.getMonth() + 1;
   const day = date.getDate();
