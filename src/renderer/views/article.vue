@@ -210,7 +210,7 @@
 
 <script>
 import connector from '@/renderer/utils/connector';
-import { getAlias, tagTypes } from '@/renderer/utils/data';
+import { tagTypes } from '@/renderer/utils/data';
 import {
   getNewTextObj,
   initSelectedArtObj,
@@ -261,7 +261,7 @@ async function getTagsFromServer(_vue) {
       children: options.map(x => {
         return {
           value: x.value,
-          label: `+${getAlias(x.label)}`,
+          label: `+${x.label}`,
         };
       }),
     });
@@ -271,7 +271,7 @@ async function getTagsFromServer(_vue) {
       children: options.map(x => {
         return {
           value: x.value,
-          label: `-${getAlias(x.label)}`,
+          label: `-${x.label}`,
         };
       }),
     });
