@@ -186,11 +186,11 @@ export default {
         const remoteVer = response.data;
         const appVerArr = [
           Number(this.appVersion.app.substring(0, 1)),
-          Number(this.appVersion.app.substring(2)),
+          Number(this.appVersion.app.substring(2).replace(/-.*$/, '')),
         ];
         const remoteVerArr = [
           Number(remoteVer.version.substring(0, 1)),
-          Number(remoteVer.version.substring(2)),
+          Number(remoteVer.version.substring(2).replace(/-.*$/, '')),
         ];
         let notifyFlag = true;
         if (
