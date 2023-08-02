@@ -1,4 +1,7 @@
 module.exports = {
+  devServer: {
+    port: 58090,
+  },
   pluginOptions: {
     electronBuilder: {
       builderOptions: {
@@ -23,8 +26,5 @@ module.exports = {
       externals: ['@prisma/client'],
       nodeIntegration: true,
     },
-  },
-  devServer: {
-    port: 58090,
   },
 };

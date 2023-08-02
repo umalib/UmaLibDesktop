@@ -1,5 +1,4 @@
 module.exports = {
-  root: true,
   env: {
     node: true,
   },
@@ -11,16 +10,18 @@ module.exports = {
   parserOptions: {
     parser: 'babel-eslint',
   },
+  root: true,
   rules: {
+    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'prettier/prettier': [
       'warn',
       {
-        singleQuote: true,
+        endOfLine: 'auto',
         semi: true,
+        singleQuote: true,
         trailingComma: 'all',
       },
     ],
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
   },
 };
