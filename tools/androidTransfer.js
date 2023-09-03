@@ -1,17 +1,19 @@
 const { PrismaClient } = require('@prisma/client');
 const { copyFileSync } = require('fs');
-const { join, resolve } = require('path');
+const { resolve } = require('path');
 const { path } = require('./config.js');
 const logger = require('log4js').getLogger('transfer');
 logger.level = 'info';
 
-const android = path.replace(/data\/(slib\/)?/, 'data/android/');
+const android = resolve(
+  path.replace(/data[/|\\](slib[/|\\])?/, 'data/android/'),
+);
 logger.info(`transfer ${path} to ${android}`);
 copyFileSync(path, android);
 logger.info('copy done');
 
 const prisma = new PrismaClient({
-  datasources: { db: { url: `file:${join(resolve(android))}` } },
+  datasources: { db: { url: `file:${resolve(android)}` } },
 });
 
 function countBase64(content) {
@@ -20,6 +22,7 @@ function countBase64(content) {
 }
 
 async function task() {
+  await prisma.$queryRaw`vacuum`;
   let tagList = (
     await prisma.tag.findMany({
       where: {
