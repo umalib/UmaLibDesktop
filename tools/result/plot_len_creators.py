@@ -19,7 +19,7 @@ config = {
 }
 rcParams.update(config)
 
-ticks = [data['days'][0], 18809, 18901, 18993, 19083, 19174, 19266, 19358, 19448, data['days'][-1]]
+ticks = [data['days'][0], 18809, 18901, 18993, 19083, 19174, 19266, 19358, 19448, 19539, 19631, data['days'][-1]]
 
 creatorLabels = data['dict']['creators']
 

@@ -10,7 +10,7 @@ logger.info(`analyze article data in db ${path}`);
 const prisma = new PrismaClient({
   datasources: {
     db: {
-      url: `file:${join(resolve(path))}`,
+      url: `file:${resolve(path)}`,
     },
   },
 });
@@ -32,9 +32,8 @@ async function task() {
       creator: x.translator || x.author,
       content: x.content
         .replace(/<[^>]*>/g, '')
-        .replace(/\s+/g, '')
         .replace(
-          /[。？！，、；：“”‘’「」（）[\]〔〕【】『』—…·~～《》〈〉_/.?!,;:"'<>()@#$%^&*+=\\`]/g,
+          /[。？！，、；：“”‘’「」（）[\]〔〕【】『』—…·~～《》〈〉_/.?!,;:"'<>()@#$%^&*+=\\`\s]/g,
           '',
         ).length,
       uploadTime: Math.floor((x.uploadTime + 8 * 3600) / 86400),
