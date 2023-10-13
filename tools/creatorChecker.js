@@ -45,9 +45,8 @@ async function task() {
     const creatorArr = creator.split('/');
     const content = x.content
       .replace(/<[^>]*>/g, '')
-      .replace(/\s+/g, '')
       .replace(
-        /[。？！，、；：“”‘’「」（）[\]〔〕【】『』—…·~～《》〈〉_/.?!,;:"'<>()@#$%^&*+=\\`]/g,
+        /[。？！，、；：“”‘’「」（）[\]〔〕【】『』—…·~～《》〈〉_/.?!,;:"'<>()@#$%^&*+=\\`\s]/g,
         '',
       ).length;
     creatorArr.forEach(c => {
