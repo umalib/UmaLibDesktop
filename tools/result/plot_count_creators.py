@@ -7,14 +7,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import rcParams
 
-f = open('./output-plot-count.json', 'r')
+f = open('./output-plot-count.json', 'r', encoding='utf-8')
 data = json.loads(f.read())
 f.close()
 
 config = {
     'axes.unicode_minus': False,
     "figure.figsize": (16, 9),
-    "font.family": ['Songti SC', 'IPAexMincho', 'serif'],
+    "font.family": ['Microsoft YaHei', 'msgothic', 'serif'],
     "font.size": 10,
     "mathtext.fontset": 'stix',
 }
