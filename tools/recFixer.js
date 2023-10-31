@@ -1,7 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const { join, resolve } = require('path');
 const { path } = require('./config.js');
-const logger = require('log4js').getLogger('cleaner');
+const logger = require('log4js').getLogger('fixer');
 logger.level = 'info';
 
 const prisma = new PrismaClient({
@@ -71,7 +71,7 @@ async function task() {
             select: { id: true, name: true },
           });
           if (!obj) {
-            logger.error(rec);
+            !others.join && logger.error(rec);
           } else if (rec.refId !== obj.id) {
             logger.info(
               `fix: tag ${rec.title}, id ${rec['refId']} -> ${obj.id}`,
@@ -90,9 +90,13 @@ async function task() {
             const newOthers = {};
             tags.forEach(t => (newOthers[t.id] = t.name));
             data.others = JSON.stringify(newOthers);
-            logger.info(
-              `fix: tag ${rec.title}, others ${rec.others} -> ${data.others}`,
-            );
+            if (data.others === rec.others) {
+              delete data.others;
+            } else {
+              logger.info(
+                `fix: tag ${rec.title}, others ${rec.others} -> ${data.others}`,
+              );
+            }
           }
         }
         break;
@@ -123,9 +127,13 @@ async function task() {
             const newOthers = {};
             articles.forEach(t => (newOthers[t.id] = t.name));
             data.others = JSON.stringify(newOthers);
-            logger.info(
-              `fix: article ${rec.title}, others ${rec.others} -> ${data.others}`,
-            );
+            if (data.others === rec.others) {
+              delete data.others;
+            } else {
+              logger.info(
+                `fix: article ${rec.title}, others ${rec.others} -> ${data.others}`,
+              );
+            }
           }
         }
         break;
