@@ -173,7 +173,9 @@ export default {
     this.appVersion = await connector.get('checkVersion', {});
     const current = new Date().getTime();
     axios
-      .get(`https://umalib.gitgud.site/UmaLibDesktop/update-info.json?${current}`)
+      .get(
+        `https://umalib.gitgud.site/UmaLibDesktop/update-info.json?${current}`,
+      )
       .then(async response => {
         connector
           .get('log', {
@@ -269,6 +271,7 @@ export default {
         timeStamp: 0,
         title: '数据库下载中……',
         visible: false,
+        url: '',
       },
       history: [],
       keyword: '',
@@ -315,6 +318,11 @@ export default {
             })
             .then();
           this.downloadDialog.aimVersion = remoteVer['db_version'];
+          this.downloadDialog.url =
+            remoteVer['db_url'] ||
+            `https://umalib.gitgud.site/UmaLibDesktop/${
+              this.downloadDialog.aimVersion
+            }.zip?${new Date().getTime()}`;
         } catch (_) {
           this.$notify({
             title: '数据库更新失败！',
@@ -331,47 +339,40 @@ export default {
       const B2M = 1024 * 1024;
       try {
         const current = new Date().getTime();
-        const ret = await axios.get(
-          `https://umalib.gitgud.site/UmaLibDesktop/${
-            this.downloadDialog.aimVersion
-          }.zip?${new Date().getTime()}`,
-          {
-            responseType: 'blob',
-            params: {},
-            onDownloadProgress(e) {
-              if (e.total) {
-                const percentage = Math.round((e.loaded * 100) / e.total);
-                _vue.downloadDialog.progress =
-                  percentage - 99 > 0 ? 99 : percentage;
-                _vue.downloadDialog.size = `已下载：${(e.loaded / B2M).toFixed(
-                  2,
-                )}/${(e.total / B2M).toFixed(2)} MB`;
+        const ret = await axios.get(this.downloadDialog.url, {
+          responseType: 'blob',
+          params: {},
+          onDownloadProgress(e) {
+            if (e.total) {
+              const percentage = Math.round((e.loaded * 100) / e.total);
+              _vue.downloadDialog.progress =
+                percentage - 99 > 0 ? 99 : percentage;
+              _vue.downloadDialog.size = `已下载：${(e.loaded / B2M).toFixed(
+                2,
+              )}/${(e.total / B2M).toFixed(2)} MB`;
 
-                let speed =
-                  ((e.loaded - _vue.downloadDialog.loaded) * 1000) /
-                  (e.timeStamp - _vue.downloadDialog.timeStamp);
-                _vue.downloadDialog.loaded = e.loaded;
-                _vue.downloadDialog.timeStamp = e.timeStamp;
-                if (speed - 1024 < 0) {
+              let speed =
+                ((e.loaded - _vue.downloadDialog.loaded) * 1000) /
+                (e.timeStamp - _vue.downloadDialog.timeStamp);
+              _vue.downloadDialog.loaded = e.loaded;
+              _vue.downloadDialog.timeStamp = e.timeStamp;
+              if (speed - 1024 < 0) {
+                _vue.downloadDialog.speed = `下载速度：${speed.toFixed(2)} Bps`;
+              } else {
+                speed /= 1024;
+                if (speed - 768 < 0) {
                   _vue.downloadDialog.speed = `下载速度：${speed.toFixed(
                     2,
-                  )} Bps`;
+                  )} KBps`;
                 } else {
-                  speed /= 1024;
-                  if (speed - 768 < 0) {
-                    _vue.downloadDialog.speed = `下载速度：${speed.toFixed(
-                      2,
-                    )} KBps`;
-                  } else {
-                    _vue.downloadDialog.speed = `下载速度：${(
-                      speed / 1024
-                    ).toFixed(2)} MBps`;
-                  }
+                  _vue.downloadDialog.speed = `下载速度：${(
+                    speed / 1024
+                  ).toFixed(2)} MBps`;
                 }
               }
-            },
+            }
           },
-        );
+        });
         connector
           .get('log', {
             level: 'info',
