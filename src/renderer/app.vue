@@ -173,7 +173,7 @@ export default {
     this.appVersion = await connector.get('checkVersion', {});
     const current = new Date().getTime();
     axios
-      .get(`https://umalib.github.io/UmaLibDesktop/update-info.json?${current}`)
+      .get(`https://umalib.gitgud.site/UmaLibDesktop/update-info.json?${current}`)
       .then(async response => {
         connector
           .get('log', {
@@ -303,7 +303,7 @@ export default {
           const current = new Date().getTime();
           const remoteVer = (
             await axios.get(
-              `https://umalib.github.io/UmaLibDesktop/update-info.json?${new Date().getTime()}`,
+              `https://umalib.gitgud.site/UmaLibDesktop/update-info.json?${new Date().getTime()}`,
             )
           ).data;
           connector
@@ -332,7 +332,7 @@ export default {
       try {
         const current = new Date().getTime();
         const ret = await axios.get(
-          `https://umalib.github.io/UmaLibDesktop/${
+          `https://umalib.gitgud.site/UmaLibDesktop/${
             this.downloadDialog.aimVersion
           }.zip?${new Date().getTime()}`,
           {

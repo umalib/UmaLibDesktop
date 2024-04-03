@@ -1,5 +1,5 @@
 {
-  "author": "WindyWisper <umalib@protonmail.com>",
+  "author": "WindyWhisper <umalib@protonmail.com>",
   "dependencies": {
     "@prisma/client": "^3.15.2",
     "axios": "^0.27.2",
@@ -54,6 +54,6 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
   },
-  "version": "3.0.0-Final",
+  "version": "3.0.1-Final",
   "web-types": "./web-types.json"
 }
