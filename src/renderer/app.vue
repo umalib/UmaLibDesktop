@@ -318,10 +318,9 @@ export default {
           .then();
         this.downloadDialog.aimVersion = remoteVer['db_version'];
         this.downloadDialog.url =
-          remoteVer['db_url'] ||
-          `https://umalib.gitgud.site/UmaLibDesktop/${
-            this.downloadDialog.aimVersion
-          }.zip?${new Date().getTime()}`;
+          (remoteVer['db_url'] ||
+            `https://umalib.gitgud.site/UmaLibDesktop/${this.downloadDialog.aimVersion}.zip`) +
+          `?${new Date().getTime()}`;
       } catch (_) {
         this.$notify({
           title: '数据库更新失败！',
@@ -338,8 +337,6 @@ export default {
       try {
         const current = new Date().getTime();
         const ret = await axios.get(_vue.downloadDialog.url, {
-          responseType: 'blob',
-          params: {},
           onDownloadProgress(e) {
             if (e.total) {
               const percentage = Math.round((e.loaded * 100) / e.total);
@@ -348,7 +345,6 @@ export default {
               _vue.downloadDialog.size = `已下载：${(e.loaded / B2M).toFixed(
                 2,
               )}/${(e.total / B2M).toFixed(2)} MB`;
-
               let speed =
                 ((e.loaded - _vue.downloadDialog.loaded) * 1000) /
                 (e.timeStamp - _vue.downloadDialog.timeStamp);
@@ -370,6 +366,7 @@ export default {
               }
             }
           },
+          responseType: 'blob',
         });
         connector
           .get('log', {
@@ -415,10 +412,12 @@ export default {
         await connector.get('rollbackDb', {});
         this.$notify({
           title: '数据库更新失败！',
-          message: `请检查网络连接！${this.downloadDialog.url}`,
+          message: '请检查网络连接！',
           type: 'error',
           duration: 0,
         });
+        console.log(e);
+        console.log(e.stack);
       }
       setTimeout(async () => {
         this.downloadDialog.visible = false;

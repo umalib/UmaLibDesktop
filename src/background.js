@@ -299,6 +299,25 @@ async function createWindow() {
     },
   });
 
+  mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
+    (details, callback) => {
+      callback({ requestHeaders: { Origin: '*', ...details.requestHeaders } });
+    },
+  );
+
+  mainWindow.webContents.session.webRequest.onHeadersReceived(
+    (details, callback) => {
+      const headerKey = 'Access-Control-Allow-Origin';
+      if (
+        !details.responseHeaders[headerKey] &&
+        !details.responseHeaders[headerKey.toLowerCase()]
+      ) {
+        details.responseHeaders[headerKey.toLowerCase()] = ['*'];
+      }
+      callback(details);
+    },
+  );
+
   function setRendererBackgroundColor(color) {
     color && storeEvents.setBackgroundColor(color);
     mainWindow.webContents.send('colorEvent', storeEvents.getBackgroundColor());
