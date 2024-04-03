@@ -265,13 +265,13 @@ export default {
       currentDbPath: '',
       downloadDialog: {
         aimVersion: -1,
-        size: '',
         loaded: 0,
         progress: 0,
+        size: '',
         timeStamp: 0,
         title: '数据库下载中……',
-        visible: false,
         url: '',
+        visible: false,
       },
       history: [],
       keyword: '',
@@ -301,36 +301,34 @@ export default {
       await this.$router.push('/empty');
     },
     async downloadDb() {
-      if (!this.downloadDialog.aimVersion) {
-        try {
-          const current = new Date().getTime();
-          const remoteVer = (
-            await axios.get(
-              `https://umalib.gitgud.site/UmaLibDesktop/update-info.json?${new Date().getTime()}`,
-            )
-          ).data;
-          connector
-            .get('log', {
-              level: 'info',
-              info: `loading remote update-info: ${(new Date().getTime() -
-                current) /
-                1000}s`,
-            })
-            .then();
-          this.downloadDialog.aimVersion = remoteVer['db_version'];
-          this.downloadDialog.url =
-            remoteVer['db_url'] ||
-            `https://umalib.gitgud.site/UmaLibDesktop/${
-              this.downloadDialog.aimVersion
-            }.zip?${new Date().getTime()}`;
-        } catch (_) {
-          this.$notify({
-            title: '数据库更新失败！',
-            message: '请检查网络连接！',
-            type: 'error',
-          });
-          return;
-        }
+      try {
+        const current = new Date().getTime();
+        const remoteVer = (
+          await axios.get(
+            `https://umalib.gitgud.site/UmaLibDesktop/update-info.json?${new Date().getTime()}`,
+          )
+        ).data;
+        connector
+          .get('log', {
+            level: 'info',
+            info: `loading remote update-info: ${(new Date().getTime() -
+              current) /
+              1000}s`,
+          })
+          .then();
+        this.downloadDialog.aimVersion = remoteVer['db_version'];
+        this.downloadDialog.url =
+          remoteVer['db_url'] ||
+          `https://umalib.gitgud.site/UmaLibDesktop/${
+            this.downloadDialog.aimVersion
+          }.zip?${new Date().getTime()}`;
+      } catch (_) {
+        this.$notify({
+          title: '数据库更新失败！',
+          message: '请检查网络连接！',
+          type: 'error',
+        });
+        return;
       }
       this.downloadDialog.title = `数据库 ${this.downloadDialog.aimVersion} 下载中……`;
       this.downloadDialog.visible = true;
@@ -339,7 +337,7 @@ export default {
       const B2M = 1024 * 1024;
       try {
         const current = new Date().getTime();
-        const ret = await axios.get(this.downloadDialog.url, {
+        const ret = await axios.get(_vue.downloadDialog.url, {
           responseType: 'blob',
           params: {},
           onDownloadProgress(e) {
@@ -417,7 +415,7 @@ export default {
         await connector.get('rollbackDb', {});
         this.$notify({
           title: '数据库更新失败！',
-          message: '请检查网络连接！',
+          message: `请检查网络连接！${this.downloadDialog.url}`,
           type: 'error',
           duration: 0,
         });
