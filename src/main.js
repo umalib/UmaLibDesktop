@@ -4,7 +4,7 @@ import VueQuillEditor from 'vue-quill-editor';
 import ElementUI from 'element-ui';
 
 import 'element-ui/lib/theme-chalk/index.css';
-import '@/assets/font/font.css';
+import '@/assets/fonts/font.css';
 
 import App from '@/renderer/app.vue';
 import ArticleView from '@/renderer/views/article.vue';
