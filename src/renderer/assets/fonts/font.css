@@ -1,0 +1,7 @@
+@font-face {
+    font-family: 'Saitamaar';
+    src: url('./Saitamaar.woff2') format('woff2'),
+    url('./Saitamaar.woff') format('woff'),
+    url('./Saitamaar.ttf') format('ttf');
+    font-display: swap;
+}

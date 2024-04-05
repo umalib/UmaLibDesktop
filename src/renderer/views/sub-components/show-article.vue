@@ -249,14 +249,6 @@ export default {
 </script>
 
 <style lang="scss">
-@font-face {
-  font-family: 'Saitamaar';
-  src: url('../../fonts/Saitamaar.woff2') format('woff2'),
-    url('../../fonts/Saitamaar.woff') format('woff'),
-    url('../../fonts/Saitamaar.ttf') format('ttf');
-  font-display: swap;
-}
-
 div.uma-article div.el-dialog__body {
   padding: 0;
 
