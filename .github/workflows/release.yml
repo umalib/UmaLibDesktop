@@ -20,6 +20,7 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
         with:
+          lfs: 'true'
           persist-credentials: false
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -57,6 +58,7 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
         with:
+          lfs: 'true'
           persist-credentials: false
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
