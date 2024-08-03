@@ -19,7 +19,7 @@ config = {
 }
 rcParams.update(config)
 
-ticks = [data['days'][0], 18809, 18901, 18993, 19083, 19174, 19266, 19358, 19448, 19539, 19631, 19723, data['days'][-1]]
+ticksX = [data['days'][0], 18809, 18901, 18993, 19083, 19174, 19266, 19358, 19448, 19539, 19631, 19723,19814, 19905, data['days'][-1]]
 
 creatorLabels = data['dict']['creators']
 
@@ -33,7 +33,7 @@ for i in range(0, len(creatorLabels)):
 
 for i in range(0, len(creatorLabels)):
     plt.plot(data['days'], data['creators'][i], '-', label=creatorLabels[i])
-plt.xticks(ticks, map(lambda x: time.strftime('%Y%m%d', time.localtime(x * 86400)), ticks))
+plt.xticks(ticksX, map(lambda x: time.strftime('%Y%m%d', time.localtime(x * 86400))[2:], ticksX))
 plt.yticks(list(set(ticksY)))
 plt.xlabel(u"时间")
 plt.ylabel(u"字符数（千字）")

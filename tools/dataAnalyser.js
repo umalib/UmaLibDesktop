@@ -1,6 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const { writeFileSync } = require('fs');
-const { join, resolve } = require('path');
+const { resolve } = require('path');
 const { path } = require('./config.js');
 const logger = require('log4js').getLogger('analyser');
 logger.level = 'info';

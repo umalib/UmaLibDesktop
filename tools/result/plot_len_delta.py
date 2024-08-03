@@ -19,13 +19,19 @@ config = {
 }
 rcParams.update(config)
 
-ticksX = [data['days'][0], 18809, 18901, 18993, 19083, 19174, 19266, 19358, 19448, 19539, 19631, 19723, data['days'][-1]]
+ticksX = [data['days'][0]]
+for t in range(18809,data['days'][-1] - 90):
+    ticksName = time.strftime('%Y%m%d', time.localtime(t * 86400))
+    if ticksName.endswith('0101') or ticksName.endswith('0401') or ticksName.endswith('0701') or ticksName.endswith('1001'):
+        ticksX.append(t)
+ticksX.append(data['days'][-1])
+
 maxY = max(data['delta']) / 1000
 
 for i in range(0, len(data['delta'])):
     data['delta'][i] /= 1000
-    if data['delta'][i] == maxY:
-        ticksX.append(data['days'][i])
+#     if data['delta'][i] == maxY:
+#         ticksX.append(data['days'][i])
 
 maxY = round(maxY)
 

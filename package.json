@@ -51,7 +51,8 @@
     "electron:serve": "vue-cli-service electron:serve",
     "lint": "vue-cli-service lint",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "postuninstall": "electron-builder install-app-deps",
+    "sqlite": "prisma introspect && prisma studio"
   },
   "version": "3.0.2-Final",
   "web-types": "./web-types.json"
