@@ -1,0 +1,17 @@
+pages:
+  stage: deploy
+  variables:
+    FF_USE_FASTZIP: "true"
+    ARTIFACT_COMPRESSION_LEVEL: "fastest"
+  tags:
+    - shell
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'version'
+  script:
+    - git lfs fetch
+    - rm -rf public
+    - mkdir public
+    - mv docs/* public/
+  artifacts:
+    paths:
+      - public
